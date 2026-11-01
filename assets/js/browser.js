@@ -19,7 +19,9 @@
 
   const state = {
     url: '',
-    families: null
+    families: null,
+    tabs: [{ url: '' }],
+    active: 0
   };
 
   let dom = {};
@@ -77,6 +79,109 @@
     document.title = hostOf(url) + ' — Navegador | LuminSDK';
   }
 
+  /* ---------- abas ----------
+     cada aba guarda o endereço que mostra (vazio = página inicial).
+     trocar de aba reabre o endereço dela, como um navegador comum. */
+  function activeTab() {
+    return state.tabs[state.active] || null;
+  }
+
+  function touchTab(url) {
+    let tab = activeTab();
+    if (!tab) {
+      tab = { url: '' };
+      state.tabs.push(tab);
+      state.active = state.tabs.length - 1;
+    }
+    tab.url = url;
+    renderTabs();
+  }
+
+  function renderTabs() {
+    if (!dom.tabs) return;
+    dom.tabs.replaceChildren();
+
+    state.tabs.forEach(function (tab, index) {
+      const label = tab.url ? hostOf(tab.url) : 'Nova aba';
+      const item = el('div', 'brw-tab' + (index === state.active ? ' is-active' : ''));
+      item.setAttribute('role', 'tab');
+      item.setAttribute('aria-selected', index === state.active ? 'true' : 'false');
+      item.tabIndex = 0;
+      item.title = label;
+
+      const icon = el('span', 'brw-tab__icon', tab.url ? initial(label) : '+');
+      icon.setAttribute('aria-hidden', 'true');
+      const name = el('span', 'brw-tab__title', label);
+      const close = el('button', 'brw-tab__close', '×');
+      close.type = 'button';
+      close.setAttribute('aria-label', 'Fechar aba ' + label);
+
+      item.append(icon, name, close);
+      item.addEventListener('click', function () { selectTab(index); });
+      item.addEventListener('keydown', function (event) {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        selectTab(index);
+      });
+      close.addEventListener('click', function (event) {
+        event.stopPropagation();
+        closeTab(index);
+      });
+      dom.tabs.append(item);
+    });
+
+    const add = el('button', 'brw-tab brw-tab--new', '+');
+    add.type = 'button';
+    add.title = 'Nova aba';
+    add.setAttribute('aria-label', 'Nova aba');
+    add.addEventListener('click', newTab);
+    dom.tabs.append(add);
+  }
+
+  function selectTab(index) {
+    const tab = state.tabs[index];
+    if (!tab) return;
+    state.active = index;
+    if (tab.url) {
+      open(tab.url);
+    } else {
+      goHome();
+    }
+  }
+
+  function newTab() {
+    state.tabs.push({ url: '' });
+    selectTab(state.tabs.length - 1);
+  }
+
+  function closeTab(index) {
+    const wasActive = index === state.active;
+    state.tabs.splice(index, 1);
+    if (!state.tabs.length) state.tabs.push({ url: '' });
+    if (!wasActive && index < state.active) state.active -= 1;
+    if (wasActive) {
+      selectTab(Math.min(index, state.tabs.length - 1));
+    } else {
+      state.active = Math.min(state.active, state.tabs.length - 1);
+      renderTabs();
+    }
+  }
+
+  /* volta para a página inicial, mantendo a aba */
+  function goHome() {
+    const tab = activeTab();
+    if (tab) tab.url = '';
+    setStage(false);
+    setNote(false);
+    setLoading(false);
+    clearTimeout(timer);
+    if (dom.frame) dom.frame.src = 'about:blank';
+    if (dom.input) dom.input.value = '';
+    state.url = '';
+    renderTabs();
+    renderHome();
+  }
+
   /* ---------- abrir ---------- */
   function open(raw) {
     const url = normalize(raw);
@@ -86,6 +191,7 @@
     }
 
     remember(url);
+    touchTab(url);
     setStage(true);
     setNote(false);
     setLoading(true, 'Abrindo ' + hostOf(url) + '…');
@@ -304,27 +410,18 @@
       });
     }
 
+    dom.tabs = $('#brw-tabs');
+    renderTabs();
+
     const back = $('#brw-back');
     if (back) {
       back.addEventListener('click', function () {
-        setStage(false);
-        setNote(false);
-        setLoading(false);
-        clearTimeout(timer);
-        if (dom.frame) dom.frame.src = 'about:blank';
+        goHome();
         if (window.LuminApp) window.LuminApp.setTitle('Navegador — abrir sites aqui dentro | LuminSDK');
       });
     }
     const homeBtn = $('#brw-home');
-    if (homeBtn) {
-      homeBtn.addEventListener('click', function () {
-        setStage(false);
-        setNote(false);
-        clearTimeout(timer);
-        if (dom.frame) dom.frame.src = 'about:blank';
-        renderHome();
-      });
-    }
+    if (homeBtn) homeBtn.addEventListener('click', goHome);
     const clean = $('#brw-clean');
     if (clean) clean.addEventListener('click', function () { cleanTab(state.url); });
     const retry = $('#brw-retry');
@@ -402,7 +499,7 @@
   window.LuminBrowser = {
     open: function (url) { return open(url); },
     clean: function (url) { return cleanTab(url); },
-    home: function () { renderHome(); },
+    home: function () { goHome(); },
     current: function () { return state.url; }
   };
 

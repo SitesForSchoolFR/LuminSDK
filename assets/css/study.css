@@ -961,7 +961,8 @@ html[data-view="estudo"] body { padding-left: 0; }
 }
 
 @media (max-width: 900px) {
-  #view-estudo .sd-nav { display: none; }
+  #view-estudo .sd-nav { max-width: 100%; margin-left: 0; overflow-x: auto; scrollbar-width: none; }
+  #view-estudo .sd-nav a { white-space: nowrap; }
   #view-estudo .sd-planner { grid-template-columns: minmax(0, 1fr); }
   #view-estudo .sd-section__head { flex-direction: column; align-items: flex-start; gap: 8px; }
   #view-estudo .sd-section__head > p { text-align: left; max-width: 56ch; }
@@ -999,3 +1000,43 @@ html[data-view="estudo"] body { padding-left: 0; }
     transition-duration: .001ms !important;
   }
 }
+
+/* ---------- abas da página (StudyHub) ---------- */
+#view-estudo [hidden] { display: none !important; }
+#view-estudo .sd-nav a { border-bottom: 2px solid transparent; border-radius: 9px 9px 0 0; }
+#view-estudo .sd-nav a.is-on {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-bottom-color: var(--accent);
+}
+
+/* ---------- filtros do quiz ---------- */
+#view-estudo .sd-qfilter { display: grid; gap: 10px; margin: 0 0 18px; }
+#view-estudo .sd-qfilter__row { display: flex; flex-wrap: wrap; gap: 8px; }
+#view-estudo .sd-qfilter__row--meta { align-items: center; justify-content: space-between; }
+#view-estudo .sd-qfilter__size {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-soft);
+  font-size: .85rem;
+}
+#view-estudo .sd-qfilter__size select {
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+}
+#view-estudo .sd-quiz__pool { color: var(--ink-soft); font-size: .85rem; }
+
+/* ---------- revisão dos erros ---------- */
+#view-estudo .sd-quiz__wrong {
+  margin: 14px 0 0;
+  padding-left: 20px;
+  color: var(--ink-soft);
+  font-size: .92rem;
+  line-height: 1.5;
+}
+#view-estudo .sd-quiz__wrong li { margin: 6px 0; }

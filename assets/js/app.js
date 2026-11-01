@@ -24,18 +24,18 @@
       css: [],
       scripts: [
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=31',
-        'assets/js/settings.js?v=31',
-        'assets/js/site.js?v=31',
-        'assets/js/atmosphere.js?v=31',
-        'assets/js/progress.js?v=31',
-        'assets/js/bonus.js?v=31'
+        'assets/js/library.js?v=33',
+        'assets/js/settings.js?v=33',
+        'assets/js/site.js?v=33',
+        'assets/js/atmosphere.js?v=33',
+        'assets/js/progress.js?v=33',
+        'assets/js/bonus.js?v=33'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=31'],
-      scripts: ['assets/js/gnmath.js?v=31'],
+      css: ['assets/css/gnmath.css?v=33'],
+      scripts: ['assets/js/gnmath.js?v=33'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -47,33 +47,33 @@
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=31'],
-      scripts: ['assets/js/provider.js?v=31', 'assets/js/atmosphere.js?v=31']
+      css: ['assets/css/provider.css?v=33'],
+      scripts: ['assets/js/provider.js?v=33', 'assets/js/atmosphere.js?v=33']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=31'],
-      scripts: ['assets/js/sites.js?v=31', 'assets/js/atmosphere.js?v=31']
+      css: ['assets/css/sites.css?v=33'],
+      scripts: ['assets/js/sites.js?v=33', 'assets/js/atmosphere.js?v=33']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=31'],
-      scripts: ['assets/js/browser.js?v=31', 'assets/js/atmosphere.js?v=31']
+      css: ['assets/css/browser.css?v=33'],
+      scripts: ['assets/js/browser.js?v=33', 'assets/js/atmosphere.js?v=33']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
-      scripts: ['assets/js/os.js?v=31', 'assets/js/atmosphere.js?v=31']
+      scripts: ['assets/js/os.js?v=33', 'assets/js/atmosphere.js?v=33']
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=31']
+      scripts: ['assets/js/atmosphere.js?v=33']
     },
     estudo: {
-      title: 'StudyDesk — portal de estudos para o ensino médio',
-      css: ['assets/css/study.css?v=31'],
-      scripts: ['assets/js/study.js?v=31']
+      title: 'StudyHub | Estudos e Quiz',
+      css: ['assets/css/study.css?v=33'],
+      scripts: ['assets/js/study-questions.js?v=33', 'assets/js/study.js?v=33']
     }
   };
 
@@ -190,6 +190,14 @@
     }, Promise.resolve());
   }
 
+  /* ícone da aba: a página de estudos sempre usa o próprio logotipo */
+  function syncIcon(route) {
+    const link = document.querySelector('link[rel="icon"]');
+    if (!link) return;
+    const want = route === 'estudo' ? 'assets/img/studyhub.svg' : 'assets/img/favicon.svg';
+    if (link.getAttribute('href') !== want) link.setAttribute('href', want);
+  }
+
   /* ---------- troca de aba ---------- */
   function paintRail(route) {
     document.querySelectorAll('.tabrail__tab').forEach(function (item) {
@@ -242,6 +250,7 @@
     });
 
     document.title = config.title;
+    syncIcon(route);
     paintRail(route);
     loadRoute(route);
     syncCss(route);                 /* liga o CSS da aba recém-criada */

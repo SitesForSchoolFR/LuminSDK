@@ -455,3 +455,69 @@
 
 /* selos de família neutros */
 .brw-fam__logo { background: var(--surface-strong); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: none; }
+
+/* ---------- abas (faixa de abas acima da barra de endereço) ---------- */
+.brw-tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 6px 10px 0;
+  background: #0b0b13;
+  border-bottom: 1px solid #22223a;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.brw-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  min-width: 120px;
+  max-width: 220px;
+  height: 34px;
+  padding: 0 8px 0 10px;
+  border: 0;
+  border-radius: 10px 10px 0 0;
+  background: #171725;
+  color: #9d9db8;
+  font: 13px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  cursor: pointer;
+}
+.brw-tab:hover { background: #1e1e30; color: #dcdcf0; }
+.brw-tab.is-active { background: #22223a; color: #f2f2fb; box-shadow: inset 0 2px 0 #7c6cff; }
+.brw-tab__icon {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  background: #2d2d48;
+  color: #cfcfe4;
+  font-size: 11px;
+  font-weight: 700;
+}
+.brw-tab__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+.brw-tab__close {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.brw-tab__close:hover { background: #34344f; color: #fff; }
+.brw-tab--new { min-width: 0; max-width: none; width: 34px; justify-content: center; padding: 0; font-size: 18px; }
