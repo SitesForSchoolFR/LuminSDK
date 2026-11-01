@@ -581,8 +581,10 @@ html[data-view="os"] .tabrail { display: none !important; }
   min-height: 0;
 }
 
-/* ---------- app: jogos ---------- */
-.games {
+/* ---------- app: jogos ----------
+   preso à janela do LuminOS: esta folha de estilo vale para o site inteiro
+   e um `.games` solto quebrava a grade de jogos da aba LuminSDK */
+.win[data-app="games"] .games {
   display: grid;
   grid-template-rows: auto 1fr;
   height: 100%;
@@ -965,7 +967,7 @@ html[data-view="os"] .tabrail { display: none !important; }
 .calc__key--eq { background: linear-gradient(135deg, var(--os-accent), var(--os-accent-2)); color: #09090f; border-color: transparent; }
 
 /* ---------- app: ajustes ---------- */
-.settings { height: 100%; overflow-y: auto; padding: 18px; display: grid; gap: 18px; align-content: start; background: #0a0a14; }
+.win[data-app="settings"] .settings { height: 100%; overflow-y: auto; padding: 18px; display: grid; gap: 18px; align-content: start; background: #0a0a14; }
 .settings__block h3 { margin: 0 0 10px; font-size: .76rem; letter-spacing: .09em; text-transform: uppercase; color: #8a8aa4; font-weight: 700; }
 .settings__walls { display: flex; flex-wrap: wrap; gap: 8px; }
 .wall {
@@ -1197,7 +1199,11 @@ html[data-view="os"] .tabrail { display: none !important; }
    · cartões chapados, sem gradiente e sem sobe-e-desce no hover
    ========================================================= */
 
-.games {
+/* ATENÇÃO: este arquivo é carregado em TODAS as páginas do site.
+   Por isso os seletores de app ficam presos à janela do LuminOS — antes um
+   `.games` genérico engolia a grade de jogos do LuminSDK (uma coluna de
+   ~1000px por cartão, parecia que nada carregava). */
+.win[data-app="games"] .games {
   background: #0a0a0b;
   grid-template-columns: minmax(0, 1fr);   /* a grade ocupa a largura toda */
   width: 100%;
