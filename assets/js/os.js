@@ -399,10 +399,98 @@
   }
 
   /* ---------- app: jogos ---------- */
+  /* ---------- app de jogos: escolha da fonte ----------
+     três entradas, como no site normal: GN-Math (acervo local),
+     DuckMath (lista de sites da família) e LuminSDK (catálogo do SDK). */
+  const GAME_SOURCES = [
+    { id: 'gn', name: 'GN-Math', text: 'acervo de jogos do GN-Math' },
+    { id: 'duck', name: 'DuckMath', text: 'matemática que vira jogo', logo: 'assets/img/duckmath.jpg' },
+    { id: 'lumin', name: 'LuminSDK', text: 'catálogo com mais de 1.100 jogos', logo: 'assets/img/favicon.svg' }
+  ];
+
+  function sourceBack(body, win, label) {
+    return '<button class="games__back" type="button" data-src-back>← ' + esc(label) + '</button>';
+  }
+
   async function renderGames(body, win) {
+    body.innerHTML = [
+      '<div class="gsrc">',
+      '  <p class="gsrc__lead">De onde vêm os jogos?</p>',
+      '  <div class="gsrc__grid">',
+      GAME_SOURCES.map(function (src) {
+        const art = src.logo
+          ? '<img src="' + src.logo + '" alt="" width="44" height="44" decoding="async">'
+          : '<span class="gsrc__mono" aria-hidden="true">GN</span>';
+        return '<button class="gsrc__card" type="button" data-src="' + src.id + '">' + art +
+          '<b>' + esc(src.name) + '</b><small>' + esc(src.text) + '</small></button>';
+      }).join(''),
+      '  </div>',
+      '</div>'
+    ].join('');
+
+    body.querySelectorAll('[data-src]').forEach(function (card) {
+      card.addEventListener('click', function () {
+        const id = card.dataset.src;
+        if (id === 'gn') renderGnGames(body, win);
+        else if (id === 'duck') renderSiteFamily(body, win, 'duck-math', 'DuckMath');
+        else renderLuminSource(body, win);
+      });
+    });
+  }
+
+  /* lista de sites de uma família (DuckMath): cada item abre em outra aba */
+  async function renderSiteFamily(body, win, familyId, title) {
+    body.innerHTML = '<div class="gsrc gsrc--list">' +
+      '<div class="games__head">' + sourceBack(body, win, 'Fontes') +
+      '<span class="games__count" data-count>carregando…</span></div>' +
+      '<div class="gsrc__items" data-grid></div></div>';
+    body.querySelector('[data-src-back]').addEventListener('click', function () { renderGames(body, win); });
+    const grid = body.querySelector('[data-grid]');
+    const counter = body.querySelector('[data-count]');
+
+    let families = [];
+    try {
+      families = await loadSites();
+    } catch (error) {
+      grid.append(el('p', 'games__error', 'Não foi possível abrir a lista agora. Confira a conexão.'));
+      counter.textContent = 'offline';
+      return;
+    }
+
+    const family = families.find(function (item) { return item.id === familyId; });
+    const sites = (family && family.sites) || [];
+    counter.textContent = sites.length + (sites.length === 1 ? ' link' : ' links') + ' · ' + title;
+    sites.forEach(function (site) {
+      const row = el('button', 'gsrc__item', site.name || site.url);
+      row.type = 'button';
+      row.title = site.url;
+      row.addEventListener('click', function () {
+        window.open(site.url, '_blank', 'noopener');
+      });
+      grid.append(row);
+    });
+  }
+
+  /* LuminSDK: o catálogo mora na aba LuminSDK do site (carregado pelo SDK) */
+  function renderLuminSource(body, win) {
+    body.innerHTML = '<div class="gsrc gsrc--list">' +
+      '<div class="games__head">' + sourceBack(body, win, 'Fontes') + '</div>' +
+      '<div class="gsrc__panel">' +
+      '  <p class="gsrc__title">Catálogo LuminSDK</p>' +
+      '  <p class="gsrc__text">Os jogos do LuminSDK abrem no catálogo principal, com busca, favoritos e o player próprio.</p>' +
+      '  <button class="gsrc__go" type="button" data-open-lumin>Abrir o catálogo LuminSDK</button>' +
+      '</div></div>';
+    body.querySelector('[data-src-back]').addEventListener('click', function () { renderGames(body, win); });
+    body.querySelector('[data-open-lumin]').addEventListener('click', function () {
+      if (window.LuminApp) window.LuminApp.go('lumin', { force: true });
+    });
+  }
+
+  async function renderGnGames(body, win) {
     body.innerHTML = [
       '<div class="games">',
       '  <div class="games__head">',
+      '    <button class="games__back" type="button" data-src-back>← Fontes</button>',
       '    <label class="games__search">',
       '      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="6.4"/><path d="m16 16 4.4 4.4"/></svg>',
       '      <input type="search" placeholder="Buscar jogo…" aria-label="Buscar jogo">',
@@ -416,6 +504,7 @@
     const grid = body.querySelector('[data-grid]');
     const input = body.querySelector('input');
     const counter = body.querySelector('[data-count]');
+    body.querySelector('[data-src-back]').addEventListener('click', function () { renderGames(body, win); });
 
     let games = [];
     try {
@@ -582,7 +671,7 @@
     body.querySelector('[data-back]').addEventListener('click', function () {
       stopPlaying(id);
       shrinkAfterPlay(id);
-      renderGames(body, win);
+      renderGnGames(body, win);
     });
     body.querySelector('[data-ext]').addEventListener('click', function () {
       window.open(sources[0], '_blank', 'noopener');
