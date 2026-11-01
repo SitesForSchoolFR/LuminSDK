@@ -104,13 +104,13 @@
   }
   </script>
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=30">
+  <link rel="stylesheet" href="assets/css/styles.css?v=32">
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <link rel="stylesheet" href="assets/css/app.css?v=30">
-  <link rel="stylesheet" href="assets/css/social.css?v=30">
-  <link rel="stylesheet" href="assets/css/os.css?v=30">
-  <link rel="stylesheet" href="assets/css/lcore.css?v=30">
+  <link rel="stylesheet" href="assets/css/app.css?v=32">
+  <link rel="stylesheet" href="assets/css/social.css?v=32">
+  <link rel="stylesheet" href="assets/css/os.css?v=32">
+  <link rel="stylesheet" href="assets/css/lcore.css?v=32">
 </head>
 <body>
 
@@ -238,7 +238,7 @@
       <span>Nav</span>
     </a>
     <a class="tabrail__tab" href="./" data-route="estudo" title="Estudos — portal de estudos">
-      <img src="assets/img/study.svg" alt="" width="24" height="24">
+      <img src="assets/img/studyhub.svg" alt="" width="24" height="24">
       <span>Estudos</span>
     </a>
 
@@ -1599,16 +1599,16 @@
   <header class="sd-top" id="sd-topo">
     <div class="sd-top__inner">
       <a class="sd-brand" href="#sd-topo">
-        <img src="assets/img/study.svg" alt="" width="28" height="28">
-        <span>Study<b>Desk</b></span>
+        <img src="assets/img/studyhub.svg" alt="" width="28" height="28">
+        <span>Study<b>Hub</b></span>
       </a>
 
-      <nav class="sd-nav" aria-label="Seções">
-        <a href="#materias">Matérias</a>
-        <a href="#recursos">Recursos</a>
-        <a href="#planejador">Planejador</a>
-        <a href="#teste">Teste rápido</a>
-        <a href="#faq-estudo">Dúvidas</a>
+      <nav class="sd-nav" aria-label="Seções" role="tablist">
+        <a href="#inicio" role="tab" data-tab="inicio">Início</a>
+        <a href="#recursos" role="tab" data-tab="recursos">Recursos</a>
+        <a href="#teste" role="tab" data-tab="quiz">Quiz</a>
+        <a href="#planejador" role="tab" data-tab="planejador">Planejador</a>
+        <a href="#faq-estudo" role="tab" data-tab="faq">Dúvidas</a>
       </nav>
 
       <div class="sd-top__right">
@@ -1619,7 +1619,7 @@
   </header>
 
   <main class="sd-main" id="conteudo">
-    <section class="sd-hero">
+    <section class="sd-hero" id="inicio" data-panel="inicio">
       <div class="sd-hero__copy">
         <p class="sd-eyebrow"><span aria-hidden="true"></span> apoio escolar · fundamental e médio</p>
         <h1>Estude com foco.<br><em>Entenda de verdade.</em></h1>
@@ -1653,7 +1653,7 @@
       </aside>
     </section>
 
-    <section class="sd-section" id="materias">
+    <section class="sd-section" id="materias" data-panel="inicio">
       <div class="sd-section__head">
         <div>
           <p class="sd-section__label">Comece por aqui</p>
@@ -1713,7 +1713,7 @@
       </div>
     </section>
 
-    <section class="sd-section" id="recursos">
+    <section class="sd-section" id="recursos" data-panel="recursos">
       <div class="sd-section__head">
         <div>
           <p class="sd-section__label">Biblioteca</p>
@@ -1847,7 +1847,7 @@
       <p class="sd-empty" id="vazio" hidden>Nenhum recurso encontrado. Tente “redação”, “física” ou “porcentagem”.</p>
     </section>
 
-    <section class="sd-section" id="planejador">
+    <section class="sd-section" id="planejador" data-panel="planejador">
       <div class="sd-section__head">
         <div>
           <p class="sd-section__label">Rotina</p>
@@ -1895,18 +1895,46 @@
       </div>
     </section>
 
-    <section class="sd-section" id="teste">
+    <section class="sd-section" id="teste" data-panel="quiz">
       <div class="sd-section__head">
         <div>
           <p class="sd-section__label">Revisão</p>
           <h2>Teste rápido</h2>
         </div>
-        <p>Cinco perguntas. Sem nota, sem cadastro — só para fixar.</p>
+        <p>Escolha a série e a matéria. Sem nota, sem cadastro — o erro vira revisão.</p>
+      </div>
+
+      <div class="sd-qfilter" role="group" aria-label="Filtrar perguntas">
+        <div class="sd-qfilter__row" id="quiz-grades" role="group" aria-label="Série">
+          <button class="sd-chip is-on" type="button" data-grade="">Todas as séries</button>
+          <button class="sd-chip" type="button" data-grade="7">7º ano</button>
+          <button class="sd-chip" type="button" data-grade="8">8º ano</button>
+          <button class="sd-chip" type="button" data-grade="vida">Vida prática</button>
+        </div>
+        <div class="sd-qfilter__row" id="quiz-subjects" role="group" aria-label="Matéria">
+          <button class="sd-chip is-on" type="button" data-qsubject="">Todas as matérias</button>
+          <button class="sd-chip" type="button" data-qsubject="matematica">Matemática</button>
+          <button class="sd-chip" type="button" data-qsubject="portugues">Português</button>
+          <button class="sd-chip" type="button" data-qsubject="ciencias">Ciências</button>
+          <button class="sd-chip" type="button" data-qsubject="historia">História</button>
+          <button class="sd-chip" type="button" data-qsubject="geografia">Geografia</button>
+          <button class="sd-chip" type="button" data-qsubject="vida">Vida prática</button>
+        </div>
+        <div class="sd-qfilter__row sd-qfilter__row--meta">
+          <label class="sd-qfilter__size">Perguntas
+            <select id="quiz-size">
+              <option value="10">10</option>
+              <option value="20" selected>20</option>
+              <option value="40">40</option>
+            </select>
+          </label>
+          <span class="sd-quiz__pool" id="quiz-pool"></span>
+        </div>
       </div>
 
       <div class="sd-quiz" id="quiz">
         <div class="sd-quiz__top">
-          <span class="sd-quiz__count" id="quiz-count">Pergunta 1 de 5</span>
+          <span class="sd-quiz__count" id="quiz-count">Escolha um filtro</span>
           <span class="sd-quiz__score" id="quiz-score">0 acertos</span>
         </div>
         <div class="sd-bar sd-bar--thin"><span id="quiz-bar" style="width:0%"></span></div>
@@ -1916,12 +1944,13 @@
         <p class="sd-quiz__feedback" id="quiz-feedback" aria-live="polite"></p>
         <div class="sd-quiz__actions">
           <button class="sd-btn" type="button" id="quiz-next" hidden>Próxima</button>
+          <button class="sd-btn sd-btn--ghost sd-btn--small" type="button" id="quiz-review" hidden>Revisar só os erros</button>
           <button class="sd-btn sd-btn--ghost sd-btn--small" type="button" id="quiz-restart">Recomeçar</button>
         </div>
       </div>
     </section>
 
-    <section class="sd-section" id="faq-estudo">
+    <section class="sd-section" id="faq-estudo" data-panel="faq">
       <div class="sd-section__head">
         <div>
           <p class="sd-section__label">Ajuda</p>
@@ -1932,7 +1961,7 @@
 
       <div class="sd-faq">
         <details open>
-          <summary>O StudyDesk é gratuito mesmo?</summary>
+          <summary>O StudyHub é gratuito mesmo?</summary>
           <p>Sim. O projeto é mantido por voluntários e não cobra assinatura, nem pede cadastro para ler os resumos.</p>
         </details>
         <details>
@@ -1958,7 +1987,7 @@
       </div>
     </section>
 
-    <section class="sd-cta">
+    <section class="sd-cta" data-panel="inicio">
       <div>
         <h2>Comece por uma matéria</h2>
         <p>Cinco minutos por dia já mudam a nota da próxima prova.</p>
@@ -1973,7 +2002,7 @@
   <footer class="sd-foot">
     <div class="sd-foot__inner">
       <div class="sd-foot__brand">
-        <p><img src="assets/img/study.svg" alt="" width="22" height="22"> StudyDesk</p>
+        <p><img src="assets/img/studyhub.svg" alt="" width="22" height="22"> StudyHub</p>
         <p class="sd-foot__text">Portal de estudos aberto, sem anúncios e sem cadastro. Conteúdo para fins educacionais.</p>
       </div>
       <div>
@@ -1997,7 +2026,7 @@
     </div>
 
     <div class="sd-foot__bottom">
-      <p>© 2026 StudyDesk · conteúdo educacional de uso livre</p>
+      <p>© 2026 StudyHub · conteúdo educacional de uso livre</p>
       <p class="sd-foot__credit">
         mantido por
         <button class="sd-credit" type="button" id="autor" title="Ryan Smith">Ryan Smith</button>
@@ -2009,6 +2038,7 @@
   <!-- ============================= VIEW: NAVEGADOR ====================== -->
   <div class="app-view" id="view-browser" data-view="browser" hidden>
     <header class="brw-top">
+      <div class="brw-tabs" id="brw-tabs" role="tablist" aria-label="Abas do navegador"></div>
       <div class="brw-top__inner">
         <span class="brw-brand">
           <img src="assets/img/browser.jpg" alt="" width="26" height="26">
@@ -2219,8 +2249,8 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="assets/js/social.js?v=30" defer></script>
-  <script src="assets/js/lcore.js?v=30" defer></script>
-  <script src="assets/js/app.js?v=30" defer></script>
+  <script src="assets/js/social.js?v=32" defer></script>
+  <script src="assets/js/lcore.js?v=32" defer></script>
+  <script src="assets/js/app.js?v=32" defer></script>
 </body>
 </html>

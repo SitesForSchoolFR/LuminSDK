@@ -1,8 +1,11 @@
 /* =========================================================
-   StudyDesk — interações da página de estudos
+   StudyHub — interações da página de estudos
+   · abas (início, recursos, quiz, planejador, dúvidas)
    · busca e filtro por matéria nos recursos
    · planejador salvo no próprio navegador (localStorage), com progresso
-   · cronômetro de foco (25/10/5 min) e teste rápido de 5 perguntas
+   · cronômetro de foco (25/10/5 min)
+   · quiz com banco de questões por série e matéria (study-questions.js)
+   · título fixo "StudyHub | Estudos e Quiz"
    · saída discreta para o LuminSDK: clicar em "Ryan Smith" no rodapé
      (o atalho Shift+D / Alt+S agora é do app.js, que vale em todas as abas)
 
@@ -16,6 +19,79 @@
 
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.prototype.slice.call(document.querySelectorAll(sel));
+
+  /* ---------- título fixo: sempre \"StudyHub | Estudos e Quiz\" ----------
+     o app define o título ao trocar de aba; enquanto esta página estiver
+     aberta, qualquer troca volta para o nome certo. */
+  const TITLE = 'StudyHub | Estudos e Quiz';
+  let titleObserver = null;
+
+  function holdTitle() {
+    if (document.title !== TITLE) document.title = TITLE;
+    const head = document.querySelector('title');
+    if (!head || !window.MutationObserver) return null;
+    const observer = new MutationObserver(function () {
+      if (document.title !== TITLE) document.title = TITLE;
+    });
+    observer.observe(head, { childList: true, characterData: true, subtree: true });
+    return observer;
+  }
+
+  titleObserver = holdTitle();
+  window.addEventListener('lumin:view', function (event) {
+    const route = event.detail && event.detail.route;
+    if (route === 'estudo') {
+      if (!titleObserver) titleObserver = holdTitle();
+    } else if (titleObserver) {
+      titleObserver.disconnect();
+      titleObserver = null;
+    }
+  });
+
+  /* ---------- abas: cada seção pertence a uma aba (data-panel) ---------- */
+  const TAB_OF_HASH = {
+    '#inicio': 'inicio', '#sd-topo': 'inicio', '#materias': 'inicio',
+    '#recursos': 'recursos', '#teste': 'quiz', '#planejador': 'planejador', '#faq-estudo': 'faq'
+  };
+
+  function showTab(name) {
+    $$('#conteudo [data-panel]').forEach(function (panel) {
+      panel.hidden = panel.dataset.panel !== name;
+    });
+    $$('.sd-nav [data-tab]').forEach(function (link) {
+      const on = link.dataset.tab === name;
+      link.classList.toggle('is-on', on);
+      link.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+  }
+
+  function openTab(hash, scroll) {
+    const name = TAB_OF_HASH[hash] || 'inicio';
+    showTab(name);
+    if (scroll === false) return;
+    const target = hash && hash !== '#sd-topo' ? document.querySelector(hash) : null;
+    if (target && target.scrollIntoView) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    else window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  showTab('inicio');
+
+  /* links da página (menu, rodapé, chamadas) trocam de aba, sem recarregar */
+  const studyRoot = $('#view-estudo');
+  if (studyRoot) {
+    studyRoot.addEventListener('click', function (event) {
+      const link = event.target.closest('a[href^="#"]');
+      if (!link) return;
+      const hash = link.getAttribute('href');
+      if (!(hash in TAB_OF_HASH) && hash !== '#conteudo') return;
+      if (hash === '#conteudo') return;
+      event.preventDefault();
+      openTab(hash, true);
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', hash);
+      }
+    });
+  }
 
   /* ---------- recursos: busca + filtro ---------- */
   const state = { query: '', subject: '' };
@@ -83,6 +159,7 @@
         state.query = search.value.trim().toLowerCase();
         filter();
       }
+      showTab('recursos');
       const section = $('#recursos');
       if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
@@ -110,6 +187,7 @@
         item.classList.toggle('is-on', (item.dataset.subject || '') === state.subject);
       });
       filter();
+      showTab('recursos');
       const section = $('#recursos');
       if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
@@ -330,28 +408,23 @@
     const feedback = $('#quiz-feedback');
     const next = $('#quiz-next');
     const restart = $('#quiz-restart');
+    const review = $('#quiz-review');
+    const pool = $('#quiz-pool');
+    const sizeSel = $('#quiz-size');
     if (!box || !options) return;
 
-    const POOL = [
-      { q: 'Qual é o valor de x em 2x + 6 = 20?', a: ['7', '6', '8', '9'], right: 0, why: '2x = 14, então x = 7.' },
-      { q: 'A fórmula de Bháskara resolve equações de qual grau?', a: ['1º grau', '2º grau', '3º grau', 'Qualquer grau'], right: 1, why: 'Ela resolve ax² + bx + c = 0.' },
-      { q: 'Na dissertação-argumentativa, em quantos parágrafos o texto costuma ser organizado?', a: ['2', '3', '4', '6'], right: 2, why: 'Introdução, dois desenvolvimentos e conclusão.' },
-      { q: 'Qual conectivo marca oposição?', a: ['Ademais', 'Entretanto', 'Portanto', 'Outrossim'], right: 1, why: '“Entretanto” contrapõe ideias.' },
-      { q: 'Qual organela realiza a fotossíntese?', a: ['Mitocôndria', 'Ribossomo', 'Cloroplasto', 'Lisossomo'], right: 2, why: 'O cloroplasto tem clorofila.' },
-      { q: 'F = m · a corresponde a qual lei de Newton?', a: ['1ª lei', '2ª lei', '3ª lei', 'Lei de Ohm'], right: 1, why: 'É a segunda lei, a fundamental da dinâmica.' },
-      { q: 'Em que ano começou a Era Vargas?', a: ['1922', '1930', '1937', '1945'], right: 1, why: 'A Revolução de 1930 levou Vargas ao poder.' },
-      { q: 'Quanto é 20% de 250?', a: ['25', '40', '50', '75'], right: 2, why: '0,20 × 250 = 50.' },
-      { q: 'No cruzamento Aa × Aa, quantos fenótipos aparecem?', a: ['1', '2', '3', '4'], right: 1, why: 'Dois: dominante (3/4) e recessivo (1/4).' },
-      { q: 'A proposta de intervenção fica em qual parte do texto?', a: ['Introdução', '1º desenvolvimento', '2º desenvolvimento', 'Conclusão'], right: 3, why: 'Ela fecha o texto, na conclusão.' },
-      { q: 'Um aumento de 20% seguido de desconto de 20% deixa o preço…', a: ['Igual', 'Maior', 'Menor', 'O dobro'], right: 2, why: '1,20 × 0,80 = 0,96 — 4% menor.' },
-      { q: 'Qual é a unidade de força no SI?', a: ['Joule', 'Newton', 'Watt', 'Pascal'], right: 1, why: 'Força se mede em newton (N).' },
-    ];
+    /* banco: assets/js/study-questions.js (window.STUDY_QUESTIONS) */
+    const BANK = (window.STUDY_QUESTIONS || []).map(function (row, i) {
+      return { id: i, grade: row[0], subject: row[1], q: row[2], a: row[3], right: row[4], why: row[5] };
+    });
 
-    const TOTAL = 5;
+    const filters = { grade: '', subject: '' };
     let deck = [];
     let index = 0;
     let hits = 0;
+    let wrong = [];
     let answered = false;
+    let reviewing = false;
 
     function shuffle(list) {
       const copy = list.slice();
@@ -362,20 +435,66 @@
       return copy;
     }
 
+    function matching() {
+      return BANK.filter(function (item) {
+        return (!filters.grade || item.grade === filters.grade) &&
+          (!filters.subject || item.subject === filters.subject);
+      });
+    }
+
+    function paintPool() {
+      if (!pool) return;
+      const total = matching().length;
+      pool.textContent = total + (total === 1 ? ' pergunta neste filtro' : ' perguntas neste filtro');
+    }
+
     function paintScore() {
       if (score) score.textContent = hits + (hits === 1 ? ' acerto' : ' acertos');
-      if (bar) bar.style.width = Math.round((index / TOTAL) * 100) + '%';
-      if (count) count.textContent = 'Pergunta ' + Math.min(index + 1, TOTAL) + ' de ' + TOTAL;
+    }
+
+    function setButtons(group, attr, value) {
+      $$(group + ' [' + attr + ']').forEach(function (item) {
+        item.classList.toggle('is-on', (item.getAttribute(attr) || '') === value);
+      });
+    }
+
+    function start(items, isReview) {
+      reviewing = !!isReview;
+      box.classList.remove('is-over');
+      if (review) review.hidden = true;
+      if (next) next.hidden = true;
+      if (feedback) { feedback.textContent = ''; feedback.className = 'sd-quiz__feedback'; }
+      index = 0;
+      hits = 0;
+      wrong = [];
+      paintPool();
+      paintScore();
+
+      if (!items.length) {
+        deck = [];
+        if (count) count.textContent = 'Sem perguntas';
+        if (bar) bar.style.width = '0%';
+        if (question) question.textContent = 'Nenhuma pergunta com essa combinação de série e matéria. Troque um dos filtros.';
+        options.textContent = '';
+        return;
+      }
+
+      const limit = Number(sizeSel && sizeSel.value) || 10;
+      deck = isReview ? shuffle(items) : shuffle(items).slice(0, Math.min(limit, items.length));
+      render();
     }
 
     function render() {
       answered = false;
       const item = deck[index];
-      box.classList.remove('is-over');
-      if (feedback) { feedback.textContent = ''; feedback.className = 'sd-quiz__feedback'; }
-      if (next) { next.hidden = true; next.textContent = index === TOTAL - 1 ? 'Ver resultado' : 'Próxima'; }
-      paintScore();
+      if (count) {
+        count.textContent = (reviewing ? 'Revisão · ' : '') +
+          'Pergunta ' + (index + 1) + ' de ' + deck.length + ' · ' + item.grade.replace(/^(\d)$/, '$1º ano').replace('vida', 'vida prática');
+      }
+      if (bar) bar.style.width = Math.round((index / deck.length) * 100) + '%';
       if (question) question.textContent = item.q;
+      if (feedback) { feedback.textContent = ''; feedback.className = 'sd-quiz__feedback'; }
+      if (next) { next.hidden = true; next.textContent = index === deck.length - 1 ? 'Ver resultado' : 'Próxima'; }
       options.textContent = '';
 
       item.a.forEach(function (text, i) {
@@ -383,61 +502,117 @@
         button.type = 'button';
         button.className = 'opt';
         button.textContent = text;
-        button.addEventListener('click', function () {
-          if (answered) return;
-          answered = true;
-          const right = i === item.right;
-          if (right) hits += 1;
-          Array.prototype.forEach.call(options.children, function (child, k) {
-            child.disabled = true;
-            if (k === item.right) child.classList.add('is-right');
-            else if (k === i) child.classList.add('is-wrong');
-          });
-          if (feedback) {
-            feedback.className = 'sd-quiz__feedback ' + (right ? 'is-right' : 'is-wrong');
-            feedback.textContent = (right ? 'Isso! ' : 'Quase. ') + item.why;
-          }
-          paintScore();
-          if (next) next.hidden = false;
-        });
+        button.addEventListener('click', function () { choose(i); });
         options.append(button);
       });
+    }
+
+    function choose(i) {
+      if (answered || !deck[index]) return;
+      answered = true;
+      const item = deck[index];
+      const right = i === item.right;
+      if (right) hits += 1;
+      else wrong.push(item);
+
+      Array.prototype.forEach.call(options.children, function (child, k) {
+        child.disabled = true;
+        if (k === item.right) child.classList.add('is-right');
+        else if (k === i) child.classList.add('is-wrong');
+      });
+      if (feedback) {
+        feedback.className = 'sd-quiz__feedback ' + (right ? 'is-right' : 'is-wrong');
+        feedback.textContent = (right ? 'Isso! ' : 'Resposta: ' + item.a[item.right] + '. ') + item.why;
+      }
+      paintScore();
+      if (next) next.hidden = false;
     }
 
     function finish() {
       box.classList.add('is-over');
       if (bar) bar.style.width = '100%';
       if (count) count.textContent = 'Resultado';
+      const pct = Math.round((hits / deck.length) * 100);
       if (feedback) {
-        feedback.className = 'sd-quiz__feedback ' + (hits >= 4 ? 'is-right' : 'is-wrong');
-        feedback.textContent = hits + ' de ' + TOTAL + (hits >= 4
-          ? ' — mandou bem, dá para subir a dificuldade.'
-          : ' — vale reler o resumo da matéria e tentar de novo.');
+        feedback.className = 'sd-quiz__feedback ' + (pct >= 70 ? 'is-right' : 'is-wrong');
+        feedback.textContent = hits + ' de ' + deck.length + ' (' + pct + '%)' +
+          (pct >= 70 ? ' — muito bom, continue assim.' : ' — revise os erros abaixo e tente de novo.');
       }
-      if (question) question.textContent = hits >= 4 ? 'Fechou o bloco com folga.' : 'Revisar é parte do estudo.';
+      if (question) question.textContent = wrong.length ? 'Erros para revisar: ' + wrong.length : 'Nenhum erro nesta rodada!';
       options.textContent = '';
+
+      if (wrong.length) {
+        const list = document.createElement('ol');
+        list.className = 'sd-quiz__wrong';
+        wrong.forEach(function (item) {
+          const li = document.createElement('li');
+          li.textContent = item.q + ' → ' + item.a[item.right];
+          list.append(li);
+        });
+        options.append(list);
+      }
       if (next) next.hidden = true;
+      if (review) review.hidden = wrong.length === 0;
     }
 
     if (next) {
       next.addEventListener('click', function () {
+        if (!answered) return;
         index += 1;
-        if (index >= TOTAL) { finish(); return; }
-        render();
+        if (index >= deck.length) finish();
+        else render();
+      });
+    }
+
+    if (review) {
+      review.addEventListener('click', function () {
+        start(wrong.slice(), true);
       });
     }
 
     if (restart) {
       restart.addEventListener('click', function () {
-        deck = shuffle(POOL).slice(0, TOTAL);
-        index = 0;
-        hits = 0;
-        render();
+        start(matching(), false);
       });
     }
 
-    deck = shuffle(POOL).slice(0, TOTAL);
-    render();
+    const gradeRow = $('#quiz-grades');
+    if (gradeRow) {
+      gradeRow.addEventListener('click', function (event) {
+        const chip = event.target.closest('[data-grade]');
+        if (!chip) return;
+        filters.grade = chip.dataset.grade || '';
+        setButtons('#quiz-grades', 'data-grade', filters.grade);
+        start(matching(), false);
+      });
+    }
+
+    const subjectRow = $('#quiz-subjects');
+    if (subjectRow) {
+      subjectRow.addEventListener('click', function (event) {
+        const chip = event.target.closest('[data-qsubject]');
+        if (!chip) return;
+        filters.subject = chip.dataset.qsubject || '';
+        setButtons('#quiz-subjects', 'data-qsubject', filters.subject);
+        start(matching(), false);
+      });
+    }
+
+    if (sizeSel) {
+      sizeSel.addEventListener('change', function () { start(matching(), false); });
+    }
+
+    /* teclas 1 a 4 escolhem a alternativa quando o quiz está aberto */
+    document.addEventListener('keydown', function (event) {
+      if (answered || !deck.length || box.classList.contains('is-over')) return;
+      if (!/^[1-4]$/.test(event.key)) return;
+      const tag = (event.target && event.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      const button = options.children[Number(event.key) - 1];
+      if (button) button.click();
+    });
+
+    start(matching(), false);
   })();
 
   /* atalho "/" leva direto para a busca */

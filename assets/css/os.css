@@ -1385,3 +1385,39 @@ html[data-view="os"] .tabrail { display: none !important; }
 @media (max-width: 760px) {
   .win__grip { display: none; }
 }
+
+/* ---------- app de jogos: escolha da fonte (GN-Math · DuckMath · LuminSDK) ---------- */
+.os .gsrc { display: flex; flex-direction: column; gap: 14px; padding: 18px; height: 100%; box-sizing: border-box; overflow: auto; }
+.os .gsrc__lead { margin: 0; font-size: 15px; font-weight: 600; opacity: .9; }
+.os .gsrc__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+.os .gsrc__card {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+  padding: 16px; border: 1px solid rgba(255, 255, 255, .12); border-radius: 14px;
+  background: rgba(255, 255, 255, .04); color: inherit; font: inherit; text-align: left; cursor: pointer;
+}
+.os .gsrc__card:hover, .os .gsrc__card:focus-visible { border-color: #7c6cff; background: rgba(124, 108, 255, .14); outline: none; }
+.os .gsrc__card img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; }
+.os .gsrc__card b { font-size: 15px; }
+.os .gsrc__card small { opacity: .7; font-size: 12px; line-height: 1.35; }
+.os .gsrc__mono {
+  width: 44px; height: 44px; display: grid; place-items: center; border-radius: 10px;
+  background: #2b3d6b; font-weight: 700; font-size: 14px;
+}
+.os .gsrc--list .games__head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.os .gsrc__items { display: grid; gap: 8px; }
+.os .gsrc__item {
+  padding: 10px 12px; border: 1px solid rgba(255, 255, 255, .1); border-radius: 10px;
+  background: rgba(255, 255, 255, .03); color: inherit; font: inherit; text-align: left; cursor: pointer;
+}
+.os .gsrc__item:hover { border-color: #7c6cff; }
+.os .gsrc__panel { display: grid; gap: 10px; padding: 16px; border: 1px solid rgba(255, 255, 255, .12); border-radius: 14px; }
+.os .gsrc__title { margin: 0; font-weight: 700; font-size: 16px; }
+.os .gsrc__text { margin: 0; opacity: .8; font-size: 13px; line-height: 1.45; }
+.os .gsrc__go {
+  justify-self: start; padding: 9px 14px; border: 0; border-radius: 10px;
+  background: #7c6cff; color: #fff; font: inherit; font-weight: 600; cursor: pointer;
+}
+.os .games__back {
+  padding: 6px 10px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 9px;
+  background: transparent; color: inherit; font: inherit; font-size: 13px; cursor: pointer;
+}
