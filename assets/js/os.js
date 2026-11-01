@@ -32,6 +32,7 @@
     notes: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14.5 3v4.5H19M9 12h7M9 16h5"/></svg>',
     calc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.4"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 15.5h.01M12 15.5h.01M15.5 15.5h.01M8.5 19h.01M12 19h.01M15.5 19h.01"/></svg>',
     settings: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M19.3 14.9a1.6 1.6 0 0 0 .3 1.8l.1.1a1.9 1.9 0 1 1-2.7 2.7l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a1.9 1.9 0 1 1-3.8 0v-.1a1.6 1.6 0 0 0-1-1.5 1.6 1.6 0 0 0-1.8.3l-.1.1a1.9 1.9 0 1 1-2.7-2.7l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a1.9 1.9 0 1 1 0-3.8h.1a1.6 1.6 0 0 0 1.5-1 1.6 1.6 0 0 0-.3-1.8l-.1-.1a1.9 1.9 0 1 1 2.7-2.7l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a1.9 1.9 0 1 1 3.8 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a1.9 1.9 0 1 1 2.7 2.7l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a1.9 1.9 0 1 1 0 3.8h-.1a1.6 1.6 0 0 0-1.6 1.1Z"/></svg>',
+    movies: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.2"/><path d="M7.5 5v14M16.5 5v14M3 9.5h4.5M3 14.5h4.5M16.5 9.5H21M16.5 14.5H21"/></svg>',
     about: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6h.01"/></svg>'
   };
 
@@ -809,6 +810,80 @@
     else renderBrowser(win.el.querySelector('[data-body]'), win.el, url);
   }
 
+  /* ---------- app: filmes ---------- */
+  /* Dois catálogos, cada um com seus espelhos. Tudo abre DENTRO do OS, no
+     app Navegador — nada de mandar a pessoa para fora da área de trabalho. */
+  const MOVIES = [
+    {
+      name: 'Cinera',
+      mono: 'CI',
+      hosts: [
+        'cinera.zubex.net',
+        'cinera.yowie.me',
+        'cinera.zarins.eu',
+        'cinera.xzolx.org'
+      ]
+    },
+    {
+      name: 'Triple T',
+      mono: 'TT',
+      hosts: [
+        'triplet.zubex.net',
+        'triplet.xzolx.org'
+      ]
+    }
+  ];
+
+  function renderMovies(body) {
+    body.innerHTML = [
+      '<div class="movies">',
+      '  <header class="movies__head">',
+      '    <h2 class="movies__title">Filmes e séries</h2>',
+      '    <p class="movies__lead">Abre aqui dentro, no Navegador do OS. Se um espelho estiver fora do ar, use outro da lista.</p>',
+      '  </header>',
+      '  <div class="movies__list" data-list></div>',
+      '  <p class="movies__foot">Espelhos mudam de endereço de tempos em tempos — a lista é só um atalho.</p>',
+      '</div>'
+    ].join('');
+
+    const list = body.querySelector('[data-list]');
+
+    MOVIES.forEach(function (movie) {
+      const block = el('section', 'ffam');
+
+      const head = el('header', 'ffam__head');
+      head.innerHTML = [
+        '<span class="ffam__art" aria-hidden="true">' + esc(movie.mono) + '</span>',
+        '<span class="ffam__name">' + esc(movie.name) + '</span>',
+        '<span class="ffam__count">' + movie.hosts.length + (movie.hosts.length === 1 ? ' endereço' : ' endereços') + '</span>'
+      ].join('');
+      block.append(head);
+
+      const rows = el('div', 'ffam__rows');
+      movie.hosts.forEach(function (host, index) {
+        const url = 'https://' + host;
+        const row = el('button', 'fmirror');
+        row.type = 'button';
+        row.title = 'Abrir ' + host + ' no navegador do OS';
+        row.innerHTML = [
+          '<span class="fmirror__dot" aria-hidden="true"></span>',
+          '<span class="fmirror__name">' + esc(host) + '</span>',
+          index === 0 ? '<span class="fmirror__tag">principal</span>' : '<span class="fmirror__tag fmirror__tag--alt">espelho</span>',
+          '<span class="fmirror__go" aria-hidden="true">›</span>'
+        ].join('');
+        row.addEventListener('click', function (event) {
+          /* o clique não pode devolver o foco para esta janela depois de
+             abrir o Navegador */
+          event.stopPropagation();
+          openUrl(url);
+        });
+        rows.append(row);
+      });
+      block.append(rows);
+      list.append(block);
+    });
+  }
+
   /* ---------- app: notas ---------- */
   function renderNotes(body) {
     body.innerHTML = '<div class="notes"><textarea placeholder="Suas anotações ficam salvas neste navegador…" aria-label="Notas"></textarea><p class="notes__hint">Salvo automaticamente.</p></div>';
@@ -960,12 +1035,13 @@
   /* ---------- catálogo de apps ---------- */
   const APPS = [
     { id: 'games', name: 'Jogos', short: 'Jogos', w: 860, h: 580, render: renderGames },
+    { id: 'movies', name: 'Filmes', short: 'Filmes', w: 660, h: 436, render: renderMovies },
     { id: 'browser', name: 'Navegador', short: 'Navegador', w: 900, h: 600, render: renderBrowser },
     { id: 'sites', name: 'Sites', short: 'Sites', w: 720, h: 560, render: renderSites },
     { id: 'chat', name: 'Chat', short: 'Chat', dockOnly: true, w: 0, h: 0, render: function () {} },
     { id: 'notes', name: 'Notas', short: 'Notas', w: 560, h: 460, render: renderNotes },
     { id: 'calc', name: 'Calculadora', short: 'Calculadora', w: 330, h: 470, render: renderCalc },
-    { id: 'settings', name: 'Ajustes', short: 'Ajustes', w: 620, h: 540, render: renderSettings },
+    { id: 'settings', name: 'Ajustes', short: 'Ajustes', w: 620, h: 452, render: renderSettings },
     { id: 'about', name: 'Sobre', short: 'Sobre', w: 460, h: 520, render: renderAbout }
   ];
 

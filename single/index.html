@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=30 -->
+  <!-- assets/css/styles.css?v=31 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -731,6 +731,10 @@ kbd {
 .status-pill[data-state="error"] .status-pill__dot {
   background: #f87171;
   box-shadow: 0 0 0 4px rgba(248, 113, 113, .16);
+}
+.status-pill[data-state="local"] .status-pill__dot {
+  background: var(--amber, #f59e0b);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, .16);
 }
 .status-pill[data-state="fallback"] .status-pill__dot {
   background: var(--accent);
@@ -1699,21 +1703,18 @@ mark.hl {
   grid-template-columns: repeat(var(--grid-cols, 8), minmax(0, 1fr));
   gap: var(--grid-gap, 10px);
 }
+/* `repeat(min(...), ...)` é inválido no CSS: o navegador descartava a regra
+   inteira e a grade virava uma coluna só. Aqui o limite vem do valor da
+   variável — o JS (applyGridVars) já grava o número de colunas da tela. */
 @media (max-width: 900px) {
-  .games {
-    grid-template-columns: repeat(min(var(--grid-cols, 8), 6), minmax(0, 1fr));
-  }
+  :root { --grid-cols: 6; }
+  .games { gap: 8px; }
 }
 @media (max-width: 640px) {
-  .games {
-    grid-template-columns: repeat(min(var(--grid-cols, 8), 4), minmax(0, 1fr));
-    gap: 8px;
-  }
+  :root { --grid-cols: 4; }
 }
 @media (max-width: 420px) {
-  .games {
-    grid-template-columns: repeat(min(var(--grid-cols, 8), 3), minmax(0, 1fr));
-  }
+  :root { --grid-cols: 3; }
 }
 
 /* Barra de aparência */
@@ -2142,12 +2143,15 @@ html.no-blur .sheet::backdrop { backdrop-filter: none; }
 }
 .sheet__head {
   display: flex;
+  flex: none;
   align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
   padding: 18px 20px 14px;
   border-bottom: 1px solid var(--border);
 }
+.sheet__foot { flex: none; }
+.sheet__foot .settings-note { margin: 0; }
 .sheet__title {
   font-family: var(--font-display);
   font-size: 1.12rem;
@@ -4021,7 +4025,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=30 -->
+  <!-- assets/css/app.css?v=31 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -4890,6 +4894,13 @@ html[data-view="gn"] .tabrail__tab.is-active {
           <p class="settings-note" id="data-stats">—</p>
         </section>
       </div>
+
+      <footer class="sheet__foot">
+        <p class="settings-note" id="settings-foot-note">Tudo salvo neste navegador.</p>
+        <div class="sheet__foot-right">
+          <button class="btn btn--primary btn--sm" id="settings-done" type="button">Pronto</button>
+        </div>
+      </footer>
     </div>
   </dialog>
 
@@ -5258,7 +5269,8 @@ html[data-view="gn"] .tabrail__tab.is-active {
    · o endereço do site é único: busca, filtro, página e favoritos
      ficam só no estado da memória (nada de ?q=, ?cat=, ?page=)
    · player próprio em tela cheia, foco de teclado e retry
-   · fallback automático para a interface original do SDK
+   · se a API do LuminSDK não responder, o catálogo local (GN-Math)
+     assume com capa, busca, favoritos, histórico e recomendações
 
    Autor: Ryan Smith · Licença MIT
    ========================================================= */
@@ -5289,13 +5301,18 @@ html[data-view="gn"] .tabrail__tab.is-active {
     ],
     maxRecents: 10,
     bootTimeout: 18000,
-    fallbackTimeout: 10000,
     requestTimeout: 25000,
     playerTimeout: 20000,
     searchDebounce: 360,
     retryAttempts: 2,
     retryDelay: 1400,
-    storageKey: 'luminsdk:v1'
+    storageKey: 'luminsdk:v1',
+    /* catálogo de emergência: se o SDK do LuminSDK não responder, os mesmos
+       jogos do acervo GN-Math (que a aba GN-Math usa) entram no lugar, com
+       capa, nome, busca, favoritos, histórico e recomendações. */
+    localCatalog: 'assets/data/gnmath-games.json',
+    localCover: 'https://cdn.jsdelivr.net/gh/freebuisness/covers@main/',
+    localGame: 'https://cdn.jsdelivr.net/gh/freebuisness/html@main/'
   };
 
   /* Paleta usada nos placeholders dos cards (enquanto a capa carrega) */
@@ -5326,7 +5343,9 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
   const state = {
     connected: false,
-    mode: 'boot',            // boot | custom | fallback | demo | error
+    source: 'sdk',           // sdk | local
+    localGames: [],
+    mode: 'boot',            // boot | custom | demo | error
     loading: false,
     view: 'catalog',         // catalog | favorites | random
     page: 1,
@@ -5602,8 +5621,6 @@ html[data-view="gn"] .tabrail__tab.is-active {
     dom.recoClose = $('#reco-close');
     dom.randomBar = $('#random-bar');
     dom.randomReset = $('#random-reset');
-    dom.fallback = $('#lumin-fallback');
-    dom.fallbackMount = $('#lumin-fallback-mount');
     dom.toolbar = $('.toolbar');
     dom.status = $('#sdk-status');
     dom.statusText = $('#sdk-status-text');
@@ -5742,6 +5759,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
   }
 
   async function loadCategories() {
+    if (!hasSdk()) return;
     try {
       const result = await withTimeout(
         Lumin.getCategories(),
@@ -5826,6 +5844,21 @@ html[data-view="gn"] .tabrail__tab.is-active {
     const cats = preferredCategories();
     const skip = new Set(state.recents.map((game) => String(game.id)));
     let pool = [];
+
+    if (state.source === 'local') {
+      /* sem API: sorteia do próprio catálogo local, evitando o que já está na tela */
+      const shown = new Set(state.games.map((game) => String(game.id)));
+      const list = state.localGames.filter((game) => !skip.has(String(game.id)) && !shown.has(String(game.id)));
+      const bag = list.slice();
+      while (pool.length < Math.min(18, bag.length)) {
+        pool.push(bag.splice(Math.floor(Math.random() * bag.length), 1)[0]);
+      }
+      recoPool = pool;
+      recoCats = [];
+      recoOffset = 0;
+      renderRecommendations();
+      return;
+    }
 
     try {
       if (cats.length) {
@@ -5925,7 +5958,96 @@ html[data-view="gn"] .tabrail__tab.is-active {
     return games;
   }
 
+  function hasSdk() {
+    return typeof window.Lumin !== 'undefined' && !!window.Lumin &&
+      typeof window.Lumin.getGames === 'function';
+  }
+
+  /* ---------- catálogo local (quando o SDK não responde) ---------- */
+  let localCatalog = null;
+
+  function localPage(page) {
+    const query = activeQuery().toLowerCase();
+    let list = state.localGames.filter(function (game) {
+      if (!query) return true;
+      return (
+        String(game.name || '').toLowerCase().indexOf(query) >= 0 ||
+        String(game.category || '').toLowerCase().indexOf(query) >= 0
+      );
+    });
+
+    list = sortGames(list);
+    const per = Math.max(1, state.limit);
+    const pages = Math.max(1, Math.ceil(list.length / per));
+    const current = Math.min(Math.max(1, Number(page) || 1), pages);
+
+    return {
+      games: list.slice((current - 1) * per, current * per),
+      total: list.length,
+      page: current,
+      pages: pages
+    };
+  }
+
+  async function applyLocalCatalog() {
+    state.source = 'local';
+    state.localGames = localCatalog;
+    state.connected = true;
+    state.mode = 'custom';
+    state.categories = [];
+    setStatus('local', 'Catálogo local');
+    if (dom.statCategories) dom.statCategories.textContent = '—';
+    renderChips();
+    if (dom.banner) {
+      dom.banner.hidden = false;
+      const text = dom.banner.querySelector('span');
+      if (text) text.textContent = 'Servidor do LuminSDK fora do ar — mostrando o catálogo local (GN-Math).';
+    }
+    if (state.view === 'favorites') renderFavoritesView();
+    else await loadPage(state.page || 1);
+  }
+
+  async function loadLocalCatalog() {
+    if (localCatalog) {
+      await applyLocalCatalog();
+      return true;
+    }
+    try {
+      const response = await fetch(CONFIG.localCatalog, { cache: 'force-cache' });
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const data = await response.json();
+      const raw = Array.isArray(data.games) ? data.games : [];
+
+      localCatalog = raw
+        .filter(function (game) {
+          return game && game.n && game.f &&
+            String(game.n).indexOf('[!]') !== 0 &&
+            (String(game.n).match(/[A-Za-zÀ-ÿ]/g) || []).length >= 2;
+        })
+        .map(function (game) {
+          return {
+            id: 'gn-' + game.id,
+            name: String(game.n),
+            category: game.a ? String(game.a) : '',
+            cover: game.c ? CONFIG.localCover + game.c : '',
+            url: CONFIG.localGame + game.f,
+            local: true
+          };
+        });
+
+      if (!localCatalog.length) return false;
+
+      toast('Catálogo local carregado: ' + localCatalog.length + ' jogos.');
+      await applyLocalCatalog();
+      return true;
+    } catch (error) {
+      console.warn('[LuminSDK] catálogo local indisponível:', error);
+      return false;
+    }
+  }
+
   async function fetchGames(page) {
+    if (state.source === 'local') return localPage(page);
     const query = activeQuery();
     let result = await withTimeout(
       Lumin.getGames({ page: page, limit: state.limit, q: query }),
@@ -6013,7 +6135,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
       renderPagination();
       renderRecents();
       syncUrl();
-      setStatus('online', 'Online');
+      setStatus(state.source === 'local' ? 'local' : 'online', state.source === 'local' ? 'Catálogo local' : 'Online');
     } catch (error) {
       console.error('[LuminSDK] erro ao carregar jogos:', error);
       if (!state.games.length) showError(error);
@@ -6026,7 +6148,33 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
   async function loadRandom() {
     if (!state.connected || state.loading) return;
-    if (typeof Lumin.getRandomGames !== 'function') {
+    if (state.source === 'local') {
+      const pool = state.localGames.slice();
+      const picks = [];
+      while (picks.length < Math.min(state.limit, pool.length)) {
+        picks.push(pool.splice(Math.floor(Math.random() * pool.length), 1)[0]);
+      }
+      state.loading = true;
+      state.view = 'random';
+      state.mode = 'custom';
+      state.games = picks;
+      state.total = picks.length;
+      state.pages = 1;
+      state.page = 1;
+      try {
+        if (!picks.length) showEmpty();
+        else {
+          renderGames();
+          dom.randomBar.hidden = false;
+          dom.summary.textContent = 'Seleção aleatória com ' + nf.format(picks.length) + ' jogos.';
+        }
+      } finally {
+        state.loading = false;
+        ensureConnectedUi();
+      }
+      return;
+    }
+    if (!hasSdk() || typeof Lumin.getRandomGames !== 'function') {
       return loadPage(state.page);
     }
 
@@ -6270,8 +6418,12 @@ html[data-view="gn"] .tabrail__tab.is-active {
       if (game.image_token && state.thumbs.get(game.id)) {
         const img = el('img', { alt: '', src: state.thumbs.get(game.id) });
         thumb.prepend(img);
-      } else if (game.image_token) {
-        Lumin.getImageUrl(game.image_token)
+      } else if (game.cover) {
+        const img = el('img', { alt: '', src: game.cover });
+        img.addEventListener('load', () => img.classList.add('is-loaded'));
+        thumb.prepend(img);
+      } else if (game.image_token && hasSdk() && typeof window.Lumin.getImageUrl === 'function') {
+        window.Lumin.getImageUrl(game.image_token)
           .then((url) => {
             if (!url) return;
             if (state.thumbs.size > 400) state.thumbs.clear();
@@ -6355,8 +6507,11 @@ html[data-view="gn"] .tabrail__tab.is-active {
         (gameColor ? ';--game-color:' + gameColor + ';--g1:' + gameColor : '')
     }, [media, body, hit, fav]);
 
-    if (!state.mode.startsWith('demo') && game && game.image_token && state.mode !== 'favorites') {
-      card.dataset.token = game.image_token;
+    const thumbToken = game && game.image_token;
+    const thumbCover = game && game.cover;
+    if (!state.mode.startsWith('demo') && (thumbToken || thumbCover) && state.mode !== 'favorites') {
+      if (thumbToken) card.dataset.token = thumbToken;
+      if (thumbCover) card.dataset.cover = thumbCover;
       observeThumb(card);
     }
 
@@ -6383,14 +6538,26 @@ html[data-view="gn"] .tabrail__tab.is-active {
   async function loadThumb(card) {
     const id = card.dataset.gameId;
     const token = card.dataset.token;
+    const cover = card.dataset.cover;
     const img = card.querySelector('img');
-    if (!img || !token) return;
+    if (!img) return;
+    if (!token && !cover) return;
 
     const cached = state.thumbs.get(id);
     if (cached) {
       img.src = cached;
       return;
     }
+
+    /* catálogo local: a capa já é uma URL pronta */
+    if (cover) {
+      if (state.thumbs.size > 400) state.thumbs.clear();
+      state.thumbs.set(id, cover);
+      img.src = cover;
+      return;
+    }
+
+    if (!hasSdk() || typeof window.Lumin.getImageUrl !== 'function') return;
 
     try {
       const url = await Lumin.getImageUrl(token);
@@ -6748,11 +6915,15 @@ html[data-view="gn"] .tabrail__tab.is-active {
     setPlayerSource(null);
 
     const custom = customSource(game);
-    let url = custom ? custom.url : '';
+    const own = game && game.url ? { label: 'GN-Math', url: game.url } : null;
+    let url = custom ? custom.url : own ? own.url : '';
 
     if (!url) {
+      if (!hasSdk() || typeof window.Lumin.getGameUrl !== 'function') {
+        throw new Error('URL do jogo indisponível.');
+      }
       const result = await withTimeout(
-        Lumin.getGameUrl(game.id),
+        window.Lumin.getGameUrl(game.id),
         CONFIG.requestTimeout,
         'O jogo demorou demais para carregar.'
       );
@@ -6761,7 +6932,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
     if (!url) throw new Error('URL do jogo indisponível.');
 
     state.currentUrl = url;
-    setPlayerSource(custom);
+    setPlayerSource(custom || own);
     expectedFrameSrc = url;
     if (dom.playerFrame) dom.playerFrame.src = url;
     state.currentGame = game;
@@ -6783,9 +6954,17 @@ html[data-view="gn"] .tabrail__tab.is-active {
     recordRecent(game);
     recordPlay(game);
 
-    if (!dom.player || typeof Lumin === 'undefined' || typeof Lumin.getGameUrl !== 'function') {
+    const ownPlayer =
+      dom.player &&
+      (game.url || customSource(game) || (hasSdk() && typeof window.Lumin.getGameUrl === 'function'));
+
+    if (!ownPlayer) {
+      if (!hasSdk() || typeof window.Lumin.loadGame !== 'function') {
+        toast('Não foi possível abrir este jogo agora.');
+        return;
+      }
       try {
-        await Lumin.loadGame(game.id);
+        await window.Lumin.loadGame(game.id);
       } catch (error) {
         toast('Não foi possível abrir este jogo agora.');
       }
@@ -6799,10 +6978,14 @@ html[data-view="gn"] .tabrail__tab.is-active {
     try {
       await startGameInFrame(game, name);
     } catch (error) {
-      console.warn('[LuminSDK] player próprio falhou, usando o player do SDK:', error);
+      console.warn('[LuminSDK] player próprio falhou:', error);
       closePlayerDialog();
+      if (!hasSdk() || typeof window.Lumin.loadGame !== 'function') {
+        toast('Não foi possível abrir este jogo agora.');
+        return;
+      }
       try {
-        await Lumin.loadGame(game.id);
+        await window.Lumin.loadGame(game.id);
       } catch (sdkError) {
         toast('Não foi possível abrir este jogo agora.');
       }
@@ -6839,9 +7022,9 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
     if (pool.length) {
       next = pool[Math.floor(Math.random() * pool.length)];
-    } else if (typeof Lumin.getRandomGames === 'function') {
+    } else if (hasSdk() && typeof window.Lumin.getRandomGames === 'function') {
       try {
-        const result = await withTimeout(Lumin.getRandomGames(1), CONFIG.requestTimeout);
+        const result = await withTimeout(window.Lumin.getRandomGames(1), CONFIG.requestTimeout);
         const games = result && Array.isArray(result.games) ? result.games : Array.isArray(result) ? result : [];
         next = games[0];
       } catch (error) {
@@ -6907,13 +7090,18 @@ html[data-view="gn"] .tabrail__tab.is-active {
       toast('Não foi possível abrir o jogo em outra aba.');
     };
 
-    if (typeof Lumin === 'undefined' || typeof Lumin.getGameUrl !== 'function') {
+    if (game && game.url) {
+      useUrl(game.url);
+      return;
+    }
+
+    if (!hasSdk() || typeof window.Lumin.getGameUrl !== 'function') {
       useUrl('');
       return;
     }
 
     /* pede uma URL nova: as URLs do SDK podem ser de uso único */
-    withTimeout(Lumin.getGameUrl(game.id), CONFIG.requestTimeout, 'Tempo esgotado')
+    withTimeout(window.Lumin.getGameUrl(game.id), CONFIG.requestTimeout, 'Tempo esgotado')
       .then((result) => useUrl(typeof result === 'string' ? result : result && result.url))
       .catch(() => useUrl(''));
   }
@@ -7057,8 +7245,13 @@ html[data-view="gn"] .tabrail__tab.is-active {
       return;
     }
 
+    if (!hasSdk()) {
+      openGame({ id: key, name: key }, 'Jogo compartilhado');
+      return;
+    }
+
     try {
-      const result = await withTimeout(Lumin.getGames({ page: 1, limit: 50, q: key }), CONFIG.requestTimeout);
+      const result = await withTimeout(window.Lumin.getGames({ page: 1, limit: 50, q: key }), CONFIG.requestTimeout);
       const games = (result && result.games) || [];
       const match = games.find((item) => String(item.id) === key) || null;
       openGame(match || { id: key, name: key }, (match && match.name) || 'Jogo compartilhado');
@@ -7086,6 +7279,11 @@ html[data-view="gn"] .tabrail__tab.is-active {
           toast('Ainda sem conexão. Verifique sua rede.');
           return;
         }
+        /* no catálogo local, "Tentar agora" volta a procurar o SDK */
+        if (state.source === 'local') {
+          reconnect();
+          return;
+        }
         if (state.mode === 'error') window.location.reload();
         else loadPage(state.page);
       });
@@ -7093,41 +7291,22 @@ html[data-view="gn"] .tabrail__tab.is-active {
     update();
   }
 
-  /* ---------- fallback: interface original do LuminSDK ---------- */
-  async function tryBuiltInUI() {
-    if (!dom.fallback || !dom.fallbackMount || typeof Lumin === 'undefined' || !Lumin) return false;
-
-    try {
-      const mount = el('div', { class: 'lumin-mount' });
-      dom.fallbackMount.replaceChildren(mount);
-      dom.fallback.hidden = false;
-
-      await withTimeout(
-        Lumin.init({ container: mount, theme: currentTheme(), columns: 6, rows: 3 }),
-        CONFIG.fallbackTimeout,
-        'A interface padrão do LuminSDK não respondeu.'
-      );
-
-      [dom.grid, dom.toolbar, dom.chips, dom.summary, dom.pagination, dom.randomBar, dom.empty, dom.error, dom.recents].forEach(
-        (node) => {
-          if (node) node.hidden = true;
-        }
-      );
-
-      state.mode = 'fallback';
-      setStatus('fallback', 'Interface padrão');
-      return true;
-    } catch (error) {
-      console.warn('[LuminSDK] interface padrão também falhou:', error);
-      if (dom.fallback) dom.fallback.hidden = true;
-      return false;
+  /* Se o SDK não responde, NADA da nossa interface é escondido: o catálogo
+     local (GN-Math) assume a lista, a busca, os favoritos e as recomendações.
+     Antes, a interface padrão do SDK era montada e escondia busca, chips,
+     histórico e recomendações — era isso que deixava a aba "vazia". */
+  async function reconnect() {
+    if (!hasSdk()) {
+      toast('O servidor do LuminSDK ainda não respondeu.');
+      return;
     }
+    toast('Tentando o servidor do LuminSDK…');
+    await connect();
   }
 
   async function handleFatal(error) {
     console.error('[LuminSDK] falha ao inicializar:', error);
-    if (state.mode === 'fallback') return;
-    const ok = await tryBuiltInUI();
+    const ok = await loadLocalCatalog();
     if (!ok) showError(error);
   }
 
@@ -7444,24 +7623,57 @@ html[data-view="gn"] .tabrail__tab.is-active {
     });
   }
 
+  async function bootSdk() {
+    await waitForGlobal(6000);
+    /* um init anterior pode ter deixado o worker pendurado */
+    try {
+      if (window.Lumin && typeof window.Lumin.destroy === 'function') window.Lumin.destroy();
+    } catch (error) {
+      /* sem instância para destruir */
+    }
+    await withTimeout(
+      window.Lumin.init({
+        headless: true,
+        onError: (error) => console.warn('[LuminSDK] aviso:', error)
+      }),
+      CONFIG.bootTimeout,
+      'O LuminSDK demorou demais para responder.'
+    );
+  }
+
   async function connect() {
     setStatus('loading', 'Conectando…');
 
-    try {
-      await waitForGlobal(6000);
-      await withTimeout(
-        Lumin.init({
-          headless: true,
-          onError: (error) => console.warn('[LuminSDK] aviso:', error)
-        }),
-        CONFIG.bootTimeout,
-        'O LuminSDK demorou demais para responder.'
-      );
-    } catch (error) {
-      await handleFatal(error);
+    let lastError = null;
+    /* se o SDK nem chegou a carregar, insistir não adianta: o catálogo local
+       entra mais rápido (antes a pessoa ficava ~20s numa tela sem jogos) */
+    const attempts = hasSdk() ? 3 : 1;
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      try {
+        if (attempt > 0) {
+          setStatus('loading', 'Tentando de novo…');
+          await wait(1200 * attempt);
+        }
+        await bootSdk();
+        lastError = null;
+        break;
+      } catch (error) {
+        lastError = error;
+        console.warn('[LuminSDK] tentativa ' + (attempt + 1) + ' de conexão falhou:', error);
+      }
+    }
+
+    if (lastError) {
+      await handleFatal(lastError);
       return;
     }
 
+    if (localCatalog) {
+      /* voltou a falar com o SDK: sai do catálogo local */
+      state.localGames = [];
+      if (dom.banner) dom.banner.hidden = true;
+    }
+    state.source = 'sdk';
     state.connected = true;
     state.mode = 'custom';
     setStatus('online', 'Online');
@@ -7667,9 +7879,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
       minRows: CONFIG.minRows,
       maxRows: CONFIG.maxRows
     }),
-    refreshTheme: () => {
-      if (state.mode === 'fallback') tryBuiltInUI().catch(() => {});
-    }
+    refreshTheme: () => {}
   };
 
   if (document.readyState === 'loading') {
@@ -7863,7 +8073,13 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
   function emit() {
     const payload = Object.assign({}, settings, { device: detectDevice(), options: Object.assign({}, options) });
-    window.dispatchEvent(new CustomEvent('lumin:settings', { detail: payload }));
+    /* um ouvinte com defeito não pode interromper a troca de opção:
+       antes o erro subia até o clique e o painel parava no meio */
+    try {
+      window.dispatchEvent(new CustomEvent('lumin:settings', { detail: payload }));
+    } catch (error) {
+      console.warn('[LuminSDK] aviso de configurações falhou:', error);
+    }
     listeners.forEach((fn) => {
       try {
         fn(payload);
@@ -7873,42 +8089,49 @@ html[data-view="gn"] .tabrail__tab.is-active {
     });
   }
 
+  /* aplica tudo protegido: se algo falhar no meio, a interface do painel
+     é sincronizada de qualquer jeito (o painel nunca fica "vazio") */
+  function commit(nextSettings, nextOptions) {
+    if (nextSettings) settings = nextSettings;
+    if (nextOptions) options = nextOptions;
+    try {
+      apply();
+      write();
+      emit();
+    } catch (error) {
+      console.warn('[LuminSDK] não foi possível aplicar a configuração:', error);
+    }
+    try {
+      syncUI();
+    } catch (error) {
+      console.warn('[LuminSDK] não foi possível atualizar o painel:', error);
+    }
+  }
+
   function set(key, value, opts) {
     if (!(key in DEFAULTS)) return;
+    settings = Object.assign({}, settings);
     settings[key] = !!value;
     if (!opts || opts.auto !== true) settings.auto = false;
-    apply();
-    write();
-    emit();
-    syncUI();
+    commit();
   }
 
   function setOption(key, value) {
     if (!(key in OPTION_VALUES)) return;
     if (OPTION_VALUES[key].indexOf(value) < 0) return;
-    options[key] = value;
+    settings = Object.assign({}, settings);
     settings.auto = false;
-    apply();
-    write();
-    emit();
-    syncUI();
+    options = Object.assign({}, options);
+    options[key] = value;
+    commit();
   }
 
   function setAll(next) {
-    settings = Object.assign({}, DEFAULTS, next);
-    apply();
-    write();
-    emit();
-    syncUI();
+    commit(Object.assign({}, DEFAULTS, next), null);
   }
 
   function reset() {
-    settings = Object.assign({}, autoSettings());
-    options = Object.assign({}, OPTION_DEFAULTS);
-    apply();
-    write();
-    emit();
-    syncUI();
+    commit(Object.assign({}, autoSettings()), Object.assign({}, OPTION_DEFAULTS));
   }
 
 
@@ -8118,12 +8341,24 @@ html[data-view="gn"] .tabrail__tab.is-active {
   function openSettings() {
     const dialog = document.getElementById('settings');
     if (!dialog) return;
-    buildSwatches();
-    renderSuggestion();
-    syncUI();
-    if (typeof dialog.showModal === 'function') {
-      if (!dialog.open) dialog.showModal();
-    } else {
+
+    /* cada bloco é opcional: um erro em um deles não pode impedir o
+       painel de abrir (antes, uma exceção aqui deixava a tela vazia) */
+    [buildSwatches, renderSuggestion, syncUI].forEach((step) => {
+      try {
+        step();
+      } catch (error) {
+        console.warn('[LuminSDK] bloco do painel falhou:', error);
+      }
+    });
+
+    try {
+      if (typeof dialog.showModal === 'function') {
+        if (!dialog.open) dialog.showModal();
+      } else {
+        dialog.setAttribute('open', '');
+      }
+    } catch (error) {
       dialog.setAttribute('open', '');
     }
   }
@@ -8144,6 +8379,27 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
     if (button) button.addEventListener('click', openSettings);
     if (close) close.addEventListener('click', closeSettings);
+
+    const done = document.getElementById('settings-done');
+    if (done) done.addEventListener('click', closeSettings);
+
+    const sheet = document.getElementById('settings');
+    if (sheet) {
+      /* clique fora do cartão fecha (alguns navegadores não fazem isso sozinhos) */
+      sheet.addEventListener('click', (event) => {
+        if (event.target !== sheet) return;
+        const rect = sheet.getBoundingClientRect();
+        const outside =
+          event.clientX < rect.left || event.clientX > rect.right ||
+          event.clientY < rect.top || event.clientY > rect.bottom;
+        if (outside) closeSettings();
+      });
+      /* Esc no Safari antigo não fecha <dialog> */
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || !sheet.open) return;
+        closeSettings();
+      });
+    }
 
     const suggestApply = document.getElementById('settings-suggest-apply');
     const suggestSkip = document.getElementById('settings-suggest-skip');
@@ -11150,18 +11406,18 @@ html[data-view="gn"] .tabrail__tab.is-active {
       css: [],
       scripts: [
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=30',
-        'assets/js/settings.js?v=30',
-        'assets/js/site.js?v=30',
-        'assets/js/atmosphere.js?v=30',
-        'assets/js/progress.js?v=30',
-        'assets/js/bonus.js?v=30'
+        'assets/js/library.js?v=31',
+        'assets/js/settings.js?v=31',
+        'assets/js/site.js?v=31',
+        'assets/js/atmosphere.js?v=31',
+        'assets/js/progress.js?v=31',
+        'assets/js/bonus.js?v=31'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=30'],
-      scripts: ['assets/js/gnmath.js?v=30'],
+      css: ['assets/css/gnmath.css?v=31'],
+      scripts: ['assets/js/gnmath.js?v=31'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -11173,33 +11429,33 @@ html[data-view="gn"] .tabrail__tab.is-active {
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=30'],
-      scripts: ['assets/js/provider.js?v=30', 'assets/js/atmosphere.js?v=30']
+      css: ['assets/css/provider.css?v=31'],
+      scripts: ['assets/js/provider.js?v=31', 'assets/js/atmosphere.js?v=31']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=30'],
-      scripts: ['assets/js/sites.js?v=30', 'assets/js/atmosphere.js?v=30']
+      css: ['assets/css/sites.css?v=31'],
+      scripts: ['assets/js/sites.js?v=31', 'assets/js/atmosphere.js?v=31']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=30'],
-      scripts: ['assets/js/browser.js?v=30', 'assets/js/atmosphere.js?v=30']
+      css: ['assets/css/browser.css?v=31'],
+      scripts: ['assets/js/browser.js?v=31', 'assets/js/atmosphere.js?v=31']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
-      scripts: ['assets/js/os.js?v=30', 'assets/js/atmosphere.js?v=30']
+      scripts: ['assets/js/os.js?v=31', 'assets/js/atmosphere.js?v=31']
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=30']
+      scripts: ['assets/js/atmosphere.js?v=31']
     },
     estudo: {
       title: 'StudyDesk — portal de estudos para o ensino médio',
-      css: ['assets/css/study.css?v=30'],
-      scripts: ['assets/js/study.js?v=30']
+      css: ['assets/css/study.css?v=31'],
+      scripts: ['assets/js/study.js?v=31']
     }
   };
 
