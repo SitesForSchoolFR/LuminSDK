@@ -616,6 +616,10 @@ kbd {
   background: #f87171;
   box-shadow: 0 0 0 4px rgba(248, 113, 113, .16);
 }
+.status-pill[data-state="local"] .status-pill__dot {
+  background: var(--amber, #f59e0b);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, .16);
+}
 .status-pill[data-state="fallback"] .status-pill__dot {
   background: var(--accent);
   box-shadow: 0 0 0 4px var(--glow);
@@ -1583,21 +1587,18 @@ mark.hl {
   grid-template-columns: repeat(var(--grid-cols, 8), minmax(0, 1fr));
   gap: var(--grid-gap, 10px);
 }
+/* `repeat(min(...), ...)` é inválido no CSS: o navegador descartava a regra
+   inteira e a grade virava uma coluna só. Aqui o limite vem do valor da
+   variável — o JS (applyGridVars) já grava o número de colunas da tela. */
 @media (max-width: 900px) {
-  .games {
-    grid-template-columns: repeat(min(var(--grid-cols, 8), 6), minmax(0, 1fr));
-  }
+  :root { --grid-cols: 6; }
+  .games { gap: 8px; }
 }
 @media (max-width: 640px) {
-  .games {
-    grid-template-columns: repeat(min(var(--grid-cols, 8), 4), minmax(0, 1fr));
-    gap: 8px;
-  }
+  :root { --grid-cols: 4; }
 }
 @media (max-width: 420px) {
-  .games {
-    grid-template-columns: repeat(min(var(--grid-cols, 8), 3), minmax(0, 1fr));
-  }
+  :root { --grid-cols: 3; }
 }
 
 /* Barra de aparência */
@@ -2026,12 +2027,15 @@ html.no-blur .sheet::backdrop { backdrop-filter: none; }
 }
 .sheet__head {
   display: flex;
+  flex: none;
   align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
   padding: 18px 20px 14px;
   border-bottom: 1px solid var(--border);
 }
+.sheet__foot { flex: none; }
+.sheet__foot .settings-note { margin: 0; }
 .sheet__title {
   font-family: var(--font-display);
   font-size: 1.12rem;

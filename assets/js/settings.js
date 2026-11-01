@@ -181,7 +181,13 @@
 
   function emit() {
     const payload = Object.assign({}, settings, { device: detectDevice(), options: Object.assign({}, options) });
-    window.dispatchEvent(new CustomEvent('lumin:settings', { detail: payload }));
+    /* um ouvinte com defeito não pode interromper a troca de opção:
+       antes o erro subia até o clique e o painel parava no meio */
+    try {
+      window.dispatchEvent(new CustomEvent('lumin:settings', { detail: payload }));
+    } catch (error) {
+      console.warn('[LuminSDK] aviso de configurações falhou:', error);
+    }
     listeners.forEach((fn) => {
       try {
         fn(payload);
@@ -191,42 +197,49 @@
     });
   }
 
+  /* aplica tudo protegido: se algo falhar no meio, a interface do painel
+     é sincronizada de qualquer jeito (o painel nunca fica "vazio") */
+  function commit(nextSettings, nextOptions) {
+    if (nextSettings) settings = nextSettings;
+    if (nextOptions) options = nextOptions;
+    try {
+      apply();
+      write();
+      emit();
+    } catch (error) {
+      console.warn('[LuminSDK] não foi possível aplicar a configuração:', error);
+    }
+    try {
+      syncUI();
+    } catch (error) {
+      console.warn('[LuminSDK] não foi possível atualizar o painel:', error);
+    }
+  }
+
   function set(key, value, opts) {
     if (!(key in DEFAULTS)) return;
+    settings = Object.assign({}, settings);
     settings[key] = !!value;
     if (!opts || opts.auto !== true) settings.auto = false;
-    apply();
-    write();
-    emit();
-    syncUI();
+    commit();
   }
 
   function setOption(key, value) {
     if (!(key in OPTION_VALUES)) return;
     if (OPTION_VALUES[key].indexOf(value) < 0) return;
-    options[key] = value;
+    settings = Object.assign({}, settings);
     settings.auto = false;
-    apply();
-    write();
-    emit();
-    syncUI();
+    options = Object.assign({}, options);
+    options[key] = value;
+    commit();
   }
 
   function setAll(next) {
-    settings = Object.assign({}, DEFAULTS, next);
-    apply();
-    write();
-    emit();
-    syncUI();
+    commit(Object.assign({}, DEFAULTS, next), null);
   }
 
   function reset() {
-    settings = Object.assign({}, autoSettings());
-    options = Object.assign({}, OPTION_DEFAULTS);
-    apply();
-    write();
-    emit();
-    syncUI();
+    commit(Object.assign({}, autoSettings()), Object.assign({}, OPTION_DEFAULTS));
   }
 
 
@@ -436,12 +449,24 @@
   function openSettings() {
     const dialog = document.getElementById('settings');
     if (!dialog) return;
-    buildSwatches();
-    renderSuggestion();
-    syncUI();
-    if (typeof dialog.showModal === 'function') {
-      if (!dialog.open) dialog.showModal();
-    } else {
+
+    /* cada bloco é opcional: um erro em um deles não pode impedir o
+       painel de abrir (antes, uma exceção aqui deixava a tela vazia) */
+    [buildSwatches, renderSuggestion, syncUI].forEach((step) => {
+      try {
+        step();
+      } catch (error) {
+        console.warn('[LuminSDK] bloco do painel falhou:', error);
+      }
+    });
+
+    try {
+      if (typeof dialog.showModal === 'function') {
+        if (!dialog.open) dialog.showModal();
+      } else {
+        dialog.setAttribute('open', '');
+      }
+    } catch (error) {
       dialog.setAttribute('open', '');
     }
   }
@@ -462,6 +487,27 @@
 
     if (button) button.addEventListener('click', openSettings);
     if (close) close.addEventListener('click', closeSettings);
+
+    const done = document.getElementById('settings-done');
+    if (done) done.addEventListener('click', closeSettings);
+
+    const sheet = document.getElementById('settings');
+    if (sheet) {
+      /* clique fora do cartão fecha (alguns navegadores não fazem isso sozinhos) */
+      sheet.addEventListener('click', (event) => {
+        if (event.target !== sheet) return;
+        const rect = sheet.getBoundingClientRect();
+        const outside =
+          event.clientX < rect.left || event.clientX > rect.right ||
+          event.clientY < rect.top || event.clientY > rect.bottom;
+        if (outside) closeSettings();
+      });
+      /* Esc no Safari antigo não fecha <dialog> */
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || !sheet.open) return;
+        closeSettings();
+      });
+    }
 
     const suggestApply = document.getElementById('settings-suggest-apply');
     const suggestSkip = document.getElementById('settings-suggest-skip');

@@ -192,6 +192,9 @@
   position: absolute;
   top: 16px;
   right: 16px;
+  z-index: 2;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   padding: 3px 9px;
   border-radius: 999px;
   font-size: .62rem;
@@ -235,6 +238,12 @@ html[data-view="os"] .tabrail { display: none !important; }
   background: #07070f;
 }
 
+/* rgb do destaque: usado nos brilhos, bordas e no papel de parede */
+.os { --accent-rgb: 139, 92, 246; }
+.os[data-accent="ciano"] { --accent-rgb: 34, 211, 238; }
+.os[data-accent="rosa"] { --accent-rgb: 244, 114, 182; }
+.os[data-accent="lima"] { --accent-rgb: 74, 222, 128; }
+.os[data-accent="ambar"] { --accent-rgb: 251, 191, 36; }
 .os[data-accent="ciano"] { --os-accent: #22d3ee; --os-accent-2: #6366f1; }
 .os[data-accent="rosa"] { --os-accent: #f472b6; --os-accent-2: #8b5cf6; }
 .os[data-accent="lima"] { --os-accent: #4ade80; --os-accent-2: #22d3ee; }
@@ -581,8 +590,10 @@ html[data-view="os"] .tabrail { display: none !important; }
   min-height: 0;
 }
 
-/* ---------- app: jogos ---------- */
-.os .games {
+/* ---------- app: jogos ----------
+   preso à janela do LuminOS: esta folha de estilo vale para o site inteiro
+   e um `.games` solto quebrava a grade de jogos da aba LuminSDK */
+.win[data-app="games"] .games {
   display: grid;
   grid-template-rows: auto 1fr;
   height: 100%;
@@ -874,7 +885,7 @@ html[data-view="os"] .tabrail { display: none !important; }
 }
 .sites__head span { font-size: .72rem; color: #8a8aa4; white-space: nowrap; }
 .sites__list { overflow-y: auto; padding: 12px 14px 18px; display: grid; gap: 8px; align-content: start; }
-.sfam { border: 1px solid rgba(255, 255, 255, .08); border-radius: 11px; background: rgba(255, 255, 255, .03); overflow: hidden; }
+.sfam { border: 1px solid rgba(255, 255, 255, .08); border-radius: 11px; background: rgba(255, 255, 255, .03); overflow: clip; }
 .sfam__head {
   display: flex;
   align-items: center;
@@ -965,7 +976,7 @@ html[data-view="os"] .tabrail { display: none !important; }
 .calc__key--eq { background: linear-gradient(135deg, var(--os-accent), var(--os-accent-2)); color: #09090f; border-color: transparent; }
 
 /* ---------- app: ajustes ---------- */
-.settings { height: 100%; overflow-y: auto; padding: 18px; display: grid; gap: 18px; align-content: start; background: #0a0a14; }
+.win[data-app="settings"] .settings { height: 100%; overflow-y: auto; padding: 18px; display: grid; gap: 18px; align-content: start; background: #0a0a14; }
 .settings__block h3 { margin: 0 0 10px; font-size: .76rem; letter-spacing: .09em; text-transform: uppercase; color: #8a8aa4; font-weight: 700; }
 .settings__walls { display: flex; flex-wrap: wrap; gap: 8px; }
 .wall {
@@ -1142,12 +1153,12 @@ html[data-view="os"] .tabrail { display: none !important; }
 }
 
 /* =========================================================
-   LuminOS / tela de entrada minimalistas
-   Fundo liso, sem halos, sem grade animada e sem desfoque.
+   LuminOS / tela de entrada — minimalista com profundidade
+   Fundo quase preto, um halo suave, vidro discreto e linhas de 1px.
    ========================================================= */
 
 #boot {
-  background: #0a0a0b;
+  background: #0a0a0c;
   color: #f4f4f5;
 }
 #boot::before { display: none; }
@@ -1156,39 +1167,109 @@ html[data-view="os"] .tabrail { display: none !important; }
 .boot-mode,
 .boot__option { box-shadow: none; }
 
-.os__wall { background: #0a0a0b; }
-.os[data-wall="meia-noite"] .os__wall,
-.os[data-wall="floresta"] .os__wall,
-.os[data-wall="papel"] .os__wall { background: #0a0a0b; }
-.os[data-wall="papel"] { color: #f4f4f5; }
-.os__wall-grid,
+.os__wall {
+  background:
+    radial-gradient(1000px 640px at 46% -10%, rgba(var(--accent-rgb, 139, 92, 246), .2), transparent 62%),
+    radial-gradient(720px 520px at 92% 106%, rgba(34, 211, 238, .08), transparent 66%),
+    linear-gradient(180deg, #0d0d14, #09090f 56%, #07070b);
+}
+.os[data-wall="meia-noite"] .os__wall {
+  background:
+    radial-gradient(820px 470px at 50% -16%, rgba(99, 102, 241, .16), transparent 62%),
+    linear-gradient(180deg, #07080f, #0a0c17 58%, #05060b);
+}
+.os[data-wall="floresta"] .os__wall {
+  background:
+    radial-gradient(840px 480px at 22% -10%, rgba(34, 197, 94, .13), transparent 62%),
+    radial-gradient(680px 420px at 86% 110%, rgba(56, 189, 248, .1), transparent 64%),
+    linear-gradient(180deg, #070c0a, #091310 58%, #050908);
+}
+.os[data-wall="papel"] .os__wall {
+  background:
+    radial-gradient(820px 460px at 20% -6%, rgba(59, 130, 246, .12), transparent 62%),
+    linear-gradient(180deg, #f4f6fb, #eceff7 60%, #e3e8f2);
+}
+.os[data-wall="papel"] { color: #12172a; }
+
+.os__wall-grid { opacity: .28; }
 .os__wall-blob { display: none; }
 
 .os__bar {
-  background: #101012;
-  border-bottom: 1px solid #242427;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  background: rgba(10, 10, 14, .82);
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+}
+.os[data-wall="papel"] .os__bar {
+  background: rgba(255, 255, 255, .82);
+  border-bottom-color: rgba(18, 23, 42, .08);
 }
 .os__pill,
-.os__crumb { background: transparent; border-color: #242427; }
+.os__crumb {
+  background: rgba(255, 255, 255, .04);
+  border-color: rgba(255, 255, 255, .08);
+}
+.os[data-wall="papel"] .os__pill,
+.os[data-wall="papel"] .os__crumb { background: rgba(18, 23, 42, .04); border-color: rgba(18, 23, 42, .1); }
 .os__logo b { color: #f4f4f5; }
+.os[data-wall="papel"] .os__logo b { color: #12172a; }
 
 .win {
-  background: #131315;
-  border: 1px solid #2a2a2e;
-  border-radius: 10px;
-  box-shadow: 0 1px 0 rgba(0, 0, 0, .35);
+  background: linear-gradient(180deg, #12121a, #0c0c12 52%, #0a0a10);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .05),
+    0 26px 60px -34px rgba(0, 0, 0, .95);
 }
-.win.is-focus { border-color: #3a3a40; }
-.win__bar { background: #17171a; border-bottom: 1px solid #26262a; }
-.win__icon { color: #8c8c93; }
-.win__title { color: #f4f4f5; }
+.win.is-focus {
+  border-color: rgba(255, 255, 255, .2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .07),
+    0 0 0 1px rgba(255, 255, 255, .05),
+    0 30px 70px -34px rgba(0, 0, 0, .96);
+}
+.win__bar {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .012));
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
+}
+.win__icon { color: #9a9aad; }
+.win__title { color: #f0f0f5; letter-spacing: -.005em; }
+.win__btn { border-radius: 7px; }
+.win__btn:hover { background: rgba(255, 255, 255, .1); color: #fff; }
 
+.os__dock {
+  background: rgba(12, 12, 17, .78);
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 18px;
+  backdrop-filter: blur(20px) saturate(120%);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  box-shadow: 0 22px 54px -32px rgba(0, 0, 0, .95), inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+.os[data-wall="papel"] .os__dock {
+  background: rgba(255, 255, 255, .84);
+  border-color: rgba(18, 23, 42, .1);
+}
 .os__dock,
 .os__dock a,
 .os__dock button { box-shadow: none; }
-.os__dock { background: #101012; border: 1px solid #242427; border-radius: 12px; backdrop-filter: none; }
+.os__dock { box-shadow: 0 22px 54px -32px rgba(0, 0, 0, .95), inset 0 1px 0 rgba(255, 255, 255, .05); }
+.dock__app { border-radius: 11px; color: #a9a9bd; }
+.dock__app:hover { background: rgba(255, 255, 255, .07); color: #fff; }
+.dock__app.is-open { color: #fff; }
+.dock__app.is-open::after { box-shadow: 0 0 8px rgba(255, 255, 255, .5); }
+
+.desk-icon { border-radius: 14px; color: #d8d8e2; }
+.desk-icon:hover { background: rgba(255, 255, 255, .06); }
+.desk-icon__art {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, .13);
+  background:
+    linear-gradient(160deg, rgba(var(--accent-rgb, 139, 92, 246), .22), transparent 62%),
+    linear-gradient(180deg, #212128, #131319 62%, #0f0f14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 10px 22px -16px rgba(0, 0, 0, .9);
+}
+.desk-icon__art svg { color: #e7e7ef; }
 
 /* =========================================================
    App Jogos — proporção e acabamento minimalista
@@ -1197,7 +1278,11 @@ html[data-view="os"] .tabrail { display: none !important; }
    · cartões chapados, sem gradiente e sem sobe-e-desce no hover
    ========================================================= */
 
-.os .games {
+/* ATENÇÃO: este arquivo é carregado em TODAS as páginas do site.
+   Por isso os seletores de app ficam presos à janela do LuminOS — antes um
+   `.games` genérico engolia a grade de jogos do LuminSDK (uma coluna de
+   ~1000px por cartão, parecia que nada carregava). */
+.win[data-app="games"] .games {
   background: #0a0a0b;
   grid-template-columns: minmax(0, 1fr);   /* a grade ocupa a largura toda */
   width: 100%;
@@ -1386,6 +1471,200 @@ html[data-view="os"] .tabrail { display: none !important; }
   .win__grip { display: none; }
 }
 
+/* =========================================================
+   APP: FILMES — catálogos e espelhos, abertos no Navegador
+   ========================================================= */
+
+.win[data-app="movies"] .movies {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  padding: 18px 16px 14px;
+  overflow-y: auto;
+  background: #0b0b12;
+}
+
+.movies__head { display: grid; gap: 4px; }
+.movies__title {
+  margin: 0;
+  font-family: var(--font-display, system-ui, sans-serif);
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -.012em;
+  color: #f1f1f7;
+}
+.movies__lead {
+  margin: 0;
+  max-width: 48ch;
+  font-size: .76rem;
+  line-height: 1.55;
+  color: #8e8ea6;
+}
+.movies__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  align-items: start;
+  gap: 12px;
+  grid-auto-rows: max-content;   /* linhas automáticas colapsavam no Chromium */
+}
+@media (max-width: 520px) {
+  .movies__list { grid-template-columns: minmax(0, 1fr); }
+}
+.movies__foot { margin: 0; font-size: .68rem; color: #6f6f86; }
+
+.ffam {
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .022);
+  overflow: hidden;
+}
+.ffam__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+.ffam__art {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  background: linear-gradient(150deg, rgba(var(--accent-rgb, 139, 92, 246), .85), rgba(34, 211, 238, .42));
+  font-family: var(--font-display, system-ui, sans-serif);
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22);
+}
+.ffam__name { flex: 1; min-width: 0; font-size: .82rem; font-weight: 600; color: #e9e9f4; }
+.ffam__count { font-size: .68rem; color: #7c7c94; }
+
+.ffam__rows { display: grid; grid-auto-rows: max-content; }
+.fmirror {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  background: transparent;
+  color: #d6d6e6;
+  font: inherit;
+  font-size: .76rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background .14s ease, color .14s ease;
+}
+.fmirror + .fmirror { border-top: 1px solid rgba(255, 255, 255, .05); }
+.fmirror:hover { background: rgba(255, 255, 255, .055); color: #fff; }
+.fmirror:focus-visible { outline: 2px solid rgba(255, 255, 255, .7); outline-offset: -2px; }
+.fmirror__dot {
+  width: 5px;
+  height: 5px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--os-accent, #a78bfa);
+}
+.fmirror__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fmirror__tag {
+  font-size: .58rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #85859d;
+}
+.fmirror__tag--alt { color: #5d5d74; }
+.fmirror__go { color: #6f6f88; font-size: .95rem; line-height: 1; }
+.fmirror:hover .fmirror__go { color: #fff; }
+
+@media (max-width: 520px) {
+  .win[data-app="movies"] .movies { padding: 14px 12px 12px; gap: 12px; }
+  .fmirror { padding: 10px; font-size: .74rem; }
+  .fmirror__tag { display: none; }
+}
+
+/* =========================================================
+   Acabamento — detalhes que dão vida sem sair do minimal
+   ========================================================= */
+
+/* ícone do desktop acende na cor de destaque só no hover */
+.desk-icon:hover .desk-icon__art {
+  border-color: rgba(var(--accent-rgb, 139, 92, 246), .45);
+  background: linear-gradient(160deg, rgba(var(--accent-rgb, 139, 92, 246), .28), #14141a 70%);
+}
+
+/* profundidade no papel de parede escuro (o claro fica limpo) */
+.os:not([data-wall="papel"]) .os__wall::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(125% 95% at 50% 6%, transparent 48%, rgba(0, 0, 0, .38) 100%);
+}
+
+/* barra de rolagem discreta dentro das janelas */
+.win__body,
+.movies,
+.games__grid,
+.sites__list,
+.notes textarea {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .16) transparent;
+}
+.win__body::-webkit-scrollbar,
+.movies::-webkit-scrollbar,
+.games__grid::-webkit-scrollbar,
+.sites__list::-webkit-scrollbar { width: 8px; height: 8px; }
+.win__body::-webkit-scrollbar-thumb,
+.movies::-webkit-scrollbar-thumb,
+.games__grid::-webkit-scrollbar-thumb,
+.sites__list::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .14);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .win, .desk-icon__art, .dock__app { animation: none !important; transition: none !important; }
+}
+
+/* =========================================================
+   Telas pequenas — mesmas peças, só mais apertadas
+   ========================================================= */
+@media (max-width: 760px) {
+  /* janela de conteúdo curto não precisa ocupar a tela inteira */
+  .win[data-app="movies"] { height: auto !important; max-height: calc(100% - 12px) !important; }
+  .win[data-app="movies"] .win__body { flex: 0 0 auto; }
+}
+
+@media (max-width: 560px) {
+  .games__grid {
+    grid-template-columns: repeat(auto-fill, minmax(98px, 1fr));
+    gap: 10px;
+    padding: 10px;
+  }
+  .gcard__name { font-size: .7rem; }
+  .gcard__cat { display: none; }
+}
+
+@media (max-width: 430px) {
+  .os__dock { gap: 0; padding: 4px; }
+  .dock__app { min-width: 0; padding: 6px 2px 5px; font-size: .5rem; }
+  .dock__app svg { width: 19px; height: 19px; }
+  .os__crumb { display: none; }
+  .os__pill { padding-inline: 9px; }
+}
+
 /* ---------- app de jogos: escolha da fonte (GN-Math · DuckMath · LuminSDK) ---------- */
 .os .gsrc { display: flex; flex-direction: column; gap: 14px; padding: 18px; height: 100%; box-sizing: border-box; overflow: auto; }
 .os .gsrc__lead { margin: 0; font-size: 15px; font-weight: 600; opacity: .9; }
@@ -1421,3 +1700,15 @@ html[data-view="os"] .tabrail { display: none !important; }
   padding: 6px 10px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 9px;
   background: transparent; color: inherit; font: inherit; font-size: 13px; cursor: pointer;
 }
+
+/* escolha da fonte: usa os tokens do OS em vez de cores soltas */
+.os .gsrc__card:hover,
+.os .gsrc__card:focus-visible {
+  border-color: rgba(var(--accent-rgb, 139, 92, 246), .5);
+  background: rgba(var(--accent-rgb, 139, 92, 246), .12);
+}
+.os .gsrc__mono { background: rgba(var(--accent-rgb, 139, 92, 246), .22); border: 1px solid rgba(255, 255, 255, .1); }
+.os .gsrc__item:hover { border-color: rgba(var(--accent-rgb, 139, 92, 246), .5); background: rgba(255, 255, 255, .06); }
+.os .gsrc__go { background: linear-gradient(135deg, var(--os-accent), var(--os-accent-2)); color: #09090f; }
+.os .games__back { border-radius: 10px; }
+.os .games__back:hover { border-color: rgba(var(--accent-rgb, 139, 92, 246), .5); color: #fff; }
