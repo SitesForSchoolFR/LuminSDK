@@ -87,7 +87,7 @@ continua idêntica em tudo.
 
 | Modo | O que é |
 |---|---|
-| **OS** | O **LuminOS**: área de trabalho escura com papel de parede, dock, janelas que arrastam, minimizam e maximizam, atalhos na mesa e apps de verdade (Perfil, Jogos, Laboratório, Estúdio, Arcade, Cofre, Comunidade, Filmes, Navegador, Sites, Chat, Notas, Calculadora, Ajustes e Sobre). |
+| **OS** | O **LuminOS**: área de trabalho escura com papel de parede, dock, janelas que arrastam, minimizam e maximizam, atalhos na mesa e apps de verdade (Central, Perfil, Jogos, Laboratório, Estúdio, Arcade, Cofre, Comunidade, Filmes, Navegador, Sites, Chat, Notas, Calculadora, Ajustes e Sobre). |
 | **Normal** | O site como sempre foi: catálogo de jogos, abas na lateral e o portal de estudos. |
 Trocar de aba, buscar, filtrar favoritos, abrir as configurações, jogar, abrir os estudos, nada disso
 mexe no endereço: sem `/gn/`, sem `/sites/`, sem `#/algo`, sem `?cat=`. Se você copiar a URL no meio
@@ -153,10 +153,18 @@ quem tiver o endereço antigo salvo é levado de volta para `…/LuminSDK/` já 
 
 O modo OS é uma área de trabalho de verdade dentro da mesma página:
 
-- **janelas** arrastáveis, com minimizar, maximizar e fechar (no celular abrem em tela cheia);
-- **dock** com quinze apps (em duas linhas no celular, nunca escondidos atrás de rolagem) e **atalhos** na mesa;
+- **janelas** arrastáveis, com minimizar, maximizar, fechar, encaixar nas laterais e posição/tamanho
+  lembrados por app (no celular abrem em tela cheia);
+- **dock** com dezesseis apps (em duas linhas no celular, nunca escondidos atrás de rolagem) e **atalhos** na mesa;
+- **Central**: busca global (apps, jogos, sites, notas e ajuda), lançador de apps com fixados e mais
+  usados, gerenciador de janelas (encaixar nas laterais, centralizar, cascata, fechar todas), diagnóstico
+  do navegador classificado em **compatível / limitado / indisponível / não testado**, monitor de
+  desempenho medido na hora (FPS, tarefas longas, memória quando exposta), mapa de armazenamento e cache
+  com confirmação, ajuda interna e a página de versão;
 - **papéis de parede** (aurora, meia-noite, floresta, papel) e **cor de destaque** salvos em
   `luminsdk:v1:os`;
+- **controle e teclado**: com um gamepad conectado, o direcional anda pelos controles da janela ativa,
+  **A** ativa e **B** fecha a janela (desligado dentro do player, onde o controle é do jogo);
 - **Jogos**: os 848 títulos do acervo GN-Math, com capa (quatro espelhos e monograma se falhar) e
   player embutido com volta ao acervo, recarregar e abrir em outra aba;
 - **Navegador**: barra de endereço, home com as coleções principais e aviso honesto quando o site
@@ -180,7 +188,7 @@ O modo OS é uma área de trabalho de verdade dentro da mesma página:
 - o **chat** e a **presença** são os mesmos do resto do site.
 
 Essas ferramentas também existem **fora do OS**: a aba **Hub** (no rail, ao lado de Sites, Nav e
-Estudos) monta Perfil, Laboratório, Estúdio, Arcade, Cofre e Comunidade numa moldura escura, sem
+Estudos) monta Central, Perfil, Laboratório, Estúdio, Arcade, Cofre e Comunidade numa moldura escura, sem
 janelas nem dock — é o mesmo código (`assets/js/hub.js` chama o `render()` de cada app). A cor de
 destaque, a densidade e a tipografia escolhidas no Estúdio aparecem aqui também; papel de parede e
 modo imersivo continuam sendo só do desktop.
@@ -455,6 +463,7 @@ LuminSDK/
 │   │   ├── arcade.js           # App Arcade (alvo, bichinho, quiz, sons, cronômetro, conversor)
 │   │   ├── vault.js            # App Cofre (backup, códigos, dados e área do desenvolvedor)
 │   │   ├── community.js        # App Comunidade (coleções por código, recomendações, wishlist)
+│   │   ├── central.js          # App Central (busca, janelas, diagnóstico, desempenho, dados, ajuda)
 │   │   ├── hub.js              # Aba Hub: monta os apps do OS dentro do site normal
 │   │   ├── social.js           # Presença, chat global e canal de comandos (painel)
 │   │   ├── browser.js          # Navegador: barra de endereço, home e aba limpa

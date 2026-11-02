@@ -13,7 +13,7 @@
   if (!OS || typeof OS.getApp !== 'function') return;
 
   const KEY = 'luminsdk:v1:hub';
-  const ORDER = ['player', 'lab', 'studio', 'arcade', 'vault', 'community'];
+  const ORDER = ['player', 'central', 'lab', 'studio', 'arcade', 'vault', 'community'];
   const ACCENTS = {
     violeta: ['#a78bfa', '139, 92, 246'],
     ciano: ['#22d3ee', '34, 211, 238'],

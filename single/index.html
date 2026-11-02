@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=36 -->
+  <!-- assets/css/styles.css?v=37 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -4025,7 +4025,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=36 -->
+  <!-- assets/css/app.css?v=37 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -4118,6 +4118,10 @@ html[data-view="gn"] .tabrail__tab.is-active {
 .tabrail__tab span {
   font-size: .46rem;
   letter-spacing: .06em;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* separadores discretos entre grupos de abas */
@@ -4136,6 +4140,8 @@ html[data-view="gn"] .tabrail__tab.is-active {
 }
 
 @media (max-width: 860px) {
+  /* a pílula fica fixa embaixo: sem esse respiro o rodapé fica atrás dela */
+  body { padding-bottom: 88px; }
   .tabrail {
     /* no celular o rail é a pílula de baixo: largura automática (sem isso
        ele herdava os 68px da coluna do desktop e virava um rolo de abas) */
@@ -4151,9 +4157,22 @@ html[data-view="gn"] .tabrail__tab.is-active {
 }
 
 /* telas bem estreitas: oito abas só cabem com ícones mais justos */
-@media (max-width: 380px) {
-  .tabrail { gap: 4px; padding: 6px; }
-  .tabrail__tab { width: 38px; }
+@media (max-width: 460px) {
+  .tabrail { gap: 3px; padding: 6px; }
+  .tabrail__tab { width: 38px; gap: 0; padding: 9px 0; }
+  /* oito abas num celular: só o ícone — o nome continua no texto do link
+     (escondido de forma acessível, não com display:none) e no title */
+  .tabrail__tab span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
 }
   </style>
 </head>
@@ -11408,18 +11427,18 @@ html[data-view="gn"] .tabrail__tab.is-active {
       css: [],
       scripts: [
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=35',
-        'assets/js/settings.js?v=35',
-        'assets/js/site.js?v=35',
-        'assets/js/atmosphere.js?v=35',
-        'assets/js/progress.js?v=35',
-        'assets/js/bonus.js?v=35'
+        'assets/js/library.js?v=37',
+        'assets/js/settings.js?v=37',
+        'assets/js/site.js?v=37',
+        'assets/js/atmosphere.js?v=37',
+        'assets/js/progress.js?v=37',
+        'assets/js/bonus.js?v=37'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=35'],
-      scripts: ['assets/js/gnmath.js?v=35'],
+      css: ['assets/css/gnmath.css?v=37'],
+      scripts: ['assets/js/gnmath.js?v=37'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -11431,58 +11450,60 @@ html[data-view="gn"] .tabrail__tab.is-active {
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=35'],
-      scripts: ['assets/js/provider.js?v=35', 'assets/js/atmosphere.js?v=35']
+      css: ['assets/css/provider.css?v=37'],
+      scripts: ['assets/js/provider.js?v=37', 'assets/js/atmosphere.js?v=37']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=35'],
-      scripts: ['assets/js/sites.js?v=35', 'assets/js/atmosphere.js?v=35']
+      css: ['assets/css/sites.css?v=37'],
+      scripts: ['assets/js/sites.js?v=37', 'assets/js/atmosphere.js?v=37']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=35'],
-      scripts: ['assets/js/browser.js?v=35', 'assets/js/atmosphere.js?v=35']
+      css: ['assets/css/browser.css?v=37'],
+      scripts: ['assets/js/browser.js?v=37', 'assets/js/atmosphere.js?v=37']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=35',
-        'assets/js/os.js?v=35',
-        'assets/js/profile.js?v=35',
-        'assets/js/lab.js?v=35',
-        'assets/js/studio.js?v=35',
-        'assets/js/arcade.js?v=35',
-        'assets/js/vault.js?v=35',
-        'assets/js/community.js?v=35',
-        'assets/js/atmosphere.js?v=35'
+        'assets/js/player.js?v=37',
+        'assets/js/os.js?v=37',
+        'assets/js/profile.js?v=37',
+        'assets/js/lab.js?v=37',
+        'assets/js/studio.js?v=37',
+        'assets/js/arcade.js?v=37',
+        'assets/js/vault.js?v=37',
+        'assets/js/community.js?v=37',
+        'assets/js/central.js?v=37',
+        'assets/js/atmosphere.js?v=37'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=36', 'assets/css/hub.css?v=36'],
+      css: ['assets/css/os.css?v=37', 'assets/css/hub.css?v=37'],
       scripts: [
-        'assets/js/player.js?v=36',
-        'assets/js/os.js?v=36',
-        'assets/js/profile.js?v=36',
-        'assets/js/lab.js?v=36',
-        'assets/js/studio.js?v=36',
-        'assets/js/arcade.js?v=36',
-        'assets/js/vault.js?v=36',
-        'assets/js/community.js?v=36',
-        'assets/js/hub.js?v=36'
+        'assets/js/player.js?v=37',
+        'assets/js/os.js?v=37',
+        'assets/js/profile.js?v=37',
+        'assets/js/lab.js?v=37',
+        'assets/js/studio.js?v=37',
+        'assets/js/arcade.js?v=37',
+        'assets/js/vault.js?v=37',
+        'assets/js/community.js?v=37',
+        'assets/js/central.js?v=37',
+        'assets/js/hub.js?v=37'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=35']
+      scripts: ['assets/js/atmosphere.js?v=37']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=35'],
-      scripts: ['assets/js/study-questions.js?v=35', 'assets/js/study.js?v=35']
+      css: ['assets/css/study.css?v=37'],
+      scripts: ['assets/js/study-questions.js?v=37', 'assets/js/study.js?v=37']
     }
   };
 

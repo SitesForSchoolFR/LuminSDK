@@ -74,6 +74,7 @@
   function commands() {
     const list = [
       { id: 'open:player', label: 'Abrir Perfil', run: function () { OS.open('player'); } },
+      { id: 'open:central', label: 'Abrir Central', run: function () { OS.open('central'); } },
       { id: 'open:games', label: 'Abrir Jogos', run: function () { OS.open('games'); } },
       { id: 'open:movies', label: 'Abrir Filmes', run: function () { OS.open('movies'); } },
       { id: 'open:browser', label: 'Abrir Navegador', run: function () { OS.open('browser'); } },
