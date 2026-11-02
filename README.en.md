@@ -152,13 +152,27 @@ address saved is sent back to `…/LuminSDK/` already on the right tab.
 OS mode is a real desktop inside the same page:
 
 - **windows** you can drag, minimize, maximize and close (full screen on phones);
-- a **dock** with eight apps plus **desktop shortcuts**;
+- a **dock** with fifteen apps (two rows on phones, never hidden behind scrolling) plus **desktop shortcuts**;
 - **wallpapers** (aurora, midnight, forest, paper) and an **accent colour**, saved in `luminsdk:v1:os`;
 - **Games**: the 848 GN-Math titles with covers (four mirrors, monogram fallback) and a built-in player
   with back, reload and open-in-new-tab;
 - **Browser**: address bar, home with the main collections and an honest notice when a site refuses to
   be embedded;
 - **Sites**: the 67 collections in a searchable list (they open in the Browser);
+- **Profile**: XP, level, achievements, daily challenges, collections, reviews and a year-in-review,
+  all in `luminsdk:player:v1` (`assets/js/player.js`);
+- **Lab**: gamepad test (sticks, triggers, rumble), keyboard and mouse map, input latency and a browser
+  diagnostic (screen, FPS, storage, battery, feature matrix);
+- **Studio**: wallpaper, accent colour (including a custom hex), density, typography plus **Lite**,
+  **Immersive**, **no-motion** and **high-contrast** modes, the **command palette** (`Ctrl/⌘ + K`) and
+  the **notification centre**;
+- **Arcade**: aim trainer, game roulette, daily challenge, virtual pet, quiz, WebAudio soundboard (no
+  audio files), stopwatch, unit converter and trivia;
+- **Vault**: full `.json` backup (export/import), per-app codes (`LUM-PREF-…`, `LUM-PLAY-…`, `LUM-PET-…`),
+  a storage map and the developer corner (changelog, asset status, session error log, raw preferences
+  and a playground);
+- **Community**: collection codes (`LUM-COLL-…`), ready-made packs, recommendations computed on your
+  machine and a shareable wishlist — with **no** fake login, cloud or public profile;
 - **Notes** (saved locally), **Calculator**, **Settings** and **About**.
 
 ### Live presence and global chat
