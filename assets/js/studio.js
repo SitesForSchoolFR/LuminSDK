@@ -18,6 +18,7 @@
 
   const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M7 20V9l5-5 5 5v11"/><path d="M10.5 20v-5h3v5"/></svg>';
   const NOTES_KEY = 'luminsdk:notify:v1';
+  const NOTIFY_PREFS = 'luminsdk:v1:notify:prefs';
 
   const ACCENTS = ['violeta', 'ciano', 'rosa', 'lima', 'ambar'];
   const DENSITY = [
@@ -55,18 +56,48 @@
     } catch (error) { return []; }
   }
 
+  /* categorias com interruptor próprio — o que estiver desligado não é gravado */
+  const NOTIFY_KINDS = [
+    { id: 'conquista', name: 'Conquistas e XP' },
+    { id: 'sistema', name: 'Sistema' }
+  ];
+
+  function notifyPrefs() {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(NOTIFY_PREFS) || '{}') || {}; } catch (error) { saved = {}; }
+    const out = {};
+    NOTIFY_KINDS.forEach(function (kind) { out[kind.id] = saved[kind.id] !== false; });
+    return out;
+  }
+
+  function saveNotifyPrefs(patch) {
+    const next = Object.assign(notifyPrefs(), patch);
+    try { localStorage.setItem(NOTIFY_PREFS, JSON.stringify(next)); } catch (error) {}
+    return next;
+  }
+
   window.LuminNotify = {
-    push: function (text) {
+    kinds: NOTIFY_KINDS,
+    prefs: notifyPrefs,
+    savePrefs: saveNotifyPrefs,
+    push: function (text, kind) {
       const clean = String(text || '').slice(0, 160);
-      if (!clean) return;
+      if (!clean) return false;
+      const type = NOTIFY_KINDS.some(function (item) { return item.id === kind; }) ? kind : 'sistema';
+      if (!notifyPrefs()[type]) return false;
       const list = notifyList();
-      list.push({ t: clean, at: Date.now() });
+      list.push({ t: clean, at: Date.now(), kind: type });
       while (list.length > 40) list.shift();
       try { localStorage.setItem(NOTES_KEY, JSON.stringify(list)); } catch (error) {}
+      return true;
     },
     list: notifyList,
-    clear: function () {
-      try { localStorage.removeItem(NOTES_KEY); } catch (error) {}
+    clear: function (kind) {
+      try {
+        if (!kind) { localStorage.removeItem(NOTES_KEY); return; }
+        const rest = notifyList().filter(function (item) { return item.kind !== kind; });
+        localStorage.setItem(NOTES_KEY, JSON.stringify(rest));
+      } catch (error) {}
     }
   };
 
@@ -323,21 +354,37 @@
 
   function paintNotes(box) {
     const list = notifyList().slice().reverse();
+    const prefs = notifyPrefs();
     box.innerHTML = [
       '<section class="kp-card"><h3>Central de avisos</h3>',
-      '<p class="kp-note">Tudo o que o OS avisou (XP, conquistas, backups) fica listado aqui.</p>',
+      '<p class="kp-note">Tudo o que o OS avisou (XP, conquistas, backups) fica listado aqui. Aviso de categoria desligada não é gravado.</p>',
+      '<div class="kp-row">' + NOTIFY_KINDS.map(function (kind) {
+        return '<label class="kp-item" style="gap:6px;cursor:pointer"><input type="checkbox" data-kind="' + kind.id + '"' +
+          (prefs[kind.id] ? ' checked' : '') + '> <span class="kp-grow">' + esc(kind.name) + '</span></label>';
+      }).join('') + '</div>',
       '<div class="kp-list" data-list></div>',
       '<div class="kp-row"><button class="kp-btn kp-danger" type="button" data-clear>Limpar avisos</button></div></section>'
     ].join('');
 
+    const names = {};
+    NOTIFY_KINDS.forEach(function (kind) { names[kind.id] = kind.name; });
     const node = box.querySelector('[data-list]');
     if (!list.length) node.innerHTML = '<p class="kp-empty">Nada por aqui ainda.</p>';
     list.forEach(function (item) {
       const when = new Date(item.at);
+      const kind = item.kind || 'sistema';
       const row = el('div', 'kp-item');
-      row.innerHTML = '<span class="kp-grow">' + esc(item.t) + '</span><small>' +
+      row.innerHTML = '<span class="kp-grow">' + esc(item.t) + '</span><small>' + esc(names[kind] || kind) + '</small><small>' +
         String(when.getHours()).padStart(2, '0') + ':' + String(when.getMinutes()).padStart(2, '0') + '</small>';
       node.append(row);
+    });
+    box.querySelectorAll('[data-kind]').forEach(function (input) {
+      input.addEventListener('change', function () {
+        const patch = {};
+        patch[input.dataset.kind] = input.checked;
+        window.LuminNotify.savePrefs(patch);
+        toast(input.checked ? 'Avisos de ' + names[input.dataset.kind].toLowerCase() + ' ligados.' : 'Avisos de ' + names[input.dataset.kind].toLowerCase() + ' desligados.');
+      });
     });
     box.querySelector('[data-clear]').addEventListener('click', function () {
       window.LuminNotify.clear();

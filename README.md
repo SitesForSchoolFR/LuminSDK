@@ -156,15 +156,24 @@ O modo OS é uma área de trabalho de verdade dentro da mesma página:
 - **janelas** arrastáveis, com minimizar, maximizar, fechar, encaixar nas laterais e posição/tamanho
   lembrados por app (no celular abrem em tela cheia);
 - **dock** com dezesseis apps (em duas linhas no celular, nunca escondidos atrás de rolagem) e **atalhos** na mesa;
-- **Central**: busca global (apps, jogos, sites, notas e ajuda), lançador de apps com fixados e mais
+- **Central**: busca global (apps, jogos, sites, notas e ajuda), lançador de apps com categorias,
+  fixados e mais
   usados, gerenciador de janelas (encaixar nas laterais, centralizar, cascata, fechar todas), diagnóstico
-  do navegador classificado em **compatível / limitado / indisponível / não testado**, monitor de
+  do navegador classificado em **compatível / limitado / indisponível / não testado**, áreas de
+  trabalho e janelas (focar, encaixar, mover de área), monitor de
   desempenho medido na hora (FPS, tarefas longas, memória quando exposta), mapa de armazenamento e cache
   com confirmação, ajuda interna e a página de versão;
 - **papéis de parede** (aurora, meia-noite, floresta, papel) e **cor de destaque** salvos em
   `luminsdk:v1:os`;
 - **controle e teclado**: com um gamepad conectado, o direcional anda pelos controles da janela ativa,
   **A** ativa e **B** fecha a janela (desligado dentro do player, onde o controle é do jogo);
+- **quatro áreas de trabalho**: cada janela vive numa área (`Alt`+`1`…`4` ou o botão *Área N* no topo),
+  com contagem por área, mudança de área da janela ativa e tudo salvo em `luminsdk:v1:os:ws`;
+- **alternador de janelas**: `Alt`+`` ` `` percorre as janelas da área com um HUD clicável;
+- **dock configurável**: ordem, apps fora do dock e auto-hide no botão *Ajustar*, salvos em
+  `luminsdk:v1:os:dock`, com “restaurar padrão”;
+- **atalhos remapeáveis** em *Ajustes → Atalhos internos* (conflito é recusado, `Esc` cancela, nada é
+  capturado dentro de campos de texto), salvos em `luminsdk:v1:os:keys`;
 - **Jogos**: os 848 títulos do acervo GN-Math, com capa (quatro espelhos e monograma se falhar) e
   player embutido com volta ao acervo, recarregar e abrir em outra aba;
 - **Navegador**: barra de endereço, home com as coleções principais e aviso honesto quando o site
@@ -177,6 +186,8 @@ O modo OS é uma área de trabalho de verdade dentro da mesma página:
 - **Estúdio**: papel de parede, cor de destaque (inclusive personalizada), densidade, tipografia e os
   modos **Lite**, **Imersivo**, **sem animação** e **alto contraste**, além da **paleta de comandos**
   (`Ctrl/⌘ + K`) e da **central de avisos**;
+- **avisos por categoria** no Estúdio: conquistas/XP e sistema podem ser desligados separadamente e
+  categoria desligada não é gravada;
 - **Arcade**: alvo rápido, roleta de jogo, desafio diário, bichinho virtual, quiz, soundboard com WebAudio
   (nada de arquivo de áudio), cronômetro, conversor de unidades e curiosidades;
 - **Cofre**: backup completo em `.json` (exportar/importar), códigos por app (`LUM-PREF-…`, `LUM-PLAY-…`,

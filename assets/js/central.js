@@ -19,7 +19,7 @@
   const toast = OS.ui.toast;
 
   const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.4"/><path d="M15.6 15.6 20 20M11 9.4v3.2M9.4 11h3.2"/></svg>';
-  const VERSION = 'v37';
+  const VERSION = 'v38';
 
   const HIST_KEY = 'luminsdk:v1:central:hist';
   const PIN_KEY = 'luminsdk:v1:central:pins';
@@ -37,7 +37,32 @@
     { id: 'about', name: 'Sobre' }
   ];
 
+  /* uma categoria por app — é curadoria nossa, não sugestão automática */
+  const CATEGORY = {
+    player: 'Jogador',
+    games: 'Jogos',
+    arcade: 'Jogos',
+    central: 'Sistema',
+    vault: 'Sistema',
+    settings: 'Sistema',
+    about: 'Sistema',
+    lab: 'Ferramentas',
+    notes: 'Ferramentas',
+    calc: 'Ferramentas',
+    studio: 'Aparência',
+    browser: 'Rede',
+    sites: 'Rede',
+    movies: 'Mídia',
+    community: 'Social',
+    chat: 'Social'
+  };
+
   const CHANGELOG = [
+    { v: 'v38', items: [
+      'Quatro áreas de trabalho (Alt+1…4), alternador de janelas com Alt+` e atalhos remapeáveis.',
+      'Dock editável: ordem, apps fora do dock e auto-hide, com opção de restaurar o padrão.',
+      'Diagnóstico da Central mostra a área de cada janela e permite movê-la de área.'
+    ] },
     { v: 'v37', items: [
       'Central: busca global, lançador de apps, gerenciador de janelas, diagnóstico, desempenho, dados, ajuda e versão.',
       'Janelas: encaixar nas laterais, centralizar, fechar todas e lembrar posição e tamanho de cada app.',
@@ -65,6 +90,26 @@
       t: 'Como abrir e organizar janelas',
       tags: 'janela arrastar maximizar encaixar',
       body: 'Clique num app do dock. Arraste pela barra de título, redimensione pelo canto inferior direito e use os botões de minimizar/maximizar/fechar. Na <b>Central → Janelas</b> dá para encaixar lado a lado, centralizar e fechar todas. Posição e tamanho de cada app ficam salvos.'
+    },
+    {
+      t: 'Áreas de trabalho',
+      tags: 'área workspace desktop alt 1 2 3 4 janelas',
+      body: 'O desktop tem <b>quatro áreas</b> independentes: cada janela pertence a uma delas e só aparece lá. Troque com <kbd>Alt</kbd>+<kbd>1</kbd>…<kbd>4</kbd> ou pelo botão <b>Área N</b> na barra do topo — o menu mostra quantas janelas há em cada área e permite mover a janela ativa. As áreas ficam salvas no navegador.'
+    },
+    {
+      t: 'Dock do seu jeito',
+      tags: 'dock ordem esconder auto-hide ajustar',
+      body: 'No fim do dock há o botão <b>Ajustar</b>: nele você muda a ordem dos apps, tira um app do dock (ele continua abrindo pela Central e pelos atalhos da mesa, e pode voltar em “Fora do dock”) e liga o <b>auto-hide</b>, que esconde o dock até o mouse chegar perto. “Restaurar padrão” desfaz tudo.'
+    },
+    {
+      t: 'Atalhos do sistema',
+      tags: 'atalho teclado remapear combinação conflito',
+      body: 'Em <b>Ajustes → Atalhos internos</b> estão as ações com combinação própria (áreas, alternar janelas, fechar a janela ativa, abrir a Central). Clique em <b>mudar</b>, aperte a combinação nova e pronto; <kbd>Esc</kbd> cancela. Combinação repetida é recusada com aviso, e o ↺ volta ao padrão. Nada é capturado dentro de campos de texto.'
+    },
+    {
+      t: 'Avisos por categoria',
+      tags: 'avisos notificações categoria conquistas sistema',
+      body: 'O <b>Estúdio → Avisos</b> guarda o que o sistema avisou. Dá para desligar <b>Conquistas e XP</b> ou <b>Sistema</b> separadamente: categoria desligada não é gravada — nada de fingir que o aviso existiu. O histórico tem limite de 40 itens e o botão “Limpar avisos” apaga tudo.'
     },
     {
       t: 'Navegar com controle e teclado',
@@ -128,7 +173,7 @@
     { id: 'css', name: 'CSS :has() + container queries', kind: 'read' }
   ];
 
-  const view = { tab: 'search', query: '', hits: [], cursor: -1, appsQuery: '', sort: 'az', helpQuery: '', helpOpen: '' };
+  const view = { tab: 'search', query: '', hits: [], cursor: -1, appsQuery: '', sort: 'az', cat: '', helpQuery: '', helpOpen: '' };
   let body = null;
   let games = null;
   let sites = null;
@@ -426,6 +471,7 @@
     const counts = openedCounts();
     const query = norm(view.appsQuery);
     let list = (OS.listApps ? OS.listApps() : []).filter(function (app) {
+      if (view.cat && CATEGORY[app.id] !== view.cat) return false;
       return !query || norm(app.name + ' ' + app.id).indexOf(query) >= 0;
     });
 
@@ -436,6 +482,12 @@
     box.innerHTML = [
       '<section class="kp-card"><h3>Aplicativos</h3>',
       '<input class="kp-field" type="search" data-apps-q placeholder="filtrar aplicativos…" aria-label="Filtrar aplicativos" value="' + esc(view.appsQuery) + '">',
+      '<div class="kp-row">',
+      ['', 'Jogos', 'Ferramentas', 'Rede', 'Social', 'Sistema'].map(function (cat) {
+        return '<button class="kp-btn' + (view.cat === cat ? ' is-on' : '') + '" type="button" data-cat="' + esc(cat) + '">' +
+          (cat || 'Todas') + '</button>';
+      }).join(''),
+      '</div>',
       '<div class="kp-row">',
       ['az', 'uso', 'fixados'].map(function (mode) {
         const names = { az: 'A–Z', uso: 'Mais usados', fixados: 'Fixados' };
@@ -470,6 +522,13 @@
       button.addEventListener('click', function () { view.sort = button.dataset.sort; paint(); });
     });
 
+    box.querySelectorAll('[data-cat]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        view.cat = view.cat === button.dataset.cat ? '' : button.dataset.cat;
+        paint();
+      });
+    });
+
     box.querySelectorAll('[data-open]').forEach(function (button) {
       button.addEventListener('click', function () {
         bumpOpen(button.dataset.open);
@@ -495,11 +554,23 @@
   function paintWindows(box) {
     const list = OS.listWindows ? OS.listWindows() : [];
     const geo = load(GEO_KEY, {});
+    const ws = OS.workspaces || null;
+    const current = ws ? ws.current() : 1;
+    const total = ws ? ws.total : 1;
+    const areas = [];
+    for (let n = 1; n <= total; n += 1) {
+      const count = ws ? ws.list(n).length : 0;
+      areas.push('<button class="kp-btn' + (n === current ? ' is-on' : '') + '" type="button" data-ws-go="' + n + '">' +
+        'Área ' + n + (count ? ' · ' + count : '') + '</button>');
+    }
     box.innerHTML = [
+      '<section class="kp-card"><h3>Áreas de trabalho</h3><div class="kp-row">' + areas.join('') + '</div>',
+      '<p class="kp-note">Cada área tem as suas janelas. O app abre na área em que você está; o botão “área N” na lista move a janela para a próxima.</p></section>',
       '<section class="kp-card"><h3>Janelas abertas · ' + list.length + '</h3>',
       list.length ? '<div class="kp-list">' + list.map(function (item) {
-        return '<div class="kp-item"><b class="kp-grow" style="min-width:0;overflow:hidden;text-overflow:ellipsis">' + esc(item.name) + '</b>' +
+        return '<div class="kp-item' + (item.away ? ' is-away' : '') + '"><b class="kp-grow" style="min-width:0;overflow:hidden;text-overflow:ellipsis">' + esc(item.name) + '</b>' +
           (item.focused ? '<small style="color:#4ade80">em foco</small>' : '') +
+          (ws ? '<button class="kp-btn" type="button" data-ws-cycle="' + esc(item.id) + '" title="Mover para a próxima área">área ' + item.ws + '</button>' : '') +
           (item.min ? '<small>minimizada</small>' : '') +
           (item.max ? '<small>maximizada</small>' : '') +
           '<button class="kp-btn" type="button" data-focus="' + esc(item.id) + '">focar</button>' +
@@ -527,6 +598,23 @@
       if (message) toast(message);
       paint();
     };
+
+    box.querySelectorAll('[data-ws-go]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        if (OS.workspaces) OS.workspaces.set(Number(button.dataset.wsGo));
+        after();
+      });
+    });
+
+    box.querySelectorAll('[data-ws-cycle]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        const found = list.find(function (item) { return item.id === button.dataset.wsCycle; });
+        if (!found) return;
+        const next = (found.ws % (ws ? ws.total : 1)) + 1;
+        if (OS.workspaces) OS.workspaces.move(found.id, next);
+        after();
+      });
+    });
 
     box.querySelectorAll('[data-focus]').forEach(function (button) {
       button.addEventListener('click', function () { OS.focusWindow(button.dataset.focus); after(); });

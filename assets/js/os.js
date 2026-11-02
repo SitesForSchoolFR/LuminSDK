@@ -130,9 +130,9 @@
     return tag + html;
   }
 
-  function toast(text) {
+  function toast(text, kind) {
     if (window.LuminNotify && typeof window.LuminNotify.push === 'function') {
-      try { window.LuminNotify.push(text); } catch (error) {}
+      try { window.LuminNotify.push(text, kind || 'sistema'); } catch (error) {}
     }
     let box = onDesk() ? document.getElementById('os-toast') : null;
     if (!box) {
@@ -158,7 +158,7 @@
   function notifyAchievements(items) {
     if (!items || !items.length) return;
     const names = items.map(function (item) { return item.name; }).join(' · ');
-    toast(items.length === 1 ? 'Conquista: ' + names : items.length + ' conquistas: ' + names);
+    toast(items.length === 1 ? 'Conquista: ' + names : items.length + ' conquistas: ' + names, 'conquista');
     const chip = document.getElementById('os-level');
     if (chip && window.LuminPlayer) {
       chip.querySelector('[data-lv]').textContent = 'Nv ' + window.LuminPlayer.summary().level;
@@ -359,14 +359,444 @@
         name: entry.app.name,
         focused: entry.el.classList.contains('is-focus'),
         min: entry.el.classList.contains('is-min'),
-        max: entry.el.classList.contains('is-max')
+        max: entry.el.classList.contains('is-max'),
+        ws: wsOf(id),
+        away: wsOf(id) !== wsState.current
       };
     });
+  }
+
+  /* =========================================================
+     Áreas de trabalho (workspaces)
+     Quatro áreas independentes. Cada janela pertence a uma área e só
+     aparece na sua; o dock marca como aberto apenas o que está na área
+     atual. Tudo fica salvo em luminsdk:v1:os:ws.
+     ========================================================= */
+  const WS_STORE = 'luminsdk:v1:os:ws';
+  const WS_TOTAL = 4;
+  const wsState = { current: 1, of: {} };
+
+  function loadWs() {
+    try {
+      const data = JSON.parse(localStorage.getItem(WS_STORE) || '{}') || {};
+      const current = Number(data.current);
+      wsState.current = current >= 1 && current <= WS_TOTAL ? current : 1;
+      wsState.of = data.of && typeof data.of === 'object' ? data.of : {};
+    } catch (error) {
+      wsState.current = 1;
+      wsState.of = {};
+    }
+  }
+
+  function saveWs() {
+    try {
+      localStorage.setItem(WS_STORE, JSON.stringify({ current: wsState.current, of: wsState.of }));
+    } catch (error) {}
+  }
+
+  function wsOf(id) {
+    const value = Number(wsState.of[id]);
+    return value >= 1 && value <= WS_TOTAL ? value : 1;
+  }
+
+  function wsWindows(area) {
+    return Object.keys(state.windows).filter(function (id) { return wsOf(id) === area; });
+  }
+
+  function focusedId() {
+    return Object.keys(state.windows).filter(function (id) {
+      return state.windows[id].el.classList.contains('is-focus');
+    })[0] || '';
+  }
+
+  function wsApply() {
+    Object.keys(state.windows).forEach(function (id) {
+      state.windows[id].el.classList.toggle('is-away', wsOf(id) !== wsState.current);
+    });
+    renderDock();
+    paintWsButton();
+    updateHint();
+  }
+
+  function paintWsButton() {
+    const label = document.getElementById('os-ws-name');
+    if (label) label.textContent = 'Área ' + wsState.current;
+    const button = document.getElementById('os-ws');
+    if (button) button.title = 'Áreas de trabalho · janelas nesta área: ' + wsWindows(wsState.current).length;
+    const menu = document.getElementById('os-ws-menu');
+    if (menu && !menu.hidden) paintWsMenu();
+  }
+
+  function paintWsMenu() {
+    const menu = document.getElementById('os-ws-menu');
+    if (!menu) return;
+    const focused = focusedId();
+    const parts = ['<p class="os__ws-title">Áreas de trabalho</p>'];
+    for (let n = 1; n <= WS_TOTAL; n += 1) {
+      const count = wsWindows(n).length;
+      parts.push('<button class="os__ws-item' + (n === wsState.current ? ' is-on' : '') + '" type="button" data-ws="' + n + '">' +
+        '<span>Área ' + n + '</span><small>' + count + (count === 1 ? ' janela' : ' janelas') + '</small></button>');
+    }
+    if (focused) {
+      parts.push('<div class="os__ws-foot"><span>Mover “' + esc(state.windows[focused].app.name) + '” para</span><div class="os__ws-moves">');
+      for (let n = 1; n <= WS_TOTAL; n += 1) {
+        parts.push('<button class="os__ws-move" type="button" data-ws-move="' + n + '"' +
+          (n === wsOf(focused) ? ' disabled' : '') + ' title="Mover para a área ' + n + '">' + n + '</button>');
+      }
+      parts.push('</div></div>');
+    }
+    menu.innerHTML = parts.join('');
+  }
+
+  function setWorkspace(area) {
+    const target = Number(area);
+    if (!(target >= 1 && target <= WS_TOTAL)) return false;
+    if (target === wsState.current) {
+      toast('Você já está na área ' + target + '.');
+      return false;
+    }
+    const focused = focusedId();
+    if (focused && wsState.of[focused] === undefined) wsState.of[focused] = wsState.current;
+    wsState.current = target;
+    saveWs();
+    if (focused && wsOf(focused) !== target) {
+      state.windows[focused].el.classList.remove('is-focus');
+      if (crumb) crumb.textContent = 'Área de trabalho';
+    }
+    wsApply();
+    /* ao entrar na área, foca a janela que estava na frente lá */
+    const top = wsWindows(target).sort(function (a, b) {
+      return Number(state.windows[a].el.style.zIndex || 0) - Number(state.windows[b].el.style.zIndex || 0);
+    }).pop();
+    if (top) focusWin(top);
+    toast('Área ' + target + ' · ' + wsWindows(target).length + (wsWindows(target).length === 1 ? ' janela' : ' janelas'));
+    return true;
+  }
+
+  function moveWindowTo(id, area) {
+    const target = Number(area);
+    if (!state.windows[id] || !(target >= 1 && target <= WS_TOTAL)) return false;
+    wsState.of[id] = target;
+    saveWs();
+    if (target === wsState.current) {
+      state.windows[id].el.classList.remove('is-away');
+      focusWin(id);
+    }
+    wsApply();
+    toast('“' + state.windows[id].app.name + '” foi para a área ' + target + '.');
+    return true;
+  }
+
+  /* =========================================================
+     Atalhos internos (remapeáveis)
+     Só valem no desktop e nunca capturam teclas dentro de campos de
+     texto — nada de senha. Combos ficam em luminsdk:v1:os:keys.
+     ========================================================= */
+  const KEYS_STORE = 'luminsdk:v1:os:keys';
+  const KEY_ACTIONS = [
+    { id: 'ws1', label: 'Ir para a área 1', def: 'alt+1' },
+    { id: 'ws2', label: 'Ir para a área 2', def: 'alt+2' },
+    { id: 'ws3', label: 'Ir para a área 3', def: 'alt+3' },
+    { id: 'ws4', label: 'Ir para a área 4', def: 'alt+4' },
+    { id: 'cycle', label: 'Alternar entre janelas', def: 'alt+`' },
+    { id: 'close', label: 'Fechar a janela ativa', def: 'alt+w' },
+    { id: 'central', label: 'Abrir a Central', def: 'alt+c' }
+  ];
+  const MODIFIER_KEYS = ['Alt', 'AltGraph', 'Control', 'Shift', 'Meta', 'CapsLock', 'Dead'];
+  let captureAction = '';
+
+  function keyMap() {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KEYS_STORE) || '{}') || {}; } catch (error) { saved = {}; }
+    const map = {};
+    KEY_ACTIONS.forEach(function (action) {
+      map[action.id] = typeof saved[action.id] === 'string' && saved[action.id] ? saved[action.id] : action.def;
+    });
+    return map;
+  }
+
+  function rawKeys() {
+    try { return JSON.parse(localStorage.getItem(KEYS_STORE) || '{}') || {}; } catch (error) { return {}; }
+  }
+
+  function saveKey(action, combo) {
+    const saved = rawKeys();
+    if (combo) saved[action] = combo;
+    else delete saved[action];
+    try { localStorage.setItem(KEYS_STORE, JSON.stringify(saved)); } catch (error) {}
+  }
+
+  function keyLabel(action) {
+    const found = KEY_ACTIONS.filter(function (item) { return item.id === action; })[0];
+    return found ? found.label : action;
+  }
+
+  /* a tecla vem do event.code: assim Shift+2 continua sendo "2" e não "@",
+     e o atalho não muda de significado em teclado ABNT, US ou Xbox */
+  function keyName(event) {
+    const code = String(event.code || '');
+    if (/^Digit\d$/.test(code)) return code.slice(5);
+    if (/^Key[A-Z]$/.test(code)) return code.slice(3).toLowerCase();
+    if (/^Numpad\d$/.test(code)) return 'num' + code.slice(6);
+    const named = {
+      Backquote: '`', Minus: '-', Equal: '=', BracketLeft: '[', BracketRight: ']',
+      Semicolon: ';', Quote: "'", Comma: ',', Period: '.', Slash: '/', Backslash: '\\',
+      Space: 'space', ArrowUp: 'arrowup', ArrowDown: 'arrowdown', ArrowLeft: 'arrowleft', ArrowRight: 'arrowright'
+    };
+    if (named[code]) return named[code];
+    return String(event.key || '').toLowerCase();
+  }
+
+  function comboOf(event) {
+    if (!event.key || MODIFIER_KEYS.indexOf(event.key) >= 0) return '';
+    const parts = [];
+    if (event.altKey) parts.push('alt');
+    if (event.ctrlKey) parts.push('ctrl');
+    if (event.metaKey) parts.push('meta');
+    if (event.shiftKey) parts.push('shift');
+    const key = keyName(event);
+    if (!key) return '';
+    parts.push(key);
+    return parts.join('+');
+  }
+
+  function comboText(combo) {
+    return String(combo || '').split('+').map(function (part) {
+      if (part === 'alt') return 'Alt';
+      if (part === 'ctrl') return 'Ctrl';
+      if (part === 'meta') return '⌘';
+      if (part === 'shift') return 'Shift';
+      if (part === 'space') return 'Espaço';
+      if (part === '`') return '`';
+      return part.toUpperCase();
+    }).join(' + ');
+  }
+
+  function runShortcut(id) {
+    if (/^ws[1-4]$/.test(id)) return setWorkspace(Number(id.slice(2)));
+    if (id === 'cycle') return cycleWindows(1);
+    if (id === 'close') {
+      const focused = focusedId();
+      if (!focused) return false;
+      closeWin(focused);
+      return true;
+    }
+    if (id === 'central') { openApp('central'); return true; }
+    return false;
+  }
+
+  function onShortcutKey(event) {
+    if (!state.booted || !onDesk()) return;
+    if (event.ctrlKey || event.metaKey) return;
+    const target = event.target;
+    if (target && target.closest && target.closest('input, textarea, select, [contenteditable="true"]')) return;
+    const combo = comboOf(event);
+    if (!combo) return;
+    const map = keyMap();
+    const action = Object.keys(map).filter(function (key) { return map[key] === combo; })[0];
+    if (!action) return;
+    if (runShortcut(action)) event.preventDefault();
+  }
+
+  /* =========================================================
+     Alternador de janelas (Alt+`) com HUD
+     ========================================================= */
+  let switchTimer = 0;
+
+  function cycleWindows(direction) {
+    const list = Object.keys(state.windows).filter(function (id) { return wsOf(id) === wsState.current; });
+    if (!list.length) {
+      toast('Nenhuma janela nesta área.');
+      return false;
+    }
+    const index = list.indexOf(focusedId());
+    const step = direction < 0 ? -1 : 1;
+    const next = index < 0 ? 0 : (index + step + list.length) % list.length;
+    focusWin(list[next]);
+    paintSwitcher();
+    return true;
+  }
+
+  function paintSwitcher() {
+    if (!root) return;
+    let hud = document.getElementById('os-switch');
+    if (!hud) {
+      hud = el('div', 'os-switch');
+      hud.id = 'os-switch';
+      root.append(hud);
+    }
+    const list = Object.keys(state.windows).filter(function (id) { return wsOf(id) === wsState.current; });
+    const active = focusedId();
+    hud.innerHTML = list.map(function (id) {
+      const entry = state.windows[id];
+      return '<button class="os-switch__item' + (id === active ? ' is-on' : '') + '" type="button" data-switch="' + esc(id) + '">' +
+        (ICONS[id] || '') + '<span>' + esc(entry.app.name) + '</span></button>';
+    }).join('');
+    hud.hidden = false;
+    clearTimeout(switchTimer);
+    switchTimer = setTimeout(function () { hud.hidden = true; }, 1800);
+  }
+
+  /* =========================================================
+     Dock configurável (ordem, apps fora do dock, auto-hide)
+     ========================================================= */
+  const DOCK_STORE = 'luminsdk:v1:os:dock';
+
+  function dockCfg() {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(DOCK_STORE) || '{}') || {}; } catch (error) { saved = {}; }
+    const known = APPS.map(function (app) { return app.id; });
+    const order = Array.isArray(saved.order) ? saved.order.filter(function (id) { return known.indexOf(id) >= 0; }) : [];
+    known.forEach(function (id) { if (order.indexOf(id) < 0) order.push(id); });
+    const hidden = Array.isArray(saved.hidden) ? saved.hidden.filter(function (id) { return known.indexOf(id) >= 0; }) : [];
+    return { order: order, hidden: hidden, autoHide: !!saved.autoHide };
+  }
+
+  function applyDockCfg() {
+    if (!root) return;
+    root.classList.toggle('dock-auto', dockCfg().autoHide);
+  }
+
+  function saveDockCfg(next) {
+    try { localStorage.setItem(DOCK_STORE, JSON.stringify(next)); } catch (error) {}
+    applyDockCfg();
+    renderDock();
+  }
+
+  function paintDockEditor() {
+    const modal = document.getElementById('os-dock-editor');
+    if (!modal) return;
+    const cfg = dockCfg();
+    const list = modal.querySelector('[data-dock-list]');
+    const hiddenBox = modal.querySelector('[data-dock-hidden]');
+    const auto = modal.querySelector('[data-dock-auto]');
+    if (auto) auto.checked = cfg.autoHide;
+
+    if (list) {
+      const shown = cfg.order.filter(function (id) { return cfg.hidden.indexOf(id) < 0; });
+      list.innerHTML = shown.map(function (id, index) {
+        const app = APPS.filter(function (item) { return item.id === id; })[0];
+        if (!app) return '';
+        return '<div class="os-modal__row"><span class="os-modal__icon">' + (ICONS[id] || '') + '</span>' +
+          '<b class="kp-grow">' + esc(app.name) + '</b>' +
+          '<button class="kp-btn" type="button" data-dock-up="' + esc(id) + '" aria-label="Subir ' + esc(app.name) + '"' + (index === 0 ? ' disabled' : '') + '>↑</button>' +
+          '<button class="kp-btn" type="button" data-dock-down="' + esc(id) + '" aria-label="Descer ' + esc(app.name) + '"' + (index === shown.length - 1 ? ' disabled' : '') + '>↓</button>' +
+          '<button class="kp-btn " type="button" data-dock-hide="' + esc(id) + '">tirar</button></div>';
+      }).join('') || '<p class="kp-empty">Nada no dock.</p>';
+    }
+
+    if (hiddenBox) {
+      hiddenBox.innerHTML = cfg.hidden.map(function (id) {
+        const app = APPS.filter(function (item) { return item.id === id; })[0];
+        if (!app) return '';
+        return '<div class="os-modal__row"><span class="os-modal__icon">' + (ICONS[id] || '') + '</span>' +
+          '<b class="kp-grow">' + esc(app.name) + '</b>' +
+          '<button class="kp-btn" type="button" data-dock-show="' + esc(id) + '">pôr no dock</button></div>';
+      }).join('') || '<p class="kp-empty">Todos os apps estão no dock.</p>';
+    }
+  }
+
+  function dockMove(id, delta) {
+    const cfg = dockCfg();
+    const shown = cfg.order.filter(function (item) { return cfg.hidden.indexOf(item) < 0; });
+    const from = shown.indexOf(id);
+    const to = from + delta;
+    if (from < 0 || to < 0 || to >= shown.length) return false;
+    const cut = cfg.order.indexOf(id);
+    cfg.order.splice(cut, 1);
+    const anchor = cfg.order.indexOf(shown[to]);
+    cfg.order.splice(anchor === -1 ? cfg.order.length : (delta > 0 ? anchor + 1 : anchor), 0, id);
+    saveDockCfg(cfg);
+    paintDockEditor();
+    return true;
+  }
+
+  function dockHide(id) {
+    const cfg = dockCfg();
+    if (cfg.hidden.indexOf(id) < 0) cfg.hidden.push(id);
+    const shown = cfg.order.filter(function (item) { return cfg.hidden.indexOf(item) < 0; });
+    if (!shown.length) {
+      cfg.hidden = cfg.hidden.filter(function (item) { return item !== id; });
+      toast('O dock precisa de pelo menos um app.');
+      return false;
+    }
+    saveDockCfg(cfg);
+    paintDockEditor();
+    return true;
+  }
+
+  function dockShow(id) {
+    const cfg = dockCfg();
+    cfg.hidden = cfg.hidden.filter(function (item) { return item !== id; });
+    saveDockCfg(cfg);
+    paintDockEditor();
+    return true;
+  }
+
+  function openDockEditor() {
+    if (!root) return;
+    const existing = document.getElementById('os-dock-editor');
+    if (existing) { existing.remove(); return; }
+    const modal = el('div', 'os-modal');
+    modal.id = 'os-dock-editor';
+    modal.innerHTML = [
+      '<div class="os-modal__box" role="dialog" aria-modal="true" aria-label="Editar dock">',
+      '  <header class="os-modal__head"><h3>Editar dock</h3>',
+      '    <button class="win__btn" type="button" data-dock-close aria-label="Fechar">✕</button></header>',
+      '  <p class="kp-note">A ordem vale só para o dock. App tirado do dock continua abrindo pela Central e pelos atalhos da mesa.</p>',
+      '  <div class="os-modal__list" data-dock-list></div>',
+      '  <section class="os-modal__block"><h4>Fora do dock</h4><div class="os-modal__list" data-dock-hidden></div></section>',
+      '  <label class="os-modal__check"><input type="checkbox" data-dock-auto> <span>Esconder o dock até o mouse chegar perto</span></label>',
+      '  <footer class="os-modal__foot"><button class="kp-btn kp-danger" type="button" data-dock-reset>Restaurar padrão</button></footer>',
+      '</div>'
+    ].join('');
+    root.append(modal);
+    paintDockEditor();
+
+    modal.addEventListener('click', function (event) {
+      const close = event.target.closest('[data-dock-close]');
+      if (close) { modal.remove(); return; }
+      const up = event.target.closest('[data-dock-up]');
+      if (up) { dockMove(up.dataset.dockUp, -1); return; }
+      const down = event.target.closest('[data-dock-down]');
+      if (down) { dockMove(down.dataset.dockDown, 1); return; }
+      const hide = event.target.closest('[data-dock-hide]');
+      if (hide) { dockHide(hide.dataset.dockHide); return; }
+      const show = event.target.closest('[data-dock-show]');
+      if (show) { dockShow(show.dataset.dockShow); return; }
+      const reset = event.target.closest('[data-dock-reset]');
+      if (reset) {
+        try { localStorage.removeItem(DOCK_STORE); } catch (error) {}
+        applyDockCfg();
+        renderDock();
+        paintDockEditor();
+        toast('Dock restaurado.');
+        return;
+      }
+      if (event.target === modal) modal.remove();
+    });
+
+    const auto = modal.querySelector('[data-dock-auto]');
+    if (auto) auto.addEventListener('change', function () {
+      const cfg = dockCfg();
+      cfg.autoHide = auto.checked;
+      saveDockCfg(cfg);
+      paintDockEditor();
+      toast(auto.checked ? 'Dock escondido até o mouse chegar perto.' : 'Dock sempre visível.');
+    });
+    const closeBtn = modal.querySelector('[data-dock-close]');
+    if (closeBtn) closeBtn.focus();
   }
 
   function focusWin(id) {
     const win = state.windows[id];
     if (!win) return;
+    /* focar uma janela de outra área troca de área antes */
+    if (wsState.of[id] !== undefined && wsOf(id) !== wsState.current) {
+      wsState.current = wsOf(id);
+      saveWs();
+      wsApply();
+    }
     state.z += 1;
     win.el.style.zIndex = String(state.z);
     win.el.classList.remove('is-min');
@@ -423,6 +853,8 @@
       base: { w: size.w, h: size.h }
     };
     state.order.push(id);
+    wsState.of[id] = wsState.current;
+    saveWs();
     focusWin(id);
 
     const count = Object.keys(state.windows).length - 1;
@@ -468,6 +900,8 @@
     win.el.remove();
     delete state.windows[id];
     state.order = state.order.filter(function (key) { return key !== id; });
+    delete wsState.of[id];
+    saveWs();
     if (crumb) crumb.textContent = 'Área de trabalho';
     renderDock();
     updateHint();
@@ -570,17 +1004,28 @@
   /* ---------- dock + atalhos ---------- */
   function renderDock() {
     if (!dock) return;
+    const cfg = dockCfg();
     dock.textContent = '';
-    APPS.forEach(function (app) {
+    cfg.order.forEach(function (id) {
+      if (cfg.hidden.indexOf(id) >= 0) return;
+      const app = APPS.filter(function (item) { return item.id === id; })[0];
+      if (!app) return;
       const button = el('button', 'dock__app');
       button.type = 'button';
       button.dataset.app = app.id;
       button.title = app.name;
       button.setAttribute('aria-label', 'Abrir ' + app.name);
       button.innerHTML = ICONS[app.id] + '<span>' + esc(app.short || app.name) + '</span>';
-      if (state.windows[app.id]) button.classList.add('is-open');
+      if (state.windows[app.id] && wsOf(app.id) === wsState.current) button.classList.add('is-open');
       dock.append(button);
     });
+    const edit = el('button', 'dock__app dock__app--edit');
+    edit.type = 'button';
+    edit.dataset.dockEdit = '1';
+    edit.title = 'Editar dock (ordem, apps escondidos, auto-hide)';
+    edit.setAttribute('aria-label', 'Editar dock');
+    edit.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>Ajustar</span>';
+    dock.append(edit);
   }
 
   function renderIcons() {
@@ -1318,6 +1763,21 @@
       '    </div>',
       '    <p class="settings__hint">A escolha do modo fica nesta sessão do navegador — a URL continua a mesma.</p>',
       '  </section>',
+      '  <section class="settings__block">',
+      '    <h3>Dock</h3>',
+      '    <div class="settings__row">',
+      '      <button class="settings__btn" type="button" data-dock-open>Editar dock</button>',
+      '    </div>',
+      '    <label class="settings__check"><input type="checkbox" data-dock-auto-setting> <span>Esconder o dock até o mouse chegar perto</span></label>',
+      '  </section>',
+      '  <section class="settings__block">',
+      '    <h3>Atalhos internos</h3>',
+      '    <div class="settings__keys" data-keys></div>',
+      '    <div class="settings__row" style="margin-top:8px">',
+      '      <button class="settings__btn" type="button" data-keys-reset>Restaurar atalhos</button>',
+      '    </div>',
+      '    <p class="settings__hint">Valem só no desktop e nunca dentro de campos de texto. Clique em “mudar”, aperte a combinação e use Esc para cancelar.</p>',
+      '  </section>',
       '</div>'
     ].join('');
 
@@ -1347,6 +1807,60 @@
         else setMode('normal');
       });
     });
+
+    /* atalhos remapeáveis */
+    const keysBox = body.querySelector('[data-keys]');
+    const paintKeys = function () {
+      if (!keysBox) return;
+      const map = keyMap();
+      keysBox.innerHTML = KEY_ACTIONS.map(function (action) {
+        const combo = comboText(map[action.id]);
+        const changed = map[action.id] !== action.def;
+        return '<div class="settings__key"><span class="kp-grow">' + esc(action.label) + '</span>' +
+          '<kbd>' + esc(combo) + '</kbd>' +
+          '<button class="kp-btn" type="button" data-key-change="' + action.id + '">' +
+          (captureAction === action.id ? 'pressione…' : 'mudar') + '</button>' +
+          (changed ? '<button class="kp-btn kp-danger" type="button" data-key-clear="' + action.id + '" aria-label="Voltar ao padrão">↺</button>' : '') +
+          '</div>';
+      }).join('');
+      keysBox.querySelectorAll('[data-key-change]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          captureAction = button.dataset.keyChange;
+          paintKeys();
+          button.focus();
+        });
+      });
+      keysBox.querySelectorAll('[data-key-clear]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          saveKey(button.dataset.keyClear, '');
+          paintKeys();
+          toast('Atalho voltou ao padrão.');
+        });
+      });
+    };
+    paintKeys();
+
+    const autoSetting = body.querySelector('[data-dock-auto-setting]');
+    if (autoSetting) {
+      autoSetting.checked = dockCfg().autoHide;
+      autoSetting.addEventListener('change', function () {
+        const cfg = dockCfg();
+        cfg.autoHide = autoSetting.checked;
+        saveDockCfg(cfg);
+        toast(autoSetting.checked ? 'Dock escondido até o mouse chegar perto.' : 'Dock sempre visível.');
+      });
+    }
+
+    const openDock = body.querySelector('[data-dock-open]');
+    if (openDock) openDock.addEventListener('click', openDockEditor);
+
+    const resetKeys = body.querySelector('[data-keys-reset]');
+    if (resetKeys) resetKeys.addEventListener('click', function () {
+      try { localStorage.removeItem(KEYS_STORE); } catch (error) {}
+      captureAction = '';
+      paintKeys();
+      toast('Atalhos restaurados.');
+    });
   }
 
   /* ---------- app: sobre ---------- */
@@ -1375,7 +1889,7 @@
     { id: 'chat', name: 'Chat', short: 'Chat', dockOnly: true, w: 0, h: 0, render: function () {} },
     { id: 'notes', name: 'Notas', short: 'Notas', w: 560, h: 460, render: renderNotes },
     { id: 'calc', name: 'Calculadora', short: 'Calculadora', w: 330, h: 470, render: renderCalc },
-    { id: 'settings', name: 'Ajustes', short: 'Ajustes', w: 620, h: 452, render: renderSettings },
+    { id: 'settings', name: 'Ajustes', short: 'Ajustes', w: 620, h: 560, render: renderSettings },
     { id: 'about', name: 'Sobre', short: 'Sobre', w: 460, h: 520, render: renderAbout }
   ];
 
@@ -1425,10 +1939,13 @@
     state.booted = true;
 
     applyPrefs();
+    loadWs();
+    applyDockCfg();
     mountLevelChip();
     renderDock();
     renderIcons();
     updateHint();
+    paintWsButton();
 
     /* hub do jogador: recompensa de login do dia */
     if (window.LuminPlayer) {
@@ -1452,7 +1969,98 @@
     loadGames().catch(function () {});
     loadSites().catch(function () {});
 
+    window.addEventListener('keydown', onShortcutKey);
+
+    /* Esc fecha o que estiver por cima (menu de áreas, HUD, editor do dock) */
+    window.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape') return;
+      const wsMenu = document.getElementById('os-ws-menu');
+      if (wsMenu && !wsMenu.hidden) {
+        wsMenu.hidden = true;
+        const button = document.getElementById('os-ws');
+        if (button) {
+          button.setAttribute('aria-expanded', 'false');
+          button.focus();
+        }
+      }
+      const hud = document.getElementById('os-switch');
+      if (hud && !hud.hidden) hud.hidden = true;
+      const modal = document.getElementById('os-dock-editor');
+      if (modal) {
+        const edit = document.querySelector('[data-dock-edit]');
+        modal.remove();
+        if (edit) edit.focus();
+      }
+    });
+
+    /* captura de atalho: roda antes de tudo e só enquanto o Ajustes pede */
+    window.addEventListener('keydown', function (event) {
+      if (!captureAction) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const action = captureAction;
+      if (event.key === 'Escape') {
+        captureAction = '';
+        toast('Alteração cancelada.');
+        return;
+      }
+      const combo = comboOf(event);
+      if (!combo) return;                 /* só modificador: espera a tecla */
+      const map = keyMap();
+      const conflict = Object.keys(map).filter(function (key) { return key !== action && map[key] === combo; })[0];
+      if (conflict) {
+        toast('“' + comboText(combo) + '” já é de ' + keyLabel(conflict).toLowerCase() + '.');
+        return;
+      }
+      saveKey(action, combo);
+      captureAction = '';
+      const body = document.querySelector('.win[data-app="settings"] [data-body]');
+      if (body) renderSettings(body);
+      toast('Atalho de “' + keyLabel(action).toLowerCase() + '” agora é ' + comboText(combo) + '.');
+    }, true);
+
     document.addEventListener('click', function (event) {
+      /* clique fora fecha o menu de áreas */
+      const wsMenu = document.getElementById('os-ws-menu');
+      const wsButton = document.getElementById('os-ws');
+      if (wsMenu && !wsMenu.hidden && !event.target.closest('#os-ws-menu, #os-ws')) {
+        wsMenu.hidden = true;
+        if (wsButton) wsButton.setAttribute('aria-expanded', 'false');
+      }
+      const editDock = event.target.closest('[data-dock-edit]');
+      if (editDock) { openDockEditor(); return; }
+      const wsBtn = event.target.closest('#os-ws');
+      if (wsBtn) {
+        const menu = document.getElementById('os-ws-menu');
+        if (menu) {
+          menu.hidden = !menu.hidden;
+          wsBtn.setAttribute('aria-expanded', menu.hidden ? 'false' : 'true');
+          if (!menu.hidden) paintWsMenu();
+        }
+        return;
+      }
+      const wsPick = event.target.closest('[data-ws]');
+      if (wsPick) {
+        setWorkspace(Number(wsPick.dataset.ws));
+        const menu = document.getElementById('os-ws-menu');
+        if (menu) menu.hidden = true;
+        return;
+      }
+      const wsMove = event.target.closest('[data-ws-move]');
+      if (wsMove) {
+        const focused = focusedId();
+        if (focused) moveWindowTo(focused, Number(wsMove.dataset.wsMove));
+        const menu = document.getElementById('os-ws-menu');
+        if (menu) menu.hidden = true;
+        return;
+      }
+      const switchItem = event.target.closest('[data-switch]');
+      if (switchItem) {
+        focusWin(switchItem.dataset.switch);
+        const hud = document.getElementById('os-switch');
+        if (hud) hud.hidden = true;
+        return;
+      }
       const appBtn = event.target.closest('[data-app]');
       if (appBtn && root.contains(appBtn)) {
         openApp(appBtn.dataset.app);
@@ -1628,6 +2236,22 @@
     notify: notifyAchievements,
     refresh: function () { renderDock(); renderIcons(); syncLevelChip(); },
     pad: { start: startPadNav, stop: stopPadNav, move: padMove },
+    workspaces: {
+      total: WS_TOTAL,
+      current: function () { return wsState.current; },
+      set: setWorkspace,
+      move: moveWindowTo,
+      list: wsWindows
+    },
+    dock: { config: dockCfg, save: saveDockCfg, editor: openDockEditor },
+    keys: {
+      map: keyMap,
+      save: saveKey,
+      reset: function () { try { localStorage.removeItem(KEYS_STORE); } catch (error) {} },
+      actions: KEY_ACTIONS,
+      text: comboText
+    },
+    switchWindows: cycleWindows,
     ui: {
       el: el,
       esc: esc,

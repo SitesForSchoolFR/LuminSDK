@@ -104,13 +104,13 @@
   }
   </script>
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=37">
+  <link rel="stylesheet" href="assets/css/styles.css?v=38">
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <link rel="stylesheet" href="assets/css/app.css?v=37">
-  <link rel="stylesheet" href="assets/css/social.css?v=37">
-  <link rel="stylesheet" href="assets/css/os.css?v=37">
-  <link rel="stylesheet" href="assets/css/lcore.css?v=37">
+  <link rel="stylesheet" href="assets/css/app.css?v=38">
+  <link rel="stylesheet" href="assets/css/social.css?v=38">
+  <link rel="stylesheet" href="assets/css/os.css?v=38">
+  <link rel="stylesheet" href="assets/css/lcore.css?v=38">
 </head>
 <body>
 
@@ -156,6 +156,10 @@
       </div>
 
       <div class="os__bar-right">
+        <button class="os__bar-btn os__ws" type="button" id="os-ws" title="Áreas de trabalho" aria-haspopup="true" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="13" width="7" height="7" rx="1.5"/><rect x="14" y="13" width="7" height="7" rx="1.5"/></svg>
+          <span id="os-ws-name">Área 1</span>
+        </button>
         <span class="os__pill" title="Pessoas no site agora">
           <span class="os__pill-dot" aria-hidden="true"></span>
           <b data-people-count>1</b>
@@ -181,6 +185,8 @@
     </div>
 
     <nav class="os__dock" id="os-dock" aria-label="Aplicativos"></nav>
+
+    <div class="os__ws-menu" id="os-ws-menu" hidden></div>
 
     <div class="os__power" id="os-power-menu" hidden>
       <button type="button" data-os="normal">Modo normal (site)</button>
@@ -2285,8 +2291,8 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="assets/js/social.js?v=37" defer></script>
-  <script src="assets/js/lcore.js?v=37" defer></script>
-  <script src="assets/js/app.js?v=37" defer></script>
+  <script src="assets/js/social.js?v=38" defer></script>
+  <script src="assets/js/lcore.js?v=38" defer></script>
+  <script src="assets/js/app.js?v=38" defer></script>
 </body>
 </html>
