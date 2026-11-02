@@ -80,6 +80,8 @@ slash.
 
 The site now **opens straight into the study portal** (the decoy). There is no picker screen any
 more: to reach the game catalog, click **Ryan Smith** in the study footer, or press Shift + D / Alt + S.
+The decoy is **total**: on every tab — LuminSDK, GN-Math, catalogs, sites, browser, Hub and LuminOS —
+the page is titled **“StudyHub | Estudos e Quiz”** and uses the StudyHub logo.
 **LuminOS is not a tab** — it is a site in the collection (`dylanmc.site`) and opens in the built-in
 browser like any other. The mode pick lives only in this session (`luminsdk:v1:mode`) and the URL
 stays exactly the same everywhere.
@@ -292,6 +294,25 @@ restored. The games catalog shows up when the visitor:
 - presses **`Shift` + `D`** (or **`Alt` + `S`**) — the *two-key combo* that toggles between Study and
   the site from any tab.
 
+### Full decoy and the window-switch lock
+
+The tab title and icon are never LuminSDK's, not even after opening the catalog: everywhere the page
+is called **“StudyHub | Estudos e Quiz”** with `studyhub.svg`, and the title is rewritten immediately
+if any module tries to change it.
+
+- **Alt + Tab, Windows + Tab or switching browser tabs** sends the page back to the study portal at
+  once;
+- in that state the **Ryan Smith** credit is **disabled** (and `Shift`+`D` / `Alt`+`S` stop working),
+  so whoever bumps into the screen cannot reach the catalog;
+- the lock survives a reload inside the same browser session;
+- **`Ctrl` + `AltGr` + `H`** restores everything: real title and icon, credit enabled, catalog open.
+
+Honest limits: the browser does **not** let a page intercept Alt+Tab / Windows+Tab — the site reacts
+the moment the window loses focus, which looks the same in practice. Clicking inside a game (iframe)
+does not trigger the lock, because focus stays in this window. If keyboard focus is **inside** the
+game iframe, `Ctrl`+`AltGr`+`H` does not reach the page — click the player frame or go back to Study
+first and the shortcut answers again.
+
 | Action | What happens |
 |---|---|
 | opening `…/LuminSDK/` | lands on StudyDesk |
@@ -299,6 +320,8 @@ restored. The games catalog shows up when the visitor:
 | **Study** tab in the left rail | opens StudyDesk |
 | clicking **Ryan Smith** in the StudyDesk footer | opens LuminSDK |
 | **Lumin** tab in the left rail | opens LuminSDK |
+| **Alt + Tab** / **Windows + Tab** | back to Study and the lock arms |
+| **`Ctrl` + `AltGr` + `H`** | releases everything and opens the catalog |
 
 The URL **never** changes when switching tabs. Old addresses (`/gn/`, `/sites/`, `/study/`) still
 work: they redirect to `?view=…`, the app opens the requested tab and cleans the address bar right
