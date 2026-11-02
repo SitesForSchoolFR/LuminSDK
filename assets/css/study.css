@@ -950,6 +950,13 @@ html[data-view="estudo"] body { padding-left: 0; }
   color: var(--accent);
   border-bottom-color: var(--accent);
 }
+/* crédito com a trava de troca de janela armada: continua no lugar, sem ação */
+#view-estudo .sd-credit[aria-disabled="true"],
+#view-estudo .sd-credit:disabled {
+  color: var(--ink-mute);
+  border-bottom-color: transparent;
+  cursor: default;
+}
 
 /* =========================================================
    Ajustes por largura

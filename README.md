@@ -81,6 +81,8 @@ O objetivo é simples: **abrir a página e jogar**, sem contas, sem downloads e 
 
 Ao abrir, o site **já cai no portal de estudos** (o disfarce). Não existe mais tela de escolha:
 quem quiser o catálogo de jogos clica em **Ryan Smith** no rodapé dos estudos, ou Shift + D / Alt + S.
+E o disfarce é **total**: em qualquer aba — LuminSDK, GN-Math, catálogos, sites, navegador, Hub e
+LuminOS — a página se chama **“StudyHub | Estudos e Quiz”** e usa o logotipo do StudyHub.
 O **LuminOS** não é uma aba: ele é um **site do acervo** (`dylanmc.site`), que abre no navegador do
 site como qualquer outro. A escolha de modo fica só nesta sessão (`luminsdk:v1:mode`) e a URL
 continua idêntica em tudo.
@@ -303,20 +305,46 @@ restaurada. O catálogo de jogos aparece quando a pessoa:
 - aperta **`Shift` + `D`** (ou **`Alt` + `S`**), a *combinação de duas teclas* que alterna entre os
   estudos e o site em qualquer aba.
 
+### Disfarce total e a trava de troca de janela
+
+O título e o ícone da aba **não são mais os do LuminSDK** em nenhum momento, nem depois de abrir o
+catálogo: em toda aba do site a página se chama **“StudyHub | Estudos e Quiz”** e mostra o
+`studyhub.svg`. O título é reescrito na hora se algum módulo tentar trocá-lo (o navegador interno, por
+exemplo), então o nome real não aparece nem no histórico da janela.
+
+A partir daí vale a **trava de troca de janela**:
+
+- **Alt + Tab, Windows + Tab ou qualquer troca de aba do navegador** = a página volta para os
+  estudos na hora, com o portal de estudos à vista;
+- nesse estado o crédito **Ryan Smith** fica **desligado** (e os atalhos `Shift`+`D` / `Alt`+`S` param
+  de responder), então quem esbarrar na tela não consegue chegar ao catálogo;
+- a trava sobrevive a recarregar a página dentro da mesma sessão do navegador;
+- **`Ctrl` + `AltGr` + `H`** (o AltGr do Windows chega como Ctrl+Alt) devolve **tudo ao normal**:
+  título e ícone reais voltam, o crédito é liberado e o catálogo abre.
+
+Limites honestos: o navegador **não** deixa uma página interceptar Alt+Tab / Windows+Tab — o site
+reage no instante em que a janela perde o foco (visibilidade da aba ou perda de foco), o que na
+prática dá o mesmo resultado visual. Clicar dentro de um jogo (iframe) **não** dispara a trava: o
+foco continua nesta janela. Se o foco do teclado estiver **dentro** do iframe do jogo, o
+`Ctrl`+`AltGr`+`H` não chega à página — basta clicar na moldura do player ou voltar para os estudos,
+que o atalho volta a responder.
+
 | Ação | O que acontece |
 |---|---|
 | abrir `…/LuminSDK/` | cai nos estudos |
-| **`Shift` + `D`** / **`Alt` + `S`** | alterna estudos ⇄ site (funciona em qualquer aba, até dentro do jogo) |
+| **`Shift` + `D`** / **`Alt` + `S`** | alterna estudos ⇄ site (funciona em qualquer aba, até dentro do jogo, com a trava desarmada) |
 | Aba **Estudos** na barra da esquerda | abre os estudos |
-| clicar em **Ryan Smith** no rodapé dos estudos | abre o LuminSDK |
+| clicar em **Ryan Smith** no rodapé dos estudos | abre o LuminSDK (desligado enquanto a trava está armada) |
 | aba **Lumin** na barra da esquerda | abre o LuminSDK |
+| **Alt + Tab** / **Windows + Tab** | volta para os estudos e arma a trava |
+| **`Ctrl` + `AltGr` + `H`** | libera tudo e abre o catálogo |
 
 A URL **nunca** muda ao trocar de aba. Endereços antigos (`/gn/`, `/sites/`, `/study/`) continuam
 funcionando: eles redirecionam para `?view=…`, o app abre a aba pedida e limpa a barra de endereço na
 mesma hora — reabrir o site depois cai, de novo, nos estudos.
 
-A entrada é decidida por `assets/js/app.js` (o mesmo arquivo que troca de aba), o atalho de teclado
-fica nele e a saída em `assets/js/study.js`. A versão de arquivo único (`single/index.html`) **não**
+O título/ícone, a trava e o atalho de liberação vivem em `assets/js/app.js` (o mesmo arquivo que
+troca de aba); a saída por clique fica em `assets/js/study.js` e o menu Normal/OS em `assets/js/lcore.js`. A versão de arquivo único (`single/index.html`) **não**
 tem estudos — é sempre o catálogo de jogos. Cada arquivo é independente: nada do StudyDesk vaza para
 o visual escuro do LuminSDK.
 
