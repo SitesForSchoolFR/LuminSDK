@@ -108,12 +108,21 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
 @media (max-width: 860px) {
   .tabrail {
-    gap: 4px;
+    /* no celular o rail é a pílula de baixo: largura automática (sem isso
+       ele herdava os 68px da coluna do desktop e virava um rolo de abas) */
+    width: auto;
+    gap: 5px;
     padding: 6px 8px;
     max-width: calc(100vw - 16px);
     overflow-x: auto;
   }
   .tabrail__sep { display: none; }
-  .tabrail__tab { width: 48px; }
+  .tabrail__tab { width: 42px; }
   .tabrail__tab img { width: 21px; height: 21px; }
+}
+
+/* telas bem estreitas: oito abas só cabem com ícones mais justos */
+@media (max-width: 380px) {
+  .tabrail { gap: 4px; padding: 6px; }
+  .tabrail__tab { width: 38px; }
 }

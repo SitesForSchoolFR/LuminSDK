@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=35 -->
+  <!-- assets/css/styles.css?v=36 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -4025,7 +4025,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=35 -->
+  <!-- assets/css/app.css?v=36 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -4137,14 +4137,23 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
 @media (max-width: 860px) {
   .tabrail {
-    gap: 4px;
+    /* no celular o rail é a pílula de baixo: largura automática (sem isso
+       ele herdava os 68px da coluna do desktop e virava um rolo de abas) */
+    width: auto;
+    gap: 5px;
     padding: 6px 8px;
     max-width: calc(100vw - 16px);
     overflow-x: auto;
   }
   .tabrail__sep { display: none; }
-  .tabrail__tab { width: 48px; }
+  .tabrail__tab { width: 42px; }
   .tabrail__tab img { width: 21px; height: 21px; }
+}
+
+/* telas bem estreitas: oito abas só cabem com ícones mais justos */
+@media (max-width: 380px) {
+  .tabrail { gap: 4px; padding: 6px; }
+  .tabrail__tab { width: 38px; }
 }
   </style>
 </head>
@@ -11448,6 +11457,21 @@ html[data-view="gn"] .tabrail__tab.is-active {
         'assets/js/vault.js?v=35',
         'assets/js/community.js?v=35',
         'assets/js/atmosphere.js?v=35'
+      ]
+    },
+    hub: {
+      title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
+      css: ['assets/css/os.css?v=36', 'assets/css/hub.css?v=36'],
+      scripts: [
+        'assets/js/player.js?v=36',
+        'assets/js/os.js?v=36',
+        'assets/js/profile.js?v=36',
+        'assets/js/lab.js?v=36',
+        'assets/js/studio.js?v=36',
+        'assets/js/arcade.js?v=36',
+        'assets/js/vault.js?v=36',
+        'assets/js/community.js?v=36',
+        'assets/js/hub.js?v=36'
       ]
     },
     boot: {

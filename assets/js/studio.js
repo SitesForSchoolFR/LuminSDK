@@ -110,8 +110,9 @@
 
   function openPalette() {
     if (palette) { closePalette(); return; }
-    const root = document.getElementById('os') || document.body;
-    palette = el('div', 'cmdk');
+    const desk = OS.onDesk && OS.onDesk() ? document.getElementById('os') : null;
+    const root = desk || document.body;
+    palette = el('div', 'cmdk' + (desk ? '' : ' cmdk--solo'));
     palette.innerHTML = [
       '<div class="cmdk__box" role="dialog" aria-label="Paleta de comandos">',
       '  <input class="cmdk__input" type="text" placeholder="O que você quer fazer? (apps, temas, modos)" aria-label="Buscar comando">',
@@ -164,7 +165,8 @@
 
   window.addEventListener('keydown', function (event) {
     if (!(event.ctrlKey || event.metaKey) || String(event.key).toLowerCase() !== 'k') return;
-    if (!document.getElementById('os')) return;
+    /* vale no desktop e na aba Hub (site normal) */
+    if (!(OS.onDesk && OS.onDesk()) && !document.querySelector('#view-hub.is-active')) return;
     event.preventDefault();
     openPalette();
   });
@@ -198,7 +200,7 @@
       }).join(''),
       '</div></section>',
 
-      '<section class="kp-card"><h3>Tipografia das janelas</h3><div class="kp-row" data-fonts>',
+      '<section class="kp-card"><h3>Tipografia</h3><div class="kp-row" data-fonts>',
       FONTS.map(function (item) {
         return '<button class="kp-btn' + ((p.font || 'padrao') === item.id ? ' is-on' : '') + '" type="button" data-font="' + item.id + '">' + item.name + '</button>';
       }).join(''),

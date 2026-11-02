@@ -264,7 +264,10 @@
 
     box.innerHTML = html;
     const rows = box.querySelector('[data-recent]');
-    if (!recent.length) rows.innerHTML = '<p class="pf__empty">Você ainda não abriu nenhum jogo. O acervo está no dock, em <b>Jogos</b>.</p>';
+    if (!recent.length) {
+      const where = (OS.onDesk && OS.onDesk()) ? 'no dock, em <b>Jogos</b>' : 'na aba <b>Lumin</b> do site';
+      rows.innerHTML = '<p class="pf__empty">Você ainda não abriu nenhum jogo. O acervo está ' + where + '.</p>';
+    }
     recent.forEach(function (entry) {
       const sub = [entry.plays + (entry.plays === 1 ? ' partida' : ' partidas'), hours(entry.minutes), when(entry.last)].filter(Boolean).join(' · ');
       rows.append(gameRow(entry.id, entry, { sub: sub, play: true }));

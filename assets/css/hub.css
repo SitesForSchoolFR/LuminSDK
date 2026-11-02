@@ -1,0 +1,190 @@
+/* =========================================================
+   Hub — as ferramentas do LuminOS dentro do site normal
+   A aba reaproveita os apps do OS (Perfil, Laboratório, Estúdio,
+   Arcade, Cofre e Comunidade) numa moldura escura, sem janelas e
+   sem dock: o mesmo código, outra superfície.
+   Autor: Ryan Smith · Licença MIT
+   ========================================================= */
+
+.hub {
+  padding-block: clamp(26px, 4vw, 44px) clamp(44px, 6vw, 76px);
+}
+
+.hub__head {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.hub__title {
+  margin: 0;
+  font-family: var(--font-display, system-ui, sans-serif);
+  font-size: clamp(1.5rem, 3.2vw, 2.05rem);
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  color: var(--text, #f4f4f5);
+}
+
+.hub__lead {
+  margin: 0;
+  max-width: 68ch;
+  font-size: .84rem;
+  line-height: 1.65;
+  color: var(--muted, #8b8b9c);
+}
+
+.hub__lead b {
+  color: #dcdce8;
+  font-weight: 600;
+}
+
+/* ---------- chips das ferramentas ---------- */
+.hub__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding-bottom: 2px;
+}
+
+.hub__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  background: rgba(255, 255, 255, .03);
+  color: #b9b9d4;
+  font: inherit;
+  font-size: .77rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.hub__tab svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+}
+
+.hub__tab:hover {
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+}
+
+.hub__tab.is-on {
+  border-color: rgba(var(--accent-rgb, 139, 92, 246), .55);
+  background: rgba(var(--accent-rgb, 139, 92, 246), .16);
+  color: #fff;
+}
+
+/* ---------- palco ---------- */
+.hub__stage {
+  --os-accent: #a78bfa;
+  --os-accent-2: #22d3ee;
+  --accent-rgb: 139, 92, 246;
+  position: relative;
+  padding: 10px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, .09);
+  background:
+    radial-gradient(120% 90% at 8% -20%, rgba(var(--accent-rgb), .18), transparent 62%),
+    radial-gradient(90% 80% at 100% 120%, rgba(var(--accent-rgb), .1), transparent 60%),
+    #08080e;
+  box-shadow: 0 40px 90px -60px #000;
+}
+
+.hub__mount {
+  height: min(74vh, 700px);
+  min-height: 420px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, .07);
+  background: #0b0b12;
+  overflow: hidden;
+}
+
+.hub__mount .kp {
+  border-radius: 12px;
+}
+
+.hub__app {
+  height: 100%;
+}
+
+/* a densidade escolhida no Estúdio também vale aqui */
+.hub__stage[data-density="compacto"] .kp-body {
+  padding: 10px 12px 14px;
+  gap: 10px;
+}
+
+.hub__stage[data-density="amplo"] .kp-body {
+  padding: 18px 20px 24px;
+  gap: 16px;
+}
+
+.hub__stage[data-font="serifada"] .kp {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.hub__stage[data-font="mono"] .kp {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+
+.hub__foot {
+  margin: 10px 0 0;
+  font-size: .72rem;
+  line-height: 1.6;
+  color: #7f7f96;
+}
+
+.hub__foot kbd {
+  padding: 1px 5px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .06);
+  font-size: .68rem;
+}
+
+/* o toast do OS vira um aviso fixo quando não existe desktop */
+.os-toast--solo {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  z-index: 95;
+  transform: translate(-50%, 12px);
+}
+
+.os-toast--solo.is-on {
+  transform: translate(-50%, 0);
+}
+
+/* a paleta, aberta pelo Estúdio dentro do hub, cobre a tela toda */
+.cmdk--solo {
+  position: fixed;
+  z-index: 96;
+}
+
+@media (max-width: 760px) {
+  .hub__mount {
+    height: 76vh;
+    min-height: 400px;
+  }
+
+  .hub__stage {
+    padding: 6px;
+    border-radius: 14px;
+  }
+
+  .hub__tab {
+    font-size: .72rem;
+    padding: 6px 10px 6px 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub__tab {
+    transition: none;
+  }
+}

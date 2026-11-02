@@ -75,6 +75,21 @@
         'assets/js/atmosphere.js?v=35'
       ]
     },
+    hub: {
+      title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
+      css: ['assets/css/os.css?v=36', 'assets/css/hub.css?v=36'],
+      scripts: [
+        'assets/js/player.js?v=36',
+        'assets/js/os.js?v=36',
+        'assets/js/profile.js?v=36',
+        'assets/js/lab.js?v=36',
+        'assets/js/studio.js?v=36',
+        'assets/js/arcade.js?v=36',
+        'assets/js/vault.js?v=36',
+        'assets/js/community.js?v=36',
+        'assets/js/hub.js?v=36'
+      ]
+    },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],

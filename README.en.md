@@ -175,6 +175,11 @@ OS mode is a real desktop inside the same page:
   machine and a shareable wishlist — with **no** fake login, cloud or public profile;
 - **Notes** (saved locally), **Calculator**, **Settings** and **About**.
 
+These tools also exist **outside the OS**: the **Hub** tab (in the rail, next to Sites, Nav and
+Study) mounts Profile, Lab, Studio, Arcade, Vault and Community inside a dark frame with no windows
+and no dock — same code (`assets/js/hub.js` calls each app's `render()`). The accent colour, density
+and typography chosen in Studio show up there too; wallpaper and immersive mode stay desktop-only.
+
 ### Live presence and global chat
 
 Two floating pieces follow the site — and hide on Study, on the entry screen and **while a game is

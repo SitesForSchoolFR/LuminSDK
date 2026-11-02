@@ -51,6 +51,12 @@
   let root, desk, layer, dock, crumb;
 
   /* ---------- preferências ---------- */
+  /* o #os existe sempre no HTML: "estar no desktop" é estar visível com boot feito */
+  function onDesk() {
+    const view = document.getElementById('view-os');
+    return !!root && !!view && !view.hidden;
+  }
+
   function prefs() {
     try {
       return JSON.parse(localStorage.getItem(STORE) || '{}') || {};
@@ -128,8 +134,16 @@
     if (window.LuminNotify && typeof window.LuminNotify.push === 'function') {
       try { window.LuminNotify.push(text); } catch (error) {}
     }
-    const box = document.getElementById('os-toast');
-    if (!box) return;
+    let box = onDesk() ? document.getElementById('os-toast') : null;
+    if (!box) {
+      /* fora do desktop (aba Hub) o aviso vira um toast fixo na tela */
+      box = document.getElementById('os-toast-float');
+      if (!box) {
+        box = el('div', 'os-toast os-toast--solo');
+        box.id = 'os-toast-float';
+        document.body.append(box);
+      }
+    }
     box.textContent = text;
     box.hidden = false;
     box.classList.add('is-on');
@@ -250,6 +264,11 @@
   }
 
   function openApp(id) {
+    /* fora do desktop: quem manda nos apps é a aba Hub (site normal) */
+    if (!onDesk()) {
+      if (window.LuminHub && window.LuminHub.open(id)) return;
+      if (window.LuminHub) return;
+    }
     if (id === 'chat') {
       if (window.LuminSocial) window.LuminSocial.open();
       return;
@@ -819,6 +838,10 @@
 
   /* abre o acervo já tocando um jogo — o Perfil usa isto para "jogar" */
   async function playById(id) {
+    if (!onDesk()) {
+      if (window.LuminHub && window.LuminHub.play(id)) return true;
+      return false;
+    }
     openApp('games');
     const entry = state.windows.games;
     if (!entry) return false;
@@ -1370,6 +1393,11 @@
     boot: boot,
     state: state,
     register: register,
+    onDesk: onDesk,
+    getApp: function (id) {
+      return APPS.filter(function (item) { return item.id === id; })[0] || null;
+    },
+    icon: function (id) { return ICONS[id] || ''; },
     play: playById,
     notify: notifyAchievements,
     refresh: function () { renderDock(); renderIcons(); syncLevelChip(); },
@@ -1395,6 +1423,11 @@
   function ready() {
     if (document.getElementById('os')) boot();
   }
+
+  window.addEventListener('lumin:view', function (event) {
+    const route = event && event.detail && event.detail.route;
+    if (route === 'os') boot();
+  });
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ready);
   else ready();
 })();
