@@ -315,7 +315,9 @@ exemplo), então o nome real não aparece nem no histórico da janela.
 A partir daí vale a **trava de troca de janela**:
 
 - **Alt + Tab, Windows + Tab ou qualquer troca de aba do navegador** = a página volta para os
-  estudos na hora, com o portal de estudos à vista;
+  estudos na hora, com o portal de estudos à vista — **sempre**, quantas vezes for (além dos eventos
+  de foco/visibilidade, a página confere o foco da janela a cada 0,8 s, então não existe “só
+  funcionou uma vez”);
 - nesse estado o crédito **Ryan Smith** fica **desligado** (e os atalhos `Shift`+`D` / `Alt`+`S` param
   de responder), então quem esbarrar na tela não consegue chegar ao catálogo;
 - a trava sobrevive a recarregar a página dentro da mesma sessão do navegador;
@@ -324,7 +326,9 @@ A partir daí vale a **trava de troca de janela**:
 
 Limites honestos: o navegador **não** deixa uma página interceptar Alt+Tab / Windows+Tab — o site
 reage no instante em que a janela perde o foco (visibilidade da aba ou perda de foco), o que na
-prática dá o mesmo resultado visual. Clicar dentro de um jogo (iframe) **não** dispara a trava: o
+prática dá o mesmo resultado visual. Como a trava olha o foco da janela, **abrir qualquer coisa em
+outra aba** (link externo, “abrir em nova aba” do player, o próprio Alt+Tab) também devolve a página
+aos estudos — é o comportamento pedido, mas vale saber. Clicar dentro de um jogo (iframe) **não** dispara a trava: o
 foco continua nesta janela. Se o foco do teclado estiver **dentro** do iframe do jogo, o
 `Ctrl`+`AltGr`+`H` não chega à página — basta clicar na moldura do player ou voltar para os estudos,
 que o atalho volta a responder.
@@ -583,10 +587,15 @@ customSources: [
 ]
 ```
 
-O jogo é reconhecido pelo `id` do catálogo e, se ele mudar, pelo **nome exato** — por isso
-`Undertale Yellow`, que tem id e nome diferentes, continua abrindo no player normal. Ao abrir um
-desses títulos, o cabeçalho do player mostra um selo (ex.: “Toby Web”) com o domínio de destino na
-dica de tela; se a página não carregar no iframe, o botão “abrir em outra aba” resolve.
+O jogo é reconhecido pelo `id` do catálogo, pelo **nome exato** e, por fim, pelo nome sem os
+sufixos entre parênteses/colchetes (`Undertale (PC)` → `undertale`). `Undertale Yellow` e
+`Friday Night Funkin vs Undertale` têm nomes diferentes e continuam abrindo no player normal.
+
+O **Undertale** tem uma regra a mais: se o catálogo entregar um endereço do GN-Math
+(`gn-math.github.io`) para ele, o `library.js` troca pelo endereço do Toby antes de montar o iframe —
+o jogo nunca abre no GN-Math, sempre no nosso player com o site do Toby dentro. Ao abrir um desses
+títulos, o cabeçalho do player mostra um selo (ex.: “Toby Web”) com o domínio de destino na dica de
+tela; se a página não carregar no iframe, o botão “abrir em outra aba” resolve.
 
 > A documentação completa (configuração, eventos e todos os métodos) está em
 > **[docs.luminsdk.com](https://docs.luminsdk.com/)**.

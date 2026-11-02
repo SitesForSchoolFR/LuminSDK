@@ -24,18 +24,18 @@
       css: [],
       scripts: [
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=39',
-        'assets/js/settings.js?v=39',
-        'assets/js/site.js?v=39',
-        'assets/js/atmosphere.js?v=39',
-        'assets/js/progress.js?v=39',
-        'assets/js/bonus.js?v=39'
+        'assets/js/library.js?v=40',
+        'assets/js/settings.js?v=40',
+        'assets/js/site.js?v=40',
+        'assets/js/atmosphere.js?v=40',
+        'assets/js/progress.js?v=40',
+        'assets/js/bonus.js?v=40'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=39'],
-      scripts: ['assets/js/gnmath.js?v=39'],
+      css: ['assets/css/gnmath.css?v=40'],
+      scripts: ['assets/js/gnmath.js?v=40'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -47,60 +47,60 @@
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=39'],
-      scripts: ['assets/js/provider.js?v=39', 'assets/js/atmosphere.js?v=39']
+      css: ['assets/css/provider.css?v=40'],
+      scripts: ['assets/js/provider.js?v=40', 'assets/js/atmosphere.js?v=40']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=39'],
-      scripts: ['assets/js/sites.js?v=39', 'assets/js/atmosphere.js?v=39']
+      css: ['assets/css/sites.css?v=40'],
+      scripts: ['assets/js/sites.js?v=40', 'assets/js/atmosphere.js?v=40']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=39'],
-      scripts: ['assets/js/browser.js?v=39', 'assets/js/atmosphere.js?v=39']
+      css: ['assets/css/browser.css?v=40'],
+      scripts: ['assets/js/browser.js?v=40', 'assets/js/atmosphere.js?v=40']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=39',
-        'assets/js/os.js?v=39',
-        'assets/js/profile.js?v=39',
-        'assets/js/lab.js?v=39',
-        'assets/js/studio.js?v=39',
-        'assets/js/arcade.js?v=39',
-        'assets/js/vault.js?v=39',
-        'assets/js/community.js?v=39',
-        'assets/js/central.js?v=39',
-        'assets/js/atmosphere.js?v=39'
+        'assets/js/player.js?v=40',
+        'assets/js/os.js?v=40',
+        'assets/js/profile.js?v=40',
+        'assets/js/lab.js?v=40',
+        'assets/js/studio.js?v=40',
+        'assets/js/arcade.js?v=40',
+        'assets/js/vault.js?v=40',
+        'assets/js/community.js?v=40',
+        'assets/js/central.js?v=40',
+        'assets/js/atmosphere.js?v=40'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=39', 'assets/css/hub.css?v=39'],
+      css: ['assets/css/os.css?v=40', 'assets/css/hub.css?v=40'],
       scripts: [
-        'assets/js/player.js?v=39',
-        'assets/js/os.js?v=39',
-        'assets/js/profile.js?v=39',
-        'assets/js/lab.js?v=39',
-        'assets/js/studio.js?v=39',
-        'assets/js/arcade.js?v=39',
-        'assets/js/vault.js?v=39',
-        'assets/js/community.js?v=39',
-        'assets/js/central.js?v=39',
-        'assets/js/hub.js?v=39'
+        'assets/js/player.js?v=40',
+        'assets/js/os.js?v=40',
+        'assets/js/profile.js?v=40',
+        'assets/js/lab.js?v=40',
+        'assets/js/studio.js?v=40',
+        'assets/js/arcade.js?v=40',
+        'assets/js/vault.js?v=40',
+        'assets/js/community.js?v=40',
+        'assets/js/central.js?v=40',
+        'assets/js/hub.js?v=40'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=39']
+      scripts: ['assets/js/atmosphere.js?v=40']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=39'],
-      scripts: ['assets/js/study-questions.js?v=39', 'assets/js/study.js?v=39']
+      css: ['assets/css/study.css?v=40'],
+      scripts: ['assets/js/study-questions.js?v=40', 'assets/js/study.js?v=40']
     }
   };
 
@@ -267,7 +267,7 @@
     } catch (error) { /* modo privado sem storage */ }
   }
 
-  const shield = { disguise: true, locked: readLock(), observer: null, timer: 0, bye: false };
+  const shield = { disguise: true, locked: readLock(), observer: null, timer: 0, beat: 0, bye: false };
 
   /* título à prova de reescrita: qualquer módulo que tente trocar o título
      (navegador interno, chamadas do app) é corrigido na hora */
@@ -320,6 +320,7 @@
   /* troca de janela/aba: volta para os estudos e liga a trava */
   function shieldPanic() {
     if (shield.bye) return;                /* recarregar/fechar não conta como Alt+Tab */
+    if (shield.locked && current === 'estudo') return;   /* já está no lugar certo */
     shield.disguise = true;
     shield.locked = true;
     writeLock(true);
@@ -331,6 +332,7 @@
   function shieldRelease() {
     shield.disguise = false;
     shield.locked = false;
+    shield.bye = false;
     writeLock(false);
     paintShield();
     go('lumin', { reveal: true, force: true });
@@ -359,6 +361,33 @@
   window.addEventListener('pagehide', function () { shield.bye = true; });
   window.addEventListener('beforeunload', function () { shield.bye = true; });
   window.addEventListener('pageshow', function () { shield.bye = false; });
+
+  /* ---- batida do disfarce ------------------------------------------------
+     Nem todo navegador entrega blur/visibilitychange do mesmo jeito (e um
+     Alt+Tab atrás do outro pode não gerar evento nenhum). Em vez de confiar
+     num evento só, a página confere o foco de tempo em tempo: se a janela
+     perdeu o foco — de novo, quantas vezes for — ela volta para os estudos. */
+  let sawFocus = typeof document.hasFocus === 'function' ? document.hasFocus() : true;
+
+  function noteFocus() {
+    sawFocus = true;
+    shield.bye = false;
+  }
+
+  function startHeartbeat() {
+    if (shield.beat) return;
+    shield.beat = window.setInterval(function () {
+      if (shield.bye) return;
+      if (document.visibilityState === 'hidden') { shieldPanic(); return; }
+      if (!sawFocus) return;                       /* aba aberta em segundo plano */
+      if (typeof document.hasFocus === 'function' && !document.hasFocus()) shieldPanic();
+    }, 800);
+  }
+
+  window.addEventListener('focus', noteFocus);
+  document.addEventListener('pointerdown', noteFocus, true);
+  document.addEventListener('keydown', noteFocus, true);
+  startHeartbeat();
 
   /* ---------- troca de aba ---------- */
   function paintRail(route) {

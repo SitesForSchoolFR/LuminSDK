@@ -19,7 +19,7 @@
   const toast = OS.ui.toast;
 
   const ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.4"/><path d="M15.6 15.6 20 20M11 9.4v3.2M9.4 11h3.2"/></svg>';
-  const VERSION = 'v39';
+  const VERSION = 'v40';
 
   const HIST_KEY = 'luminsdk:v1:central:hist';
   const PIN_KEY = 'luminsdk:v1:central:pins';
@@ -58,6 +58,11 @@
   };
 
   const CHANGELOG = [
+    { v: 'v40', items: [
+      'Alt+Tab / Windows+Tab voltam aos estudos em toda troca de janela, não só na primeira: a página confere o foco a cada 0,8 s.',
+      'A única saída com a trava armada continua sendo Ctrl+AltGr+H; Shift+D e o crédito “Ryan Smith” ficam desligados.',
+      'Undertale abre sempre no iframe do site do Toby, nunca no GN-Math — inclusive se o catálogo entregar o endereço antigo.'
+    ] },
     { v: 'v39', items: [
       'Disfarce total: qualquer aba do site usa o nome e o logotipo do StudyHub — inclusive LuminSDK, GN-Math, Sites e LuminOS.',
       'Alt+Tab / Windows+Tab devolve a página para os estudos e desliga o crédito “Ryan Smith” e os atalhos Shift+D / Alt+S.',
