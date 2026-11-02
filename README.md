@@ -87,7 +87,7 @@ continua idêntica em tudo.
 
 | Modo | O que é |
 |---|---|
-| **OS** | O **LuminOS**: área de trabalho escura com papel de parede, dock, janelas que arrastam, minimizam e maximizam, atalhos na mesa e apps de verdade (Jogos, Navegador, Sites, Chat, Notas, Calculadora, Ajustes e Sobre). |
+| **OS** | O **LuminOS**: área de trabalho escura com papel de parede, dock, janelas que arrastam, minimizam e maximizam, atalhos na mesa e apps de verdade (Perfil, Jogos, Laboratório, Estúdio, Arcade, Cofre, Comunidade, Filmes, Navegador, Sites, Chat, Notas, Calculadora, Ajustes e Sobre). |
 | **Normal** | O site como sempre foi: catálogo de jogos, abas na lateral e o portal de estudos. |
 Trocar de aba, buscar, filtrar favoritos, abrir as configurações, jogar, abrir os estudos, nada disso
 mexe no endereço: sem `/gn/`, sem `/sites/`, sem `#/algo`, sem `?cat=`. Se você copiar a URL no meio
@@ -154,7 +154,7 @@ quem tiver o endereço antigo salvo é levado de volta para `…/LuminSDK/` já 
 O modo OS é uma área de trabalho de verdade dentro da mesma página:
 
 - **janelas** arrastáveis, com minimizar, maximizar e fechar (no celular abrem em tela cheia);
-- **dock** com oito apps e **atalhos** na mesa (somem sozinhos em telas pequenas);
+- **dock** com quinze apps (em duas linhas no celular, nunca escondidos atrás de rolagem) e **atalhos** na mesa;
 - **papéis de parede** (aurora, meia-noite, floresta, papel) e **cor de destaque** salvos em
   `luminsdk:v1:os`;
 - **Jogos**: os 848 títulos do acervo GN-Math, com capa (quatro espelhos e monograma se falhar) e
@@ -162,6 +162,20 @@ O modo OS é uma área de trabalho de verdade dentro da mesma página:
 - **Navegador**: barra de endereço, home com as coleções principais e aviso honesto quando o site
   recusa ser embutido;
 - **Sites**: as 67 coleções em lista pesquisável (abrem no Navegador);
+- **Perfil**: XP, nível, conquistas, desafios diários, coleções, resenhas e retrospectiva, tudo em
+  `luminsdk:player:v1` (veja `assets/js/player.js`);
+- **Laboratório**: testa controle (analógicos, gatilhos, vibração), mapeia teclado e mouse, mede latência
+  de entrada e faz o diagnóstico do navegador (tela, FPS, armazenamento, bateria, recursos);
+- **Estúdio**: papel de parede, cor de destaque (inclusive personalizada), densidade, tipografia e os
+  modos **Lite**, **Imersivo**, **sem animação** e **alto contraste**, além da **paleta de comandos**
+  (`Ctrl/⌘ + K`) e da **central de avisos**;
+- **Arcade**: alvo rápido, roleta de jogo, desafio diário, bichinho virtual, quiz, soundboard com WebAudio
+  (nada de arquivo de áudio), cronômetro, conversor de unidades e curiosidades;
+- **Cofre**: backup completo em `.json` (exportar/importar), códigos por app (`LUM-PREF-…`, `LUM-PLAY-…`,
+  `LUM-PET-…`), mapa de ocupação do armazenamento e o cantinho do desenvolvedor (novidades, status dos
+  assets, registro de erros da sessão, preferências cruas e playground);
+- **Comunidade**: coleções por código (`LUM-COLL-…`), pacotes prontos, recomendações que rodam na sua
+  máquina e wishlist compartilhável — **sem** login, nuvem ou perfil público inventado;
 - **Notas** (salvas no navegador), **Calculadora**, **Ajustes** e **Sobre**;
 - o **chat** e a **presença** são os mesmos do resto do site.
 
@@ -428,6 +442,13 @@ LuminSDK/
 │   │   ├── bonus.js            # Central de bônus: controle, rede, cache, estatísticas e conquistas
 │   │   ├── app.js              # Aba única: rotas por sessionStorage, carrega cada aba sob demanda
 │   │   ├── os.js               # LuminOS: janelas, dock e apps (jogos, navegador, sites, notas…)
+│   │   ├── player.js           # LuminPlayer: XP, conquistas, coleções e sessões
+│   │   ├── profile.js          # App Perfil (hub do jogador)
+│   │   ├── lab.js              # App Laboratório (controle, teclado/mouse, latência, diagnóstico)
+│   │   ├── studio.js           # App Estúdio (tema, modos, paleta Ctrl+K, avisos)
+│   │   ├── arcade.js           # App Arcade (alvo, bichinho, quiz, sons, cronômetro, conversor)
+│   │   ├── vault.js            # App Cofre (backup, códigos, dados e área do desenvolvedor)
+│   │   ├── community.js        # App Comunidade (coleções por código, recomendações, wishlist)
 │   │   ├── social.js           # Presença, chat global e canal de comandos (painel)
 │   │   ├── browser.js          # Navegador: barra de endereço, home e aba limpa
 │   │   ├── provider.js         # Catálogos DuckMath/Astra: filtros, busca, minimal e player

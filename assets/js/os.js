@@ -65,11 +65,36 @@
     applyPrefs();
   }
 
+  /* preferências de interface (o Estúdio escreve aqui) */
+  const FONTS = ['padrao', 'serifada', 'mono'];
+
   function applyPrefs() {
     const p = prefs();
     if (!root) return;
     root.dataset.wall = WALLS.indexOf(p.wall) >= 0 ? p.wall : 'aurora';
     root.dataset.accent = p.accent || 'violeta';
+    root.dataset.density = p.density === 'compacto' ? 'compacto' : (p.density === 'amplo' ? 'amplo' : 'confortavel');
+    root.dataset.lite = p.lite ? 'on' : 'off';
+    root.dataset.immersive = p.immersive ? 'on' : 'off';
+    root.dataset.motion = p.motion === false ? 'off' : 'on';
+    root.dataset.contrast = p.contrast ? 'on' : 'off';
+    root.dataset.font = FONTS.indexOf(p.font) >= 0 ? p.font : 'padrao';
+
+    /* cor de destaque personalizada: manda em tudo que usa o token */
+    if (p.accentHex && /^#[0-9a-f]{6}$/i.test(p.accentHex)) {
+      const rgb = hexToRgb(p.accentHex);
+      root.style.setProperty('--os-accent', p.accentHex);
+      root.style.setProperty('--accent-rgb', rgb);
+      root.dataset.accent = 'custom';
+    } else {
+      root.style.removeProperty('--os-accent');
+      root.style.removeProperty('--accent-rgb');
+    }
+  }
+
+  function hexToRgb(hex) {
+    const value = String(hex).replace('#', '');
+    return [parseInt(value.slice(0, 2), 16), parseInt(value.slice(2, 4), 16), parseInt(value.slice(4, 6), 16)].join(', ');
   }
 
   /* ---------- utilidades ---------- */
@@ -100,6 +125,9 @@
   }
 
   function toast(text) {
+    if (window.LuminNotify && typeof window.LuminNotify.push === 'function') {
+      try { window.LuminNotify.push(text); } catch (error) {}
+    }
     const box = document.getElementById('os-toast');
     if (!box) return;
     box.textContent = text;
@@ -1351,7 +1379,9 @@
       toast: toast,
       prefs: prefs,
       savePrefs: savePrefs,
-      openUrl: openUrl
+      applyPrefs: applyPrefs,
+      openUrl: openUrl,
+      walls: WALLS.slice()
     },
     data: {
       games: loadGames,
