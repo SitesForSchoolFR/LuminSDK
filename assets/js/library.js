@@ -1024,17 +1024,45 @@
       .trim();
   }
 
+  /* "Undertale" · "Undertale (PC)" · "UNDERTALE [Steam]" → "undertale"
+     "Undertale Yellow" e "FNF vs Undertale" continuam de fora. */
+  function baseName(value) {
+    return normalizeName(value)
+      .replace(/\([^)]*\)|\[[^\]]*\]/g, ' ')
+      .replace(/\b(pc|steam|deluxe|remake|edition|edicao|jogo|game)\b/g, ' ')
+      .replace(/[^a-z0-9 ]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   function customSource(game) {
     if (!game) return null;
     const id = String(game.id || '');
-    const name = normalizeName(game.name);
+    const name = normalizeName(game.name || game.n);
     const sources = CONFIG.customSources;
 
     const byId = sources.find((entry) => entry.id && entry.id === id);
     if (byId) return byId;
 
     /* só o nome exato: "Undertale" ≠ "Undertale Yellow" */
-    return sources.find((entry) => entry.name && entry.name === name) || null;
+    const exact = sources.find((entry) => entry.name && entry.name === name);
+    if (exact) return exact;
+
+    /* o mesmo jogo com sufixo entre parênteses/colchetes */
+    const base = baseName(game.name || game.n);
+    return sources.find((entry) => entry.name && entry.name === base) || null;
+  }
+
+  /* O catálogo pode entregar um endereço do GN-Math para o Undertale (o
+     player ficava mostrando "GN-Math.github.io"). Aqui esse endereço é
+     trocado pelo do Toby, que roda dentro do nosso iframe. */
+  const GN_MATH_HOST = /^(https?:)?\/\/([a-z0-9-]+\.)*gn-math\.github\.io\//i;
+
+  function tobyFor(game, url) {
+    const source = customSource(game);
+    if (source) return source.url;
+    if (!url || !GN_MATH_HOST.test(url)) return '';
+    return baseName(game && (game.name || game.n)) === 'undertale' ? CONFIG.customSources[0].url : '';
   }
 
   function isFavorite(id) {
@@ -1670,8 +1698,12 @@
     }
     if (!url) throw new Error('URL do jogo indisponível.');
 
+    /* Undertale nunca abre pelo GN-Math: vai para o Toby, no nosso player */
+    const toby = tobyFor(game, url);
+    if (toby) url = toby;
+
     state.currentUrl = url;
-    setPlayerSource(custom || own);
+    setPlayerSource(custom || (toby ? { label: 'Toby Web', url: toby } : own));
     expectedFrameSrc = url;
     if (dom.playerFrame) dom.playerFrame.src = url;
     state.currentGame = game;

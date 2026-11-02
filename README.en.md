@@ -301,14 +301,18 @@ is called **“StudyHub | Estudos e Quiz”** with `studyhub.svg`, and the title
 if any module tries to change it.
 
 - **Alt + Tab, Windows + Tab or switching browser tabs** sends the page back to the study portal at
-  once;
+  once — **every time**, no matter how often (besides focus/visibility events, the page checks the
+  window focus every 0.8 s, so there is no “it only worked once”);
 - in that state the **Ryan Smith** credit is **disabled** (and `Shift`+`D` / `Alt`+`S` stop working),
   so whoever bumps into the screen cannot reach the catalog;
 - the lock survives a reload inside the same browser session;
 - **`Ctrl` + `AltGr` + `H`** restores everything: real title and icon, credit enabled, catalog open.
 
 Honest limits: the browser does **not** let a page intercept Alt+Tab / Windows+Tab — the site reacts
-the moment the window loses focus, which looks the same in practice. Clicking inside a game (iframe)
+the moment the window loses focus, which looks the same in practice. Because the lock watches the
+window focus, **opening anything in another tab** (external link, the player's “open in a new tab”,
+Alt+Tab itself) also takes the page back to Study — that is the requested behaviour, but it is worth
+knowing. Clicking inside a game (iframe)
 does not trigger the lock, because focus stays in this window. If keyboard focus is **inside** the
 game iframe, `Ctrl`+`AltGr`+`H` does not reach the page — click the player frame or go back to Study
 first and the shortcut answers again.
@@ -495,10 +499,15 @@ customSources: [
 ]
 ```
 
-The match is the catalog `id` first and the **exact** name as a fallback, so `Undertale Yellow`
-(another id) keeps opening in the normal player. Opening one of these titles shows a badge in the
-player header (e.g. “Toby Web”) with the destination domain as a tooltip; if the page refuses to
-load in the iframe, the “open in a new tab” button is the way out.
+The match is the catalog `id` first, then the **exact** name, then the name without bracketed
+suffixes (`Undertale (PC)` → `undertale`), so `Undertale Yellow` and `Friday Night Funkin vs
+Undertale` keep opening in the normal player.
+
+**Undertale** has one extra rule: if the catalog hands out a GN-Math address (`gn-math.github.io`)
+for it, `library.js` swaps in the Toby URL before building the iframe — the game never opens on
+GN-Math, always inside our player with the Toby site in it. Opening one of these titles shows a badge
+in the player header (e.g. “Toby Web”) with the destination domain as a tooltip; if the page refuses
+to load in the iframe, the “open in a new tab” button is the way out.
 
 Full API reference: **[docs.luminsdk.com](https://docs.luminsdk.com/)**.
 

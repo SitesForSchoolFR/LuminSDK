@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=39 -->
+  <!-- assets/css/styles.css?v=40 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -4025,7 +4025,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=39 -->
+  <!-- assets/css/app.css?v=40 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -6306,17 +6306,45 @@ html[data-view="gn"] .tabrail__tab.is-active {
       .trim();
   }
 
+  /* "Undertale" · "Undertale (PC)" · "UNDERTALE [Steam]" → "undertale"
+     "Undertale Yellow" e "FNF vs Undertale" continuam de fora. */
+  function baseName(value) {
+    return normalizeName(value)
+      .replace(/\([^)]*\)|\[[^\]]*\]/g, ' ')
+      .replace(/\b(pc|steam|deluxe|remake|edition|edicao|jogo|game)\b/g, ' ')
+      .replace(/[^a-z0-9 ]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   function customSource(game) {
     if (!game) return null;
     const id = String(game.id || '');
-    const name = normalizeName(game.name);
+    const name = normalizeName(game.name || game.n);
     const sources = CONFIG.customSources;
 
     const byId = sources.find((entry) => entry.id && entry.id === id);
     if (byId) return byId;
 
     /* só o nome exato: "Undertale" ≠ "Undertale Yellow" */
-    return sources.find((entry) => entry.name && entry.name === name) || null;
+    const exact = sources.find((entry) => entry.name && entry.name === name);
+    if (exact) return exact;
+
+    /* o mesmo jogo com sufixo entre parênteses/colchetes */
+    const base = baseName(game.name || game.n);
+    return sources.find((entry) => entry.name && entry.name === base) || null;
+  }
+
+  /* O catálogo pode entregar um endereço do GN-Math para o Undertale (o
+     player ficava mostrando "GN-Math.github.io"). Aqui esse endereço é
+     trocado pelo do Toby, que roda dentro do nosso iframe. */
+  const GN_MATH_HOST = /^(https?:)?\/\/([a-z0-9-]+\.)*gn-math\.github\.io\//i;
+
+  function tobyFor(game, url) {
+    const source = customSource(game);
+    if (source) return source.url;
+    if (!url || !GN_MATH_HOST.test(url)) return '';
+    return baseName(game && (game.name || game.n)) === 'undertale' ? CONFIG.customSources[0].url : '';
   }
 
   function isFavorite(id) {
@@ -6952,8 +6980,12 @@ html[data-view="gn"] .tabrail__tab.is-active {
     }
     if (!url) throw new Error('URL do jogo indisponível.');
 
+    /* Undertale nunca abre pelo GN-Math: vai para o Toby, no nosso player */
+    const toby = tobyFor(game, url);
+    if (toby) url = toby;
+
     state.currentUrl = url;
-    setPlayerSource(custom || own);
+    setPlayerSource(custom || (toby ? { label: 'Toby Web', url: toby } : own));
     expectedFrameSrc = url;
     if (dom.playerFrame) dom.playerFrame.src = url;
     state.currentGame = game;
@@ -11427,18 +11459,18 @@ html[data-view="gn"] .tabrail__tab.is-active {
       css: [],
       scripts: [
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=39',
-        'assets/js/settings.js?v=39',
-        'assets/js/site.js?v=39',
-        'assets/js/atmosphere.js?v=39',
-        'assets/js/progress.js?v=39',
-        'assets/js/bonus.js?v=39'
+        'assets/js/library.js?v=40',
+        'assets/js/settings.js?v=40',
+        'assets/js/site.js?v=40',
+        'assets/js/atmosphere.js?v=40',
+        'assets/js/progress.js?v=40',
+        'assets/js/bonus.js?v=40'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=39'],
-      scripts: ['assets/js/gnmath.js?v=39'],
+      css: ['assets/css/gnmath.css?v=40'],
+      scripts: ['assets/js/gnmath.js?v=40'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -11450,60 +11482,60 @@ html[data-view="gn"] .tabrail__tab.is-active {
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=39'],
-      scripts: ['assets/js/provider.js?v=39', 'assets/js/atmosphere.js?v=39']
+      css: ['assets/css/provider.css?v=40'],
+      scripts: ['assets/js/provider.js?v=40', 'assets/js/atmosphere.js?v=40']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=39'],
-      scripts: ['assets/js/sites.js?v=39', 'assets/js/atmosphere.js?v=39']
+      css: ['assets/css/sites.css?v=40'],
+      scripts: ['assets/js/sites.js?v=40', 'assets/js/atmosphere.js?v=40']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=39'],
-      scripts: ['assets/js/browser.js?v=39', 'assets/js/atmosphere.js?v=39']
+      css: ['assets/css/browser.css?v=40'],
+      scripts: ['assets/js/browser.js?v=40', 'assets/js/atmosphere.js?v=40']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=39',
-        'assets/js/os.js?v=39',
-        'assets/js/profile.js?v=39',
-        'assets/js/lab.js?v=39',
-        'assets/js/studio.js?v=39',
-        'assets/js/arcade.js?v=39',
-        'assets/js/vault.js?v=39',
-        'assets/js/community.js?v=39',
-        'assets/js/central.js?v=39',
-        'assets/js/atmosphere.js?v=39'
+        'assets/js/player.js?v=40',
+        'assets/js/os.js?v=40',
+        'assets/js/profile.js?v=40',
+        'assets/js/lab.js?v=40',
+        'assets/js/studio.js?v=40',
+        'assets/js/arcade.js?v=40',
+        'assets/js/vault.js?v=40',
+        'assets/js/community.js?v=40',
+        'assets/js/central.js?v=40',
+        'assets/js/atmosphere.js?v=40'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=39', 'assets/css/hub.css?v=39'],
+      css: ['assets/css/os.css?v=40', 'assets/css/hub.css?v=40'],
       scripts: [
-        'assets/js/player.js?v=39',
-        'assets/js/os.js?v=39',
-        'assets/js/profile.js?v=39',
-        'assets/js/lab.js?v=39',
-        'assets/js/studio.js?v=39',
-        'assets/js/arcade.js?v=39',
-        'assets/js/vault.js?v=39',
-        'assets/js/community.js?v=39',
-        'assets/js/central.js?v=39',
-        'assets/js/hub.js?v=39'
+        'assets/js/player.js?v=40',
+        'assets/js/os.js?v=40',
+        'assets/js/profile.js?v=40',
+        'assets/js/lab.js?v=40',
+        'assets/js/studio.js?v=40',
+        'assets/js/arcade.js?v=40',
+        'assets/js/vault.js?v=40',
+        'assets/js/community.js?v=40',
+        'assets/js/central.js?v=40',
+        'assets/js/hub.js?v=40'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=39']
+      scripts: ['assets/js/atmosphere.js?v=40']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=39'],
-      scripts: ['assets/js/study-questions.js?v=39', 'assets/js/study.js?v=39']
+      css: ['assets/css/study.css?v=40'],
+      scripts: ['assets/js/study-questions.js?v=40', 'assets/js/study.js?v=40']
     }
   };
 
@@ -11670,7 +11702,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
     } catch (error) { /* modo privado sem storage */ }
   }
 
-  const shield = { disguise: true, locked: readLock(), observer: null, timer: 0, bye: false };
+  const shield = { disguise: true, locked: readLock(), observer: null, timer: 0, beat: 0, bye: false };
 
   /* título à prova de reescrita: qualquer módulo que tente trocar o título
      (navegador interno, chamadas do app) é corrigido na hora */
@@ -11723,6 +11755,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
   /* troca de janela/aba: volta para os estudos e liga a trava */
   function shieldPanic() {
     if (shield.bye) return;                /* recarregar/fechar não conta como Alt+Tab */
+    if (shield.locked && current === 'estudo') return;   /* já está no lugar certo */
     shield.disguise = true;
     shield.locked = true;
     writeLock(true);
@@ -11734,6 +11767,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
   function shieldRelease() {
     shield.disguise = false;
     shield.locked = false;
+    shield.bye = false;
     writeLock(false);
     paintShield();
     go('lumin', { reveal: true, force: true });
@@ -11762,6 +11796,33 @@ html[data-view="gn"] .tabrail__tab.is-active {
   window.addEventListener('pagehide', function () { shield.bye = true; });
   window.addEventListener('beforeunload', function () { shield.bye = true; });
   window.addEventListener('pageshow', function () { shield.bye = false; });
+
+  /* ---- batida do disfarce ------------------------------------------------
+     Nem todo navegador entrega blur/visibilitychange do mesmo jeito (e um
+     Alt+Tab atrás do outro pode não gerar evento nenhum). Em vez de confiar
+     num evento só, a página confere o foco de tempo em tempo: se a janela
+     perdeu o foco — de novo, quantas vezes for — ela volta para os estudos. */
+  let sawFocus = typeof document.hasFocus === 'function' ? document.hasFocus() : true;
+
+  function noteFocus() {
+    sawFocus = true;
+    shield.bye = false;
+  }
+
+  function startHeartbeat() {
+    if (shield.beat) return;
+    shield.beat = window.setInterval(function () {
+      if (shield.bye) return;
+      if (document.visibilityState === 'hidden') { shieldPanic(); return; }
+      if (!sawFocus) return;                       /* aba aberta em segundo plano */
+      if (typeof document.hasFocus === 'function' && !document.hasFocus()) shieldPanic();
+    }, 800);
+  }
+
+  window.addEventListener('focus', noteFocus);
+  document.addEventListener('pointerdown', noteFocus, true);
+  document.addEventListener('keydown', noteFocus, true);
+  startHeartbeat();
 
   /* ---------- troca de aba ---------- */
   function paintRail(route) {
