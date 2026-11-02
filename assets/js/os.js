@@ -112,6 +112,40 @@
     }, 2600);
   }
 
+  /* ---------- jogador (LuminPlayer, quando presente) ---------- */
+  function notifyAchievements(items) {
+    if (!items || !items.length) return;
+    const names = items.map(function (item) { return item.name; }).join(' · ');
+    toast(items.length === 1 ? 'Conquista: ' + names : items.length + ' conquistas: ' + names);
+    const chip = document.getElementById('os-level');
+    if (chip && window.LuminPlayer) {
+      chip.querySelector('[data-lv]').textContent = 'Nv ' + window.LuminPlayer.summary().level;
+    }
+  }
+
+  /* fecha a sessão aberta e avisa quanto rendeu */
+  function finishSession(quiet) {
+    if (!window.LuminPlayer) return null;
+    const done = window.LuminPlayer.endSession();
+    if (!done) return null;
+    if (done.achievements && done.achievements.length) notifyAchievements(done.achievements);
+    if (!quiet && done.minutes >= 1) {
+      toast('+' + done.xp + ' XP · ' + done.minutes + ' min em ' + done.name);
+    }
+    syncLevelChip();
+    return done;
+  }
+
+  function syncLevelChip() {
+    const chip = document.getElementById('os-level');
+    if (!chip) return;
+    if (!window.LuminPlayer) { chip.hidden = true; return; }
+    chip.hidden = false;
+    const info = window.LuminPlayer.summary();
+    chip.querySelector('[data-lv]').textContent = 'Nv ' + info.level;
+    chip.title = 'Nível ' + info.level + ' · ' + info.xp + ' XP · ' + info.achievements + '/' + info.achievementsTotal + ' conquistas';
+  }
+
   /* ---------- dados ---------- */
   async function loadGames() {
     if (state.games) return state.games;
@@ -267,6 +301,7 @@
   function closeWin(id) {
     const win = state.windows[id];
     if (!win) return;
+    if (state.playing[id]) finishSession();
     if (state.playing[id]) stopPlaying(id);
     win.el.classList.remove('is-play');
     win.el.remove();
@@ -540,8 +575,29 @@
         card.innerHTML = [
           '<span class="gcard__art"><img alt="" loading="lazy" decoding="async"><span class="gcard__mono">' + esc(String(game.n).slice(0, 2).toUpperCase()) + '</span></span>',
           '<span class="gcard__name">' + esc(game.n) + '</span>',
-          game.a ? '<span class="gcard__cat">' + esc(game.a) + '</span>' : ''
+          game.a ? '<span class="gcard__cat">' + esc(game.a) + '</span>' : '',
+          '<button class="gcard__fav" type="button" data-fav aria-label="Favoritar ' + esc(game.n) + '" title="Favoritar">',
+          '  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m12 4.3 2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.6-4.8 2.6.9-5.4L4.2 10l5.4-.8Z"/></svg>',
+          '</button>'
         ].join('');
+
+        const fav = card.querySelector('[data-fav]');
+        if (window.LuminPlayer) {
+          const setFav = function (on) {
+            fav.classList.toggle('is-on', !!on);
+            fav.setAttribute('aria-pressed', on ? 'true' : 'false');
+          };
+          setFav(window.LuminPlayer.read().favorites.indexOf(String(game.id)) >= 0);
+          fav.addEventListener('click', function (event) {
+            event.stopPropagation();
+            const result = window.LuminPlayer.toggleFavorite(game);
+            setFav(result.on);
+            if (result.achievements && result.achievements.length) notifyAchievements(result.achievements);
+            syncLevelChip();
+          });
+        } else {
+          fav.remove();
+        }
         const img = card.querySelector('img');
         let mirror = 0;
         if (game.c) {
@@ -647,6 +703,12 @@
     state.playing[id] = true;
     if (window.LuminSocial) window.LuminSocial.setPlaying(true);
 
+    if (window.LuminPlayer) {
+      const start = window.LuminPlayer.startSession(game);
+      if (start && start.achievements && start.achievements.length) notifyAchievements(start.achievements);
+      syncLevelChip();
+    }
+
     body.innerHTML = [
       '<div class="play">',
       '  <div class="play__bar">',
@@ -670,6 +732,7 @@
     watchStage(stage);
 
     body.querySelector('[data-back]').addEventListener('click', function () {
+      finishSession();
       stopPlaying(id);
       shrinkAfterPlay(id);
       renderGnGames(body, win);
@@ -724,6 +787,21 @@
     state.playing[id] = false;
     const any = Object.keys(state.playing).some(function (key) { return state.playing[key]; });
     if (!any && window.LuminSocial) window.LuminSocial.setPlaying(false);
+  }
+
+  /* abre o acervo já tocando um jogo — o Perfil usa isto para "jogar" */
+  async function playById(id) {
+    openApp('games');
+    const entry = state.windows.games;
+    if (!entry) return false;
+    const body = entry.el.querySelector('[data-body]');
+    let games = [];
+    try { games = await loadGames(); } catch (error) { toast('Acervo indisponível agora.'); return false; }
+    const game = games.filter(function (item) { return String(item.id) === String(id); })[0];
+    if (!game) { toast('Esse jogo não está mais no acervo.'); return false; }
+    await renderGnGames(body, entry.el);
+    playGame(entry.el, game);
+    return true;
   }
 
   /* ---------- app: navegador ---------- */
@@ -1153,6 +1231,21 @@
     node.textContent = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
   }
 
+  /* selo de nível na barra do topo (abre o Perfil) */
+  function mountLevelChip() {
+    const barRight = root ? root.querySelector('.os__bar-right') : null;
+    if (!barRight || document.getElementById('os-level')) return;
+    const chip = el('button', 'os__bar-btn os__level');
+    chip.id = 'os-level';
+    chip.type = 'button';
+    chip.dataset.app = 'player';
+    chip.innerHTML = '<b data-lv>Nv 1</b>';
+    const clock = barRight.querySelector('#os-clock');
+    if (clock) barRight.insertBefore(chip, clock);
+    else barRight.append(chip);
+    chip.hidden = !window.LuminPlayer;
+  }
+
   /* ---------- início ---------- */
   function boot() {
     if (state.booted) return;
@@ -1165,9 +1258,25 @@
     state.booted = true;
 
     applyPrefs();
+    mountLevelChip();
     renderDock();
     renderIcons();
     updateHint();
+
+    /* hub do jogador: recompensa de login do dia */
+    if (window.LuminPlayer) {
+      window.LuminPlayer.on(syncLevelChip);
+      const reward = window.LuminPlayer.login();
+      if (reward) {
+        setTimeout(function () {
+          toast('Bônus diário +' + reward.reward + ' XP · ' + reward.streak + (reward.streak === 1 ? ' dia seguido' : ' dias seguidos'));
+        }, 900);
+        if (reward.achievements && reward.achievements.length) {
+          setTimeout(function () { notifyAchievements(reward.achievements); }, 3600);
+        }
+      }
+      syncLevelChip();
+    }
     tick();
     setInterval(tick, 15000);
 
@@ -1213,11 +1322,42 @@
     });
   }
 
+  /* apps de outros arquivos (player.js, profile.js, …) entram por aqui */
+  function register(app) {
+    if (!app || !app.id || !app.render) return false;
+    if (APPS.some(function (item) { return item.id === app.id; })) return false;
+    if (app.icon && !ICONS[app.id]) ICONS[app.id] = app.icon;
+    const at = typeof app.at === 'number' ? app.at : APPS.length;
+    APPS.splice(at, 0, app);
+    if (state.booted) {
+      renderDock();
+      renderIcons();
+    }
+    return true;
+  }
+
   window.LuminOS = {
     open: openApp,
     setMode: setMode,
     boot: boot,
-    state: state
+    state: state,
+    register: register,
+    play: playById,
+    notify: notifyAchievements,
+    refresh: function () { renderDock(); renderIcons(); syncLevelChip(); },
+    ui: {
+      el: el,
+      esc: esc,
+      toast: toast,
+      prefs: prefs,
+      savePrefs: savePrefs,
+      openUrl: openUrl
+    },
+    data: {
+      games: loadGames,
+      sites: loadSites,
+      covers: COVER_MIRRORS
+    }
   };
 
   /* o app.js chama boot() quando a rota "os" abre; aqui cobrimos o caso
