@@ -179,6 +179,12 @@ O modo OS é uma área de trabalho de verdade dentro da mesma página:
 - **Notas** (salvas no navegador), **Calculadora**, **Ajustes** e **Sobre**;
 - o **chat** e a **presença** são os mesmos do resto do site.
 
+Essas ferramentas também existem **fora do OS**: a aba **Hub** (no rail, ao lado de Sites, Nav e
+Estudos) monta Perfil, Laboratório, Estúdio, Arcade, Cofre e Comunidade numa moldura escura, sem
+janelas nem dock — é o mesmo código (`assets/js/hub.js` chama o `render()` de cada app). A cor de
+destaque, a densidade e a tipografia escolhidas no Estúdio aparecem aqui também; papel de parede e
+modo imersivo continuam sendo só do desktop.
+
 ### Presença ao vivo e chat global
 
 Duas peças flutuantes acompanham o site — e somem nos estudos, na tela de entrada e **enquanto um
@@ -449,6 +455,7 @@ LuminSDK/
 │   │   ├── arcade.js           # App Arcade (alvo, bichinho, quiz, sons, cronômetro, conversor)
 │   │   ├── vault.js            # App Cofre (backup, códigos, dados e área do desenvolvedor)
 │   │   ├── community.js        # App Comunidade (coleções por código, recomendações, wishlist)
+│   │   ├── hub.js              # Aba Hub: monta os apps do OS dentro do site normal
 │   │   ├── social.js           # Presença, chat global e canal de comandos (painel)
 │   │   ├── browser.js          # Navegador: barra de endereço, home e aba limpa
 │   │   ├── provider.js         # Catálogos DuckMath/Astra: filtros, busca, minimal e player
@@ -456,6 +463,7 @@ LuminSDK/
 │   │   ├── sites.js            # Aba Sites (coleções + visualizador + aba limpa)
 │   │   └── study.js            # Aba Estudos (busca, planejador, cronômetro, teste rápido)
 │   ├── css/app.css             # Casca do app de aba única (mostra/esconde a view)
+│   ├── css/hub.css             # Aba Hub: moldura, chips e palco dos apps do OS
 │   ├── css/provider.css        # Catálogos DuckMath/Astra: chips, grade, lista minimal e player
 │   ├── data/
 │   │   └── sites.json          # Dados da aba Sites: 67 coleções / 749 links

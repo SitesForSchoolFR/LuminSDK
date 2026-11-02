@@ -157,6 +157,7 @@ def build(root: Path) -> tuple[str, dict[str, object]]:
         (r"[ \t]*<!-- =+ LuminOS =+ -->[\s\S]*?(?=[ \t]*<!-- presença e atalhos)", "luminos"),
         (r"[ \t]*<!-- presença e atalhos[\s\S]*?(?=[ \t]*<nav class=\"tabrail\")", "flutuantes"),
         (r"[ \t]*<nav class=\"tabrail\"[\s\S]*?</nav>\r?\n", "rail"),
+        (r"[ \t]*<!-- =+ VIEW: HUB =+ -->[\s\S]*?(?=[ \t]*<!-- =+ VIEW: LUMIN)", "hub"),
         (r"[ \t]*<!-- =+ VIEW: GN-MATH =+ -->[\s\S]*?(?=[ \t]*<!-- =+ VIEW: SITES)", "gn"),
         (r"[ \t]*<!-- =+ VIEW: SITES =+ -->[\s\S]*?(?=[ \t]*<!-- =+ VIEW: ESTUDOS)", "sites"),
         (r"[ \t]*<!-- =+ VIEW: ESTUDOS =+ -->[\s\S]*?(?=[ \t]*<!-- =+ VIEW: NAVEGADOR)", "estudo"),

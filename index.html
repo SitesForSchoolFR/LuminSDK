@@ -104,13 +104,13 @@
   }
   </script>
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=35">
+  <link rel="stylesheet" href="assets/css/styles.css?v=36">
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <link rel="stylesheet" href="assets/css/app.css?v=35">
-  <link rel="stylesheet" href="assets/css/social.css?v=35">
-  <link rel="stylesheet" href="assets/css/os.css?v=35">
-  <link rel="stylesheet" href="assets/css/lcore.css?v=35">
+  <link rel="stylesheet" href="assets/css/app.css?v=36">
+  <link rel="stylesheet" href="assets/css/social.css?v=36">
+  <link rel="stylesheet" href="assets/css/os.css?v=36">
+  <link rel="stylesheet" href="assets/css/lcore.css?v=36">
 </head>
 <body>
 
@@ -242,7 +242,43 @@
       <span>Estudos</span>
     </a>
 
+    <span class="tabrail__sep" aria-hidden="true"></span>
+
+    <!-- ferramentas do LuminOS, aqui no site normal -->
+    <a class="tabrail__tab" href="./" data-route="hub" title="Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade">
+      <img src="assets/img/hub.svg" alt="" width="24" height="24">
+      <span>Hub</span>
+    </a>
+
   </nav>
+
+  <!-- ============================= VIEW: HUB ============================= -->
+  <div class="app-view" id="view-hub" data-view="hub" hidden>
+    <div class="container hub">
+      <header class="hub__head">
+        <p class="eyebrow">Ferramentas</p>
+        <h1 class="hub__title" id="hub-title">Hub do jogador</h1>
+        <p class="hub__lead">
+          As ferramentas que viviam só dentro do <b>LuminOS</b> agora abrem aqui no site normal:
+          perfil e XP, laboratório de controle, estúdio de aparência, arcade, cofre de backup e a
+          comunidade por códigos. Tudo continua salvo no seu navegador.
+        </p>
+      </header>
+
+      <nav class="hub__tabs" id="hub-tabs" aria-label="Ferramentas do hub"></nav>
+
+      <div class="hub__stage" id="hub-stage" data-density="confortavel">
+        <div class="hub__mount" id="hub-mount" role="region" aria-label="Ferramenta aberta"></div>
+      </div>
+
+      <p class="hub__foot">
+        <span id="hub-crumb">Perfil</span> ·
+        do Estúdio, a cor de destaque, a densidade e a tipografia aparecem aqui e no LuminOS;
+        papel de parede e modo imersivo são só do desktop.
+        Atalho: <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>K</kbd> abre a paleta de comandos.
+      </p>
+    </div>
+  </div>
 
   <!-- ============================ VIEW: LUMIN ============================ -->
   <div class="app-view" id="view-lumin" data-view="lumin" hidden>
@@ -2249,8 +2285,8 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="assets/js/social.js?v=35" defer></script>
-  <script src="assets/js/lcore.js?v=35" defer></script>
-  <script src="assets/js/app.js?v=35" defer></script>
+  <script src="assets/js/social.js?v=36" defer></script>
+  <script src="assets/js/lcore.js?v=36" defer></script>
+  <script src="assets/js/app.js?v=36" defer></script>
 </body>
 </html>
