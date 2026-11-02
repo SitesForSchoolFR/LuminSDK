@@ -303,6 +303,10 @@ html[data-view="os"] .tabrail { display: none !important; }
   filter: blur(90px);
   opacity: .5;
   animation: os-float 22s ease-in-out infinite alternate;
+  /* o desfoque é caro: a camada própria evita re-rasterizar a cada quadro */
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 .os__wall-blob--a {
   left: -12vmax;
@@ -1066,7 +1070,7 @@ html[data-view="os"] .tabrail { display: none !important; }
   z-index: 8;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   margin: 0 auto 12px;
   padding: 8px;
   border-radius: 18px;
@@ -1077,9 +1081,10 @@ html[data-view="os"] .tabrail { display: none !important; }
   box-shadow: 0 26px 60px -32px rgba(0, 0, 0, .95);
   flex-wrap: wrap;
   justify-content: center;
-  /* com quinze apps o dock passa a quebrar em duas linhas em vez de
-     esconder metade deles atrás de uma rolagem horizontal */
-  max-width: min(1120px, calc(100vw - 24px));
+  /* com dezesseis apps o dock ainda cabe numa linha em telas de 1280+;
+     abaixo disso quebra em duas linhas em vez de esconder metade atrás
+     de uma rolagem horizontal */
+  max-width: min(1240px, calc(100vw - 24px));
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -2319,6 +2324,9 @@ html[data-view="os"] .tabrail { display: none !important; }
   overflow-y: auto;
   padding: 14px 16px 20px;
   display: grid;
+  /* a coluna implícita do grid cresce pelo conteúdo e estourava o card;
+     minmax(0,1fr) fixa a largura na do painel */
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
   align-content: start;
   min-height: 0;
@@ -2423,7 +2431,13 @@ textarea.kp-field { min-height: 78px; resize: vertical; line-height: 1.5; }
 }
 .kp input[type="file"]::file-selector-button:hover { background: rgba(255, 255, 255, .11); }
 
-.kp-list { display: grid; gap: 5px; }
+.kp-list {
+  display: grid;
+  /* coluna única que respeita a largura do card (sem isso o min-content
+     de um texto longo empurra a lista para fora) */
+  grid-template-columns: minmax(0, 1fr);
+  gap: 5px;
+}
 .kp-item {
   display: flex;
   align-items: center;
@@ -2741,3 +2755,63 @@ textarea.kp-field { min-height: 78px; resize: vertical; line-height: 1.5; }
 .os[data-font="mono"] .win { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; }
 .os[data-font="mono"] .win .pfr__info b,
 .os[data-font="mono"] .win .kp-stat b { font-family: inherit; }
+
+/* ---------- foco visível no teclado (apps .kp) ----------
+   Vários controles zeram o outline no :focus; no teclado isso deixa a
+   pessoa sem referência. O anel só aparece em :focus-visible. */
+.kp button:focus-visible,
+.kp input:focus-visible,
+.kp summary:focus-visible,
+.kp-btn:focus-visible,
+.kp-tab:focus-visible,
+.kp-item:focus-visible,
+.kp-field:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, .72);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ---------- Central: grade de aplicativos ----------
+   O ícone vem do mesmo ICONS do dock (SVG sem width/height); sem isso
+   ele ocupa a linha inteira. Prefixo .ct- para não colidir com .kp. */
+.ct-app svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  opacity: .9;
+}
+.ct-app b {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ct-app small {
+  white-space: nowrap;
+}
+
+/* linhas do diagnóstico: nada de cortar o status na borda */
+.ct-diag {
+  flex-wrap: wrap;
+  row-gap: 3px;
+}
+.ct-diag .ct-note {
+  flex: 1 1 120px;
+  min-width: 0;
+  max-width: 100%;
+  text-align: right;
+  word-break: break-word;
+}
+.ct-diag .ct-state {
+  flex: none;
+  margin-left: auto;
+}
+
+/* a grade do .kp-list deixa o item crescer pelo conteúdo: zerar o min-width
+   é o que permite a linha encolher (e o flex-wrap agir) dentro do card */
+.ct-list {
+  grid-template-columns: minmax(0, 1fr);
+}
+.ct-list > * {
+  min-width: 0;
+}

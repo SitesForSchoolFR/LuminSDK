@@ -251,6 +251,119 @@
     win.style.setProperty('--h', Math.round(h) + 'px');
   }
 
+  /* ---------- posições lembradas ---------- */
+  const GEO_STORE = 'luminsdk:v1:os:geo';
+
+  function readGeo() {
+    try {
+      const data = JSON.parse(localStorage.getItem(GEO_STORE) || '{}');
+      return data && typeof data === 'object' ? data : {};
+    } catch (error) { return {}; }
+  }
+
+  function writeGeo(data) {
+    try { localStorage.setItem(GEO_STORE, JSON.stringify(data)); } catch (error) {}
+  }
+
+  function saveGeo(id) {
+    const entry = state.windows[id];
+    if (!entry || !entry.el.isConnected) return;
+    const win = entry.el;
+    /* maximizada ou em tela pequena não vira posição salva */
+    if (win.classList.contains('is-max') || window.innerWidth < 760) return;
+    const left = parseFloat(win.style.left);
+    const top = parseFloat(win.style.top);
+    const w = parseFloat(win.style.getPropertyValue('--w'));
+    const h = parseFloat(win.style.getPropertyValue('--h'));
+    if (!isFinite(left) || !isFinite(top) || !isFinite(w) || !isFinite(h)) return;
+    const data = readGeo();
+    data[id] = { left: Math.round(left), top: Math.round(top), w: Math.round(w), h: Math.round(h) };
+    writeGeo(data);
+  }
+
+  function saveAllGeometry() {
+    Object.keys(state.windows).forEach(saveGeo);
+    return Object.keys(state.windows).length;
+  }
+
+  function restoreGeo(id, win) {
+    const saved = readGeo()[id];
+    if (!saved || window.innerWidth < 760) return false;
+    const area = deskBox();
+    const w = Math.min(Number(saved.w) || 0, area.w - 20);
+    const h = Math.min(Number(saved.h) || 0, area.h - 20);
+    if (w < 280 || h < 220) return false;
+    resizeWin(win, w, h);
+    win.style.left = Math.round(Math.max(8, Math.min(Number(saved.left) || 0, area.w - w - 8))) + 'px';
+    win.style.top = Math.round(Math.max(4, Math.min(Number(saved.top) || 0, area.h - h - 8))) + 'px';
+    return true;
+  }
+
+  /* encaixa a janela na metade esquerda/direita ou maximiza */
+  function snapWindow(id, where) {
+    const entry = state.windows[id];
+    if (!entry) return false;
+    const win = entry.el;
+    const area = deskBox();
+    win.classList.remove('is-min');
+    focusWin(id);
+    if (where === 'left' || where === 'right') {
+      win.classList.remove('is-max');
+      const w = Math.round(Math.max(300, (area.w - 28) / 2));
+      resizeWin(win, w, Math.max(240, area.h - 26));
+      win.style.left = (where === 'left' ? 10 : area.w - w - 10) + 'px';
+      win.style.top = '10px';
+    } else {
+      win.classList.add('is-max');
+    }
+    saveGeo(id);
+    return true;
+  }
+
+  function centerWindow(id) {
+    const entry = state.windows[id];
+    if (!entry) return false;
+    entry.el.classList.remove('is-max', 'is-min');
+    focusWin(id);
+    const size = fitSize(entry.app);
+    resizeWin(entry.el, size.w, size.h);
+    placeWin(entry.el, 0);
+    saveGeo(id);
+    return true;
+  }
+
+  function cascadeWindows() {
+    const area = deskBox();
+    Object.keys(state.windows).forEach(function (id, index) {
+      const entry = state.windows[id];
+      entry.el.classList.remove('is-max');
+      const size = fitSize(entry.app);
+      resizeWin(entry.el,
+        Math.min(size.w, Math.round(area.w * .72)),
+        Math.min(size.h, Math.round(area.h * .82)));
+      placeWin(entry.el, (index % 5) * 26);
+    });
+    return Object.keys(state.windows).length;
+  }
+
+  function closeAllWindows() {
+    Object.keys(state.windows).forEach(closeWin);
+    return true;
+  }
+
+  function listWindows() {
+    return Object.keys(state.windows).map(function (id) {
+      const entry = state.windows[id];
+      return {
+        id: id,
+        name: entry.app.name,
+        focused: entry.el.classList.contains('is-focus'),
+        min: entry.el.classList.contains('is-min'),
+        max: entry.el.classList.contains('is-max')
+      };
+    });
+  }
+
   function focusWin(id) {
     const win = state.windows[id];
     if (!win) return;
@@ -313,7 +426,7 @@
     focusWin(id);
 
     const count = Object.keys(state.windows).length - 1;
-    placeWin(win, (count % 5) * 26);
+    if (!restoreGeo(id, win)) placeWin(win, (count % 5) * 26);
 
     win.addEventListener('pointerdown', function () { focusWin(id); }, true);
 
@@ -348,6 +461,7 @@
   function closeWin(id) {
     const win = state.windows[id];
     if (!win) return;
+    saveGeo(id);
     if (state.playing[id]) finishSession();
     if (state.playing[id]) stopPlaying(id);
     win.el.classList.remove('is-play');
@@ -398,6 +512,7 @@
       if (!start) return;
       start = null;
       win.classList.remove('is-resizing');
+      if (win.dataset.app) saveGeo(win.dataset.app);
       try { handle.releasePointerCapture(event.pointerId); } catch (error) {}
     };
     handle.addEventListener('pointerup', stop);
@@ -440,6 +555,7 @@
       if (!start) return;
       start = null;
       win.classList.remove('is-dragging');
+      if (win.dataset.app) saveGeo(win.dataset.app);
       try { bar.releasePointerCapture(event.pointerId); } catch (error) {}
     };
     bar.addEventListener('pointerup', stop);
@@ -1238,7 +1354,7 @@
     body.innerHTML = [
       '<div class="about">',
       '  <p class="about__logo">Lumin<b>OS</b></p>',
-      '  <p class="about__text">A área de trabalho do LuminSDK: janelas arrastáveis, jogos do acervo público, navegador, sites, notas, calculadora e chat — tudo em uma URL só, sem build e sem cadastro.</p>',
+      '  <p class="about__text">A área de trabalho do LuminSDK: janelas arrastáveis, central de busca e diagnóstico, jogos do acervo público, navegador, sites, notas, calculadora e chat — tudo em uma URL só, sem build e sem cadastro.</p>',
       '  <ul class="about__list">',
       '    <li><span>Jogos</span><strong>' + (state.games ? state.games.length : '848') + ' no acervo GN-Math</strong></li>',
       '    <li><span>Sites</span><strong>' + (state.sites ? state.sites.length : '65') + ' coleções</strong></li>',
@@ -1330,6 +1446,7 @@
     }
     tick();
     setInterval(tick, 15000);
+    startPadNav();
 
     /* dados em segundo plano para o app "Sobre" já mostrar os números */
     loadGames().catch(function () {});
@@ -1387,6 +1504,104 @@
     return true;
   }
 
+  /* ---------- navegação por controle (fora do player) ----------
+     D-pad move o foco entre os controles da janela em foco (ou da mesa,
+     quando não há janela), A ativa e B fecha a janela em foco. O player
+     fica de fora: lá o controle é do jogo. */
+  const PAD_FOCUS = 'button:not([disabled]):not([hidden]), a[href], input:not([disabled]), ' +
+    'select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  function padCandidates() {
+    const focused = desk.querySelector('.win.is-focus');
+    const scope = focused || desk;
+    return Array.from(scope.querySelectorAll(PAD_FOCUS)).filter(function (node) {
+      if (node.closest('[hidden]')) return false;
+      const rect = node.getBoundingClientRect();
+      return rect.width > 4 && rect.height > 4;
+    });
+  }
+
+  function padMove(direction) {
+    const list = padCandidates();
+    if (!list.length) return false;
+    const index = list.indexOf(document.activeElement);
+    if (index < 0) {
+      /* primeiro toque do D-pad entra no conteúdo, não nos botões da barra */
+      const start = list.filter(function (node) { return !node.closest('.win__bar'); })[0] || list[0];
+      start.focus();
+      return true;
+    }
+    const from = list[index].getBoundingClientRect();
+    const originX = from.left + from.width / 2;
+    const originY = from.top + from.height / 2;
+    let best = null;
+    let bestScore = Infinity;
+    list.forEach(function (node, position) {
+      if (position === index) return;
+      const rect = node.getBoundingClientRect();
+      const dx = (rect.left + rect.width / 2) - originX;
+      const dy = (rect.top + rect.height / 2) - originY;
+      let primary;
+      let secondary;
+      if (direction === 'right') { primary = dx; secondary = Math.abs(dy); }
+      else if (direction === 'left') { primary = -dx; secondary = Math.abs(dy); }
+      else if (direction === 'down') { primary = dy; secondary = Math.abs(dx); }
+      else { primary = -dy; secondary = Math.abs(dx); }
+      if (primary <= 6) return;
+      const score = primary + secondary * 1.8;
+      if (score < bestScore) { bestScore = score; best = node; }
+    });
+    if (!best) return false;
+    best.focus();
+    return true;
+  }
+
+  function padAct(index) {
+    if (index >= 12 && index <= 15) return padMove(['up', 'down', 'left', 'right'][index - 12]);
+    if (index === 0) {
+      const active = document.activeElement;
+      if (active && active !== document.body && typeof active.click === 'function') active.click();
+      return true;
+    }
+    if (index === 1) {
+      const win = desk.querySelector('.win.is-focus');
+      if (win && win.dataset.app) closeWin(win.dataset.app);
+      return true;
+    }
+    return false;
+  }
+
+  let padTimer = 0;
+
+  function stopPadNav() {
+    if (padTimer) clearInterval(padTimer);
+    padTimer = 0;
+  }
+
+  function startPadNav() {
+    stopPadNav();
+    if (typeof navigator.getGamepads !== 'function') return false;
+    const held = {};
+    padTimer = setInterval(function () {
+      if (!state.booted || document.hidden) return;
+      if (!onDesk()) return;
+      /* dentro do player quem manda é o jogo */
+      if (desk.querySelector('.play')) return;
+      let pads = [];
+      try { pads = Array.from(navigator.getGamepads() || []).filter(Boolean); } catch (error) { return; }
+      pads.forEach(function (pad) {
+        for (let i = 0; i < 16; i++) {
+          const button = pad.buttons && pad.buttons[i];
+          const down = !!(button && (button.pressed || button.value > 0.5));
+          const key = (pad.index || 0) + ':' + i;
+          if (down && !held[key]) { held[key] = true; padAct(i); }
+          else if (!down) held[key] = false;
+        }
+      });
+    }, 120);
+    return true;
+  }
+
   window.LuminOS = {
     open: openApp,
     setMode: setMode,
@@ -1397,10 +1612,22 @@
     getApp: function (id) {
       return APPS.filter(function (item) { return item.id === id; })[0] || null;
     },
+    listApps: function () {
+      return APPS.map(function (app) { return { id: app.id, name: app.name, short: app.short || app.name }; });
+    },
+    listWindows: listWindows,
+    focusWindow: focusWin,
+    closeWindow: closeWin,
+    closeAllWindows: closeAllWindows,
+    snapWindow: snapWindow,
+    centerWindow: centerWindow,
+    cascadeWindows: cascadeWindows,
+    saveAllGeometry: saveAllGeometry,
     icon: function (id) { return ICONS[id] || ''; },
     play: playById,
     notify: notifyAchievements,
     refresh: function () { renderDock(); renderIcons(); syncLevelChip(); },
+    pad: { start: startPadNav, stop: stopPadNav, move: padMove },
     ui: {
       el: el,
       esc: esc,

@@ -86,7 +86,7 @@ stays exactly the same everywhere.
 
 | Mode | What it is |
 |---|---|
-| **OS** | **LuminOS**: a dark desktop with wallpapers, a dock, draggable windows with minimize/maximize and real apps (Games, Browser, Sites, Chat, Notes, Calculator, Settings, About). |
+| **OS** | **LuminOS**: a dark desktop with wallpapers, a dock, draggable windows with minimize/maximize and real apps (Central, Profile, Games, Lab, Studio, Arcade, Vault, Community, Movies, Browser, Sites, Chat, Notes, Calculator, Settings, About). |
 | **Normal** | The site as it always was: game catalog, side tabs and the study portal. | Switching tabs, searching, filtering favorites, opening settings, playing, opening the study
 portal: none of it changes the address. No `/gn/`, no `/sites/`, no `#/anything`, no `?cat=`. Copy the
 URL in the middle of a game and it is still just `…/LuminSDK/`.
@@ -151,9 +151,16 @@ address saved is sent back to `…/LuminSDK/` already on the right tab.
 
 OS mode is a real desktop inside the same page:
 
-- **windows** you can drag, minimize, maximize and close (full screen on phones);
-- a **dock** with fifteen apps (two rows on phones, never hidden behind scrolling) plus **desktop shortcuts**;
+- **windows** you can drag, minimize, maximize, close and snap to a side, with size and position
+  remembered per app (full screen on phones);
+- a **dock** with sixteen apps (two rows on phones, never hidden behind scrolling) plus **desktop shortcuts**;
+- **Central**: global search (apps, games, sites, notes and help), an app launcher with pins and most
+  used, a window manager (snap left/right, centre, cascade, close all), a browser diagnostic graded
+  **supported / limited / unavailable / untested**, a live performance monitor (FPS, long tasks, memory
+  when exposed), a storage and cache map with confirmations, built-in help and the version page;
 - **wallpapers** (aurora, midnight, forest, paper) and an **accent colour**, saved in `luminsdk:v1:os`;
+- **gamepad and keyboard**: with a pad connected the D-pad walks the controls of the focused window,
+  **A** activates and **B** closes the window (off inside the player, where the pad belongs to the game);
 - **Games**: the 848 GN-Math titles with covers (four mirrors, monogram fallback) and a built-in player
   with back, reload and open-in-new-tab;
 - **Browser**: address bar, home with the main collections and an honest notice when a site refuses to
@@ -176,7 +183,7 @@ OS mode is a real desktop inside the same page:
 - **Notes** (saved locally), **Calculator**, **Settings** and **About**.
 
 These tools also exist **outside the OS**: the **Hub** tab (in the rail, next to Sites, Nav and
-Study) mounts Profile, Lab, Studio, Arcade, Vault and Community inside a dark frame with no windows
+Study) mounts Central, Profile, Lab, Studio, Arcade, Vault and Community inside a dark frame with no windows
 and no dock — same code (`assets/js/hub.js` calls each app's `render()`). The accent colour, density
 and typography chosen in Studio show up there too; wallpaper and immersive mode stay desktop-only.
 

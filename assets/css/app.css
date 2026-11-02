@@ -89,6 +89,10 @@ html[data-view="gn"] .tabrail__tab.is-active {
 .tabrail__tab span {
   font-size: .46rem;
   letter-spacing: .06em;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* separadores discretos entre grupos de abas */
@@ -107,6 +111,8 @@ html[data-view="gn"] .tabrail__tab.is-active {
 }
 
 @media (max-width: 860px) {
+  /* a pílula fica fixa embaixo: sem esse respiro o rodapé fica atrás dela */
+  body { padding-bottom: 88px; }
   .tabrail {
     /* no celular o rail é a pílula de baixo: largura automática (sem isso
        ele herdava os 68px da coluna do desktop e virava um rolo de abas) */
@@ -122,7 +128,20 @@ html[data-view="gn"] .tabrail__tab.is-active {
 }
 
 /* telas bem estreitas: oito abas só cabem com ícones mais justos */
-@media (max-width: 380px) {
-  .tabrail { gap: 4px; padding: 6px; }
-  .tabrail__tab { width: 38px; }
+@media (max-width: 460px) {
+  .tabrail { gap: 3px; padding: 6px; }
+  .tabrail__tab { width: 38px; gap: 0; padding: 9px 0; }
+  /* oito abas num celular: só o ícone — o nome continua no texto do link
+     (escondido de forma acessível, não com display:none) e no title */
+  .tabrail__tab span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
 }
