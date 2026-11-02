@@ -154,13 +154,22 @@ OS mode is a real desktop inside the same page:
 - **windows** you can drag, minimize, maximize, close and snap to a side, with size and position
   remembered per app (full screen on phones);
 - a **dock** with sixteen apps (two rows on phones, never hidden behind scrolling) plus **desktop shortcuts**;
-- **Central**: global search (apps, games, sites, notes and help), an app launcher with pins and most
+- **Central**: global search (apps, games, sites, notes and help), an app launcher with categories,
+  pins and most
   used, a window manager (snap left/right, centre, cascade, close all), a browser diagnostic graded
   **supported / limited / unavailable / untested**, a live performance monitor (FPS, long tasks, memory
-  when exposed), a storage and cache map with confirmations, built-in help and the version page;
+  when exposed), workspaces and windows (focus, snap, move to area), a storage and cache map with
+  confirmations, built-in help and the version page;
 - **wallpapers** (aurora, midnight, forest, paper) and an **accent colour**, saved in `luminsdk:v1:os`;
 - **gamepad and keyboard**: with a pad connected the D-pad walks the controls of the focused window,
   **A** activates and **B** closes the window (off inside the player, where the pad belongs to the game);
+- **four workspaces**: every window belongs to one area (`Alt`+`1`…`4` or the *Área N* button), with
+  per-area counts, moving the active window and everything saved in `luminsdk:v1:os:ws`;
+- **window switcher**: `Alt`+`` ` `` cycles the windows of the area with a clickable HUD;
+- **configurable dock**: order, hidden apps and auto-hide in the *Ajustar* button, saved in
+  `luminsdk:v1:os:dock`, with “restore defaults”;
+- **remappable shortcuts** in *Settings → Internal shortcuts* (conflicts refused, `Esc` cancels, never
+  inside text fields), saved in `luminsdk:v1:os:keys`;
 - **Games**: the 848 GN-Math titles with covers (four mirrors, monogram fallback) and a built-in player
   with back, reload and open-in-new-tab;
 - **Browser**: address bar, home with the main collections and an honest notice when a site refuses to
@@ -178,6 +187,8 @@ OS mode is a real desktop inside the same page:
 - **Vault**: full `.json` backup (export/import), per-app codes (`LUM-PREF-…`, `LUM-PLAY-…`, `LUM-PET-…`),
   a storage map and the developer corner (changelog, asset status, session error log, raw preferences
   and a playground);
+- **notification categories** in Studio: achievements/XP and system can be toggled separately, and a
+  muted category is never stored;
 - **Community**: collection codes (`LUM-COLL-…`), ready-made packs, recommendations computed on your
   machine and a shareable wishlist — with **no** fake login, cloud or public profile;
 - **Notes** (saved locally), **Calculator**, **Settings** and **About**.
