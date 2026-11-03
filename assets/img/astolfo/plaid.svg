@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Xadrez rosa e preto">
+  <rect width="64" height="64" fill="#ff9ecb"/>
+  <g fill="#0d0a11" opacity=".55">
+    <rect x="0" y="0" width="64" height="12"/><rect x="0" y="32" width="64" height="12"/>
+    <rect x="0" y="0" width="12" height="64"/><rect x="32" y="0" width="12" height="64"/>
+  </g>
+  <g fill="none" stroke="#fff6fb" stroke-width="1.4" opacity=".5">
+    <path d="M0 6h64M0 38h64M6 0v64M38 0v64"/>
+  </g>
+</svg>

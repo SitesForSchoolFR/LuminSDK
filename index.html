@@ -104,15 +104,17 @@
   }
   </script>
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=50">
+  <link rel="stylesheet" href="assets/css/styles.css?v=51">
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <link rel="stylesheet" href="assets/css/app.css?v=50">
-  <link rel="stylesheet" href="assets/css/social.css?v=50">
-  <link rel="stylesheet" href="assets/css/os.css?v=50">
-  <link rel="stylesheet" href="assets/css/lcore.css?v=50">
+  <link rel="stylesheet" href="assets/css/app.css?v=51">
+  <link rel="stylesheet" href="assets/css/social.css?v=51">
+  <link rel="stylesheet" href="assets/css/os.css?v=51">
+  <link rel="stylesheet" href="assets/css/lcore.css?v=51">
   <!-- animação de troca de aba (tempo/relógio), coreografada por assets/js/anim.js -->
-  <link rel="stylesheet" href="assets/css/anim.css?v=50">
+  <link rel="stylesheet" href="assets/css/anim.css?v=51">
+  <!-- personalização Astolfo (opcional): só age com html[data-skin="astolfo"] -->
+  <link rel="stylesheet" href="assets/css/astolfo.css?v=51" id="astolfo-css">
 </head>
 <body>
 
@@ -1030,6 +1032,73 @@
           </div>
           <p class="settings-note" id="data-stats">—</p>
         </section>
+
+        <section class="settings-section" id="settings-astolfo">
+          <h3>Estilo especial</h3>
+          <p class="settings-section__hint">Uma camada de personalidade por cima de todo o site — dá para desligar quando quiser.</p>
+
+          <div class="ast-card" id="astolfo-card">
+            <div class="ast-card__head">
+              <span class="ast-card__avatar" aria-hidden="true">
+                <img src="assets/img/astolfo/avatar.svg" alt="" width="46" height="46" decoding="async">
+              </span>
+              <span class="ast-card__title">
+                Astolfo
+                <small>femboy knight · rosa, preto e estrela</small>
+              </span>
+            </div>
+
+            <div class="ast-card__row">
+              <span class="ast-card__state" id="astolfo-state">Desligado</span>
+              <button class="btn btn--primary btn--sm" type="button" data-astolfo="toggle" id="astolfo-toggle" aria-pressed="false" aria-label="Ligar ou desligar o tema Astolfo">Alternar tema</button>
+              <button class="btn btn--soft btn--sm" type="button" data-astolfo="preview">Ver como fica</button>
+            </div>
+
+            <p class="ast-card__keys">Atalho: <kbd>Ctrl</kbd> + <kbd>AltGr</kbd> + <kbd>Y</kbd> (no Mac, <kbd>Ctrl</kbd> + <kbd>⌥</kbd> + <kbd>Y</kbd>) — a mesma combinação desliga.</p>
+            <p class="ast-card__note">SFW: só cores, letras, laço, estrela e listras. Nada de conteúdo adulto.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ================= ASTOLFO: visualizador ================= -->
+  <dialog class="sheet" id="astolfo-preview" aria-labelledby="astolfo-preview-title">
+    <div class="sheet__shell">
+      <header class="sheet__head">
+        <div>
+          <h2 class="sheet__title" id="astolfo-preview-title">Tema Astolfo</h2>
+          <p class="sheet__sub">Como o site fica antes de você ligar — cores, molduras e detalhes.</p>
+        </div>
+        <button class="icon-btn" type="button" data-astolfo="close" aria-label="Fechar visualização">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+        </button>
+      </header>
+
+      <div class="sheet__body">
+        <img class="ast-sheet__art" src="assets/img/astolfo/banner.jpg" alt="Ilustração do tema: laço rosa, estrela e xadrez sobre fundo preto arroxeado" width="960" height="360" decoding="async">
+
+        <div class="ast-sheet__swatches" aria-label="Cores do tema">
+          <span class="ast-sheet__swatch"><i style="background:#ff9ecb"></i>rosa</span>
+          <span class="ast-sheet__swatch"><i style="background:#ff5fa8"></i>rosa forte</span>
+          <span class="ast-sheet__swatch"><i style="background:#d7c1ff"></i>lilás</span>
+          <span class="ast-sheet__swatch"><i style="background:#17101f"></i>preto</span>
+          <span class="ast-sheet__swatch"><i style="background:#0d0a11"></i>tinta</span>
+          <span class="ast-sheet__swatch"><i style="background:#fff6fb"></i>creme</span>
+        </div>
+
+        <ul class="ast-sheet__list">
+          <li>Cabeçalho com faixa de bandeirinhas, marca com laço e barra lateral preta de borda rosa.</li>
+          <li>Botões, chips, foco e seleção em rosa; cartões com moldura rosa e brilho suave.</li>
+          <li>Estudos em rosa-papel, catálogo e GN-Math em rosa-noite, navegador com borda listrada.</li>
+          <li>Rolagem rosa, estrelinhas no fundo e uma comemoração rápida ao ligar ou desligar.</li>
+          <li>Desligado, o site volta exatamente ao minimalista de antes — nada é sobrescrito.</li>
+        </ul>
+
+        <div class="settings-row settings-row--wrap" style="margin-top:16px">
+          <button class="btn btn--primary btn--sm" type="button" data-astolfo="toggle">Ligar / desligar agora</button>
+          <button class="btn btn--soft btn--sm" type="button" data-astolfo="close">Fechar</button>
+        </div>
       </div>
     </div>
   </dialog>
@@ -2293,13 +2362,14 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="assets/js/social.js?v=50" defer></script>
+  <script src="assets/js/social.js?v=51" defer></script>
   <!-- abertura em about:blank: o site continua no iframe da aba em branco
        (o app.js recarrega a página uma vez quando o bundle muda, então o JS
        antigo nunca fica preso nessa aba) -->
-  <script src="assets/js/cloak.js?v=50" defer></script>
-  <script src="assets/js/anim.js?v=50" defer></script>
-  <script src="assets/js/lcore.js?v=50" defer></script>
-    <script src="assets/js/app.js?v=50" defer></script>
+  <script src="assets/js/cloak.js?v=51" defer></script>
+  <script src="assets/js/anim.js?v=51" defer></script>
+  <script src="assets/js/astolfo.js?v=51" defer></script>
+  <script src="assets/js/lcore.js?v=51" defer></script>
+    <script src="assets/js/app.js?v=51" defer></script>
 </body>
 </html>

@@ -121,7 +121,15 @@
     root.style.setProperty(name, value);
   }
 
+  /* Tema Astolfo ligado: a paleta é do personagem. O seletor de cores
+     continua salvo e volta a valer quando o tema é desligado. */
+  const ASTOLFO_HEX = '#ff8fc4';
+
   function applyPalette(hex, options) {
+    if (root.getAttribute('data-skin') === 'astolfo') {
+      hex = ASTOLFO_HEX;
+      options = { persist: false };     /* não sobrescreve a cor escolhida */
+    }
     const isLight = root.getAttribute('data-theme') === 'light';
     const base = hexToRgb(hex);
     const hsl = rgbToHsl(base.r, base.g, base.b);
@@ -973,6 +981,11 @@
       }).observe(root, { attributes: true, attributeFilter: ['class'] });
     }
     window.addEventListener('lumin:settings', applySettings);
+
+    /* ligar/desligar o tema Astolfo reaplica a paleta na hora */
+    window.addEventListener('lumin:astolfo', function () {
+      applyPalette(loadSavedColor() || NEUTRAL, { persist: false });
+    });
 
     /* o botão de tema do site.js pede a reaplicação da paleta */
     document.getElementById('theme-toggle')?.addEventListener('click', () => {

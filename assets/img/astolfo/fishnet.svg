@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Trama de meia arrastão">
+  <rect width="64" height="64" fill="#ffd7ea"/>
+  <g stroke="#0d0a11" stroke-width="1.2" opacity=".8">
+    <path d="M-8 8L72 88M-8 24L72 104M-8 40L72 120M-8 56L72 136M-8 72L72 152"/>
+    <path d="M72 8L-8 88M72 24L-8 104M72 40L-8 120M72 56L-8 136M72 72L-8 152"/>
+  </g>
+</svg>
