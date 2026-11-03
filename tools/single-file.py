@@ -170,7 +170,7 @@ def build(root: Path) -> tuple[str, dict[str, object]]:
         (r"[ \t]*<link rel=\"stylesheet\" href=\"assets/css/os\.css[^\"]*\"[^>]*>\r?\n", "os.css"),
         (r"[ \t]*<link rel=\"stylesheet\" href=\"assets/css/lcore\.css[^\"]*\"[^>]*>\r?\n", "lcore.css"),
         (r"[ \t]*<script src=\"assets/js/lcore\.js[^\"]*\"[^>]*></script>\r?\n", "lcore.js"),
-        (r"[ \t]*<!-- abertura em about:blank[^\n]*\n[ \t]*<script src=\"assets/js/cloak\.js[^\"]*\"[^>]*></script>\r?\n", "cloak.js"),
+        (r"[ \t]*<!-- abertura em about:blank[\s\S]*?-->\r?\n[ \t]*<script src=\"assets/js/cloak\.js[^\"]*\"[^>]*></script>\r?\n", "cloak.js"),
         (r"[ \t]*<!-- anima[^\n]*assets/js/anim\.js -->\n[ \t]*<link rel=\"stylesheet\" href=\"assets/css/anim\.css[^\"]*\">\r?\n", "anim.css"),
         (r"[ \t]*<script src=\"assets/js/anim\.js[^\"]*\"[^>]*></script>\r?\n", "anim.js"),
     ]
