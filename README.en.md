@@ -79,7 +79,7 @@ Open the page and play — no account, no download, no installation.
 slash.
 
 The site now **opens straight into the study portal** (the decoy). There is no picker screen any
-more: to reach the game catalog, click **Ryan Smith** in the study footer, or press Shift + D / Alt + S.
+more: to reach the game catalog, click/tap **Ryan Smith** in the study footer — always enabled, on desktop and mobile — or press Shift + D (Alt + S was removed).
 The decoy is **total**: on every tab — LuminSDK, GN-Math, catalogs, sites, browser, Hub and LuminOS —
 the page is titled **“StudyHub | Estudos e Quiz”** and uses the StudyHub logo.
 **LuminOS is not a tab** — it is a site in the collection (`dylanmc.site`) and opens in the built-in
@@ -290,42 +290,35 @@ two-column planner with the timer in a dark card, the quiz, a two-column FAQ and
 exactly the same), even with saved history, settings or a “last tab” — the previous tab is **not**
 restored. The games catalog shows up when the visitor:
 
-- clicks **Ryan Smith** in the StudyDesk footer, or
-- presses **`Shift` + `D`** (or **`Alt` + `S`**) — the *two-key combo* that toggles between Study and
-  the site from any tab.
+- clicks/taps **Ryan Smith** in the StudyDesk footer (always enabled, on desktop and mobile), or
+- presses **`Shift` + `D`** — the *two-key combo* that toggles between Study and the site from any tab
+  (`Alt` + `S` was removed).
 
-### Full decoy and the window-switch lock
+### Full decoy (no window-switch lock)
 
 The tab title and icon are never LuminSDK's, not even after opening the catalog: everywhere the page
 is called **“StudyHub | Estudos e Quiz”** with `studyhub.svg`, and the title is rewritten immediately
 if any module tries to change it.
 
-- **Alt + Tab, Windows + Tab or switching browser tabs** sends the page back to the study portal at
-  once — **every time**, no matter how often (besides focus/visibility events, the page checks the
-  window focus every 0.8 s, so there is no “it only worked once”);
-- in that state the **Ryan Smith** credit is **disabled** (and `Shift`+`D` / `Alt`+`S` stop working),
-  so whoever bumps into the screen cannot reach the catalog;
-- the lock survives a reload inside the same browser session;
-- **`Ctrl` + `AltGr` + `H`** restores everything: real title and icon, credit enabled, catalog open.
+**There is no window-switch lock anymore.** Switching tabs, pressing **Alt + Tab**, leaving the app or
+locking the phone does **not** change the screen and does **not** disable the “Ryan Smith” credit: the
+footer button stays enabled and clickable on any device. That lock was what fired on every app switch
+on mobile (`visibilitychange`) and left the credit greyed out and inert.
 
-Honest limits: the browser does **not** let a page intercept Alt+Tab / Windows+Tab — the site reacts
-the moment the window loses focus, which looks the same in practice. Because the lock watches the
-window focus, **opening anything in another tab** (external link, the player's “open in a new tab”,
-Alt+Tab itself) also takes the page back to Study — that is the requested behaviour, but it is worth
-knowing. Clicking inside a game (iframe)
-does not trigger the lock, because focus stays in this window. If keyboard focus is **inside** the
-game iframe, `Ctrl`+`AltGr`+`H` does not reach the page — click the player frame or go back to Study
-first and the shortcut answers again.
+- **`Ctrl` + `AltGr` + `H`** (Windows' AltGr arrives as Ctrl+Alt) shows the real title and icon; it is
+  optional, for whoever wants to see the page's real name.
+- The decoy (StudyHub title/icon) still applies on every tab of the site.
+- The old lock key (`luminsdk:v1:shield`) is cleared on startup.
 
 | Action | What happens |
 |---|---|
 | opening `…/LuminSDK/` | lands on StudyDesk |
-| **`Shift` + `D`** / **`Alt` + `S`** | toggles Study ⇄ site (works on any tab, even inside a game) |
+| **`Shift` + `D`** | toggles Study ⇄ site (works on any tab, even inside a game) |
 | **Study** tab in the left rail | opens StudyDesk |
-| clicking **Ryan Smith** in the StudyDesk footer | opens LuminSDK |
+| clicking/tapping **Ryan Smith** in the StudyDesk footer | opens LuminSDK (always active, desktop and mobile) |
 | **Lumin** tab in the left rail | opens LuminSDK |
-| **Alt + Tab** / **Windows + Tab** | back to Study and the lock arms |
-| **`Ctrl` + `AltGr` + `H`** | releases everything and opens the catalog |
+| **Alt + Tab** / **Windows + Tab** / switching apps | nothing changes: the screen stays where it is |
+| **`Ctrl` + `AltGr` + `H`** | shows the real title/icon and opens the catalog |
 
 The URL **never** changes when switching tabs. Old addresses (`/gn/`, `/sites/`, `/study/`) still
 work: they redirect to `?view=…`, the app opens the requested tab and cleans the address bar right

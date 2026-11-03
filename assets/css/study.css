@@ -945,12 +945,25 @@ html[data-view="estudo"] body { padding-left: 0; }
   font-weight: 600;
   line-height: 1.35;
   transition: color .16s ease, border-color .16s ease;
+  /* alvo de toque confortável no celular (antes era só uma palavra fina) */
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 2px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+#view-estudo .sd-credit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 #view-estudo .sd-credit:hover {
   color: var(--accent);
   border-bottom-color: var(--accent);
 }
-/* crédito com a trava de troca de janela armada: continua no lugar, sem ação */
+/* crédito sem ação (estado antigo da trava, que não existe mais): mantém a regra
+   só para quem ainda tiver a marca aria-disabled vinda de uma sessão velha */
 #view-estudo .sd-credit[aria-disabled="true"],
 #view-estudo .sd-credit:disabled {
   color: var(--ink-mute);
@@ -983,6 +996,7 @@ html[data-view="estudo"] body { padding-left: 0; }
   #view-estudo .sd-faq { grid-template-columns: minmax(0, 1fr); }
   #view-estudo .sd-foot__inner { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   #view-estudo .sd-foot__brand { grid-column: 1 / -1; }
+  #view-estudo .sd-foot__bottom { justify-content: flex-start; }
   #view-estudo .sd-search { flex-wrap: wrap; }
   #view-estudo .sd-search input { flex-basis: calc(100% - 28px); }
   #view-estudo .sd-search .sd-btn { width: 100%; }

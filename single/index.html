@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=42 -->
+  <!-- assets/css/styles.css?v=43 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -4025,7 +4025,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=42 -->
+  <!-- assets/css/app.css?v=43 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -11629,7 +11629,10 @@ html[data-view="gn"] .tabrail__tab.is-active {
    · o site ABRE SEMPRE nos estudos, mesmo com histórico, preferências ou
      última aba salvos: nada de restaurar a aba anterior
    · o catálogo aparece quando a pessoa clica em "Ryan Smith" no rodapé do
-     portal de estudos (ou Shift + D / Alt + S)
+     portal de estudos (ou Shift + D, e só ele)
+   · não existe mais trava de troca de janela: sair do app (Alt+Tab, trocar
+     de aba, bloquear o celular) não muda a tela nem desliga o crédito — no
+     celular era isso que sumia com o botão "Ryan Smith"
    · endereços antigos (/gn/, /sites/, /study/) continuam funcionando pelo
      ?view=…, e a barra de endereço é limpa logo depois
    · cada aba carrega o seu CSS e os seus scripts só na primeira visita
@@ -11646,18 +11649,18 @@ html[data-view="gn"] .tabrail__tab.is-active {
       css: [],
       scripts: [
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=42',
-        'assets/js/settings.js?v=42',
-        'assets/js/site.js?v=42',
-        'assets/js/atmosphere.js?v=42',
-        'assets/js/progress.js?v=42',
-        'assets/js/bonus.js?v=42'
+        'assets/js/library.js?v=43',
+        'assets/js/settings.js?v=43',
+        'assets/js/site.js?v=43',
+        'assets/js/atmosphere.js?v=43',
+        'assets/js/progress.js?v=43',
+        'assets/js/bonus.js?v=43'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=42'],
-      scripts: ['assets/js/gnmath.js?v=42'],
+      css: ['assets/css/gnmath.css?v=43'],
+      scripts: ['assets/js/gnmath.js?v=43'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -11669,60 +11672,60 @@ html[data-view="gn"] .tabrail__tab.is-active {
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=42'],
-      scripts: ['assets/js/provider.js?v=42', 'assets/js/atmosphere.js?v=42']
+      css: ['assets/css/provider.css?v=43'],
+      scripts: ['assets/js/provider.js?v=43', 'assets/js/atmosphere.js?v=43']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=42'],
-      scripts: ['assets/js/sites.js?v=42', 'assets/js/atmosphere.js?v=42']
+      css: ['assets/css/sites.css?v=43'],
+      scripts: ['assets/js/sites.js?v=43', 'assets/js/atmosphere.js?v=43']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=42'],
-      scripts: ['assets/js/browser.js?v=42', 'assets/js/atmosphere.js?v=42']
+      css: ['assets/css/browser.css?v=43'],
+      scripts: ['assets/js/browser.js?v=43', 'assets/js/atmosphere.js?v=43']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=42',
-        'assets/js/os.js?v=42',
-        'assets/js/profile.js?v=42',
-        'assets/js/lab.js?v=42',
-        'assets/js/studio.js?v=42',
-        'assets/js/arcade.js?v=42',
-        'assets/js/vault.js?v=42',
-        'assets/js/community.js?v=42',
-        'assets/js/central.js?v=42',
-        'assets/js/atmosphere.js?v=42'
+        'assets/js/player.js?v=43',
+        'assets/js/os.js?v=43',
+        'assets/js/profile.js?v=43',
+        'assets/js/lab.js?v=43',
+        'assets/js/studio.js?v=43',
+        'assets/js/arcade.js?v=43',
+        'assets/js/vault.js?v=43',
+        'assets/js/community.js?v=43',
+        'assets/js/central.js?v=43',
+        'assets/js/atmosphere.js?v=43'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=42', 'assets/css/hub.css?v=42'],
+      css: ['assets/css/os.css?v=43', 'assets/css/hub.css?v=43'],
       scripts: [
-        'assets/js/player.js?v=42',
-        'assets/js/os.js?v=42',
-        'assets/js/profile.js?v=42',
-        'assets/js/lab.js?v=42',
-        'assets/js/studio.js?v=42',
-        'assets/js/arcade.js?v=42',
-        'assets/js/vault.js?v=42',
-        'assets/js/community.js?v=42',
-        'assets/js/central.js?v=42',
-        'assets/js/hub.js?v=42'
+        'assets/js/player.js?v=43',
+        'assets/js/os.js?v=43',
+        'assets/js/profile.js?v=43',
+        'assets/js/lab.js?v=43',
+        'assets/js/studio.js?v=43',
+        'assets/js/arcade.js?v=43',
+        'assets/js/vault.js?v=43',
+        'assets/js/community.js?v=43',
+        'assets/js/central.js?v=43',
+        'assets/js/hub.js?v=43'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=42']
+      scripts: ['assets/js/atmosphere.js?v=43']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=42'],
-      scripts: ['assets/js/study-questions.js?v=42', 'assets/js/study.js?v=42']
+      css: ['assets/css/study.css?v=43'],
+      scripts: ['assets/js/study-questions.js?v=43', 'assets/js/study.js?v=43']
     }
   };
 
@@ -11762,15 +11765,6 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
   function initialRoute() {
     if (SINGLE) return 'lumin';
-
-    /* com a trava armada o site reabre nos estudos, sem herdar modo nem aba */
-    if (shield.locked) {
-      try {
-        sessionStorage.removeItem(MODE);
-        sessionStorage.removeItem(START);
-      } catch (error) { /* modo privado sem storage */ }
-      return 'estudo';
-    }
 
     const asked = routeFromUrl();
     if (asked) return asked;
@@ -11862,34 +11856,17 @@ html[data-view="gn"] .tabrail__tab.is-active {
      título real não aparece no LuminSDK, no GN-Math, nos catálogos, nos
      sites, no navegador, no Hub nem no LuminOS.
 
-     A trava entra quando a pessoa troca de janela ou de aba (Alt+Tab,
-     Windows+Tab, clique fora): a página volta para os estudos, o crédito
-     "Ryan Smith" fica desligado e Shift+D / Alt+S param de responder.
+     Aqui NÃO existe mais trava de troca de janela: trocar de aba, dar
+     Alt+Tab ou sair do app não muda a tela nem mexe no crédito "Ryan Smith".
+     No celular a troca de app dispara visibilidade o tempo todo, e era isso
+     que deixava o crédito do rodapé apagado e sem ação.
 
-     Ctrl+AltGr+H (o AltGr do Windows chega como Ctrl+Alt) desarma tudo:
-     título e ícone reais, crédito liberado e catálogo aberto.
-
-     O navegador não deixa a página capturar Alt+Tab / Windows+Tab — o que
-     dá para fazer, e é o que este bloco faz, é reagir no instante em que a
-     janela perde o foco e voltar para os estudos. */
+     Ctrl+AltGr+H (o AltGr do Windows chega como Ctrl+Alt) mostra o título e o
+     ícone reais e abre o catálogo — é só o disfarce saindo, opcional. */
   const SHIELD_TITLE = 'StudyHub | Estudos e Quiz';
   const SHIELD_ICON = 'assets/img/studyhub.svg';
-  const SHIELD_KEY = 'luminsdk:v1:shield';
 
-  /* a trava sobrevive ao recarregar dentro da mesma sessão do navegador:
-     recarregar não devolve o crédito para quem esbarrou no Alt+Tab */
-  function readLock() {
-    try { return sessionStorage.getItem(SHIELD_KEY) === '1'; } catch (error) { return false; }
-  }
-
-  function writeLock(on) {
-    try {
-      if (on) sessionStorage.setItem(SHIELD_KEY, '1');
-      else sessionStorage.removeItem(SHIELD_KEY);
-    } catch (error) { /* modo privado sem storage */ }
-  }
-
-  const shield = { disguise: true, locked: readLock(), observer: null, timer: 0, beat: 0, bye: false };
+  const shield = { disguise: true, observer: null };
 
   /* título à prova de reescrita: qualquer módulo que tente trocar o título
      (navegador interno, chamadas do app) é corrigido na hora */
@@ -11909,22 +11886,6 @@ html[data-view="gn"] .tabrail__tab.is-active {
     shield.observer = null;
   }
 
-  /* crédito "Ryan Smith": é a saída para o catálogo, então fica desligado
-     enquanto a trava estiver armada */
-  function paintCredit() {
-    const autor = document.getElementById('autor');
-    if (!autor) return;
-    if (shield.locked) {
-      if (!autor.disabled) autor.disabled = true;
-      autor.setAttribute('aria-disabled', 'true');
-      autor.dataset.shield = 'on';
-    } else {
-      if (autor.disabled) autor.disabled = false;
-      autor.removeAttribute('aria-disabled');
-      delete autor.dataset.shield;
-    }
-  }
-
   function paintShield() {
     const config = ROUTES[current];
     if (shield.disguise) {
@@ -11935,81 +11896,15 @@ html[data-view="gn"] .tabrail__tab.is-active {
       if (config && document.title !== config.title) document.title = config.title;
     }
     syncIcon(current);
-    paintCredit();
     document.documentElement.classList.toggle('is-shield', shield.disguise);
   }
 
-  /* troca de janela/aba: volta para os estudos e liga a trava */
-  function shieldPanic() {
-    if (shield.bye) return;                /* recarregar/fechar não conta como Alt+Tab */
-    if (shield.locked && current === 'estudo') return;   /* já está no lugar certo */
-    shield.disguise = true;
-    shield.locked = true;
-    writeLock(true);
-    if (current && current !== 'estudo') go('estudo', { force: true });
-    paintShield();
-  }
-
-  /* Ctrl+AltGr+H: tudo volta ao normal e o catálogo abre */
+  /* Ctrl+AltGr+H: título e ícone reais voltam e o catálogo abre */
   function shieldRelease() {
     shield.disguise = false;
-    shield.locked = false;
-    shield.bye = false;
-    writeLock(false);
     paintShield();
     go('lumin', { reveal: true, force: true });
   }
-
-  /* a checagem não olha para o iframe de propósito: com um jogo em foco
-     document.hasFocus() continua true (o foco está nesta janela), então
-     jogar não dispara a trava — mas Alt+Tab dispara */
-  function shieldCheck() {
-    window.clearTimeout(shield.timer);
-    shield.timer = window.setTimeout(function () {
-      const hidden = document.visibilityState === 'hidden';
-      const unfocused = typeof document.hasFocus === 'function' && !document.hasFocus();
-      if (hidden || unfocused) shieldPanic();
-    }, 200);
-  }
-
-  document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden') shieldPanic();
-    else shieldCheck();
-  });
-  window.addEventListener('blur', shieldCheck);
-
-  /* sair da página (recarregar, fechar, ir para outro endereço) não é
-     Alt+Tab: o disfarce não pode se armar sozinho no meio da saída */
-  window.addEventListener('pagehide', function () { shield.bye = true; });
-  window.addEventListener('beforeunload', function () { shield.bye = true; });
-  window.addEventListener('pageshow', function () { shield.bye = false; });
-
-  /* ---- batida do disfarce ------------------------------------------------
-     Nem todo navegador entrega blur/visibilitychange do mesmo jeito (e um
-     Alt+Tab atrás do outro pode não gerar evento nenhum). Em vez de confiar
-     num evento só, a página confere o foco de tempo em tempo: se a janela
-     perdeu o foco — de novo, quantas vezes for — ela volta para os estudos. */
-  let sawFocus = typeof document.hasFocus === 'function' ? document.hasFocus() : true;
-
-  function noteFocus() {
-    sawFocus = true;
-    shield.bye = false;
-  }
-
-  function startHeartbeat() {
-    if (shield.beat) return;
-    shield.beat = window.setInterval(function () {
-      if (shield.bye) return;
-      if (document.visibilityState === 'hidden') { shieldPanic(); return; }
-      if (!sawFocus) return;                       /* aba aberta em segundo plano */
-      if (typeof document.hasFocus === 'function' && !document.hasFocus()) shieldPanic();
-    }, 800);
-  }
-
-  window.addEventListener('focus', noteFocus);
-  document.addEventListener('pointerdown', noteFocus, true);
-  document.addEventListener('keydown', noteFocus, true);
-  startHeartbeat();
 
   /* ---------- troca de aba ---------- */
   function paintRail(route) {
@@ -12102,26 +11997,25 @@ html[data-view="gn"] .tabrail__tab.is-active {
     show(route);
   }
 
-  /* ---------- teclado: Shift+D ou Alt+S (livres) · Ctrl+AltGr+H (libera) ---------- */
+  /* ---------- teclado: Shift+D alterna · Ctrl+AltGr+H libera o disfarce ---------- */
   document.addEventListener('keydown', function (event) {
     const tag = (event.target && event.target.tagName) || '';
     const typing = tag === 'INPUT' || tag === 'TEXTAREA' || (event.target && event.target.isContentEditable);
     const altGraph = typeof event.getModifierState === 'function' && event.getModifierState('AltGraph');
     const letterH = event.code === 'KeyH' || event.key === 'h' || event.key === 'H';
 
-    /* Ctrl+AltGr+H: sai do disfarce, libera o crédito e abre o catálogo */
+    /* Ctrl+AltGr+H: sai do disfarce (título e ícone reais) e abre o catálogo */
     if (letterH && !event.shiftKey && !event.metaKey && ((event.ctrlKey && event.altKey) || altGraph)) {
       event.preventDefault();
       shieldRelease();
       return;
     }
 
-    const combo = (event.shiftKey && (event.key === 'D' || event.key === 'd')) ||
-      (event.altKey && (event.key === 's' || event.key === 'S'));
+    /* Shift + D: a única combinação que troca estudos ⇄ site */
+    const combo = event.shiftKey && !event.altKey && !event.ctrlKey && !event.metaKey &&
+      (event.code === 'KeyD' || event.key === 'D' || event.key === 'd');
     if (!combo || typing) return;
     event.preventDefault();
-    /* com a trava armada, os atalhos não levam ao catálogo */
-    if (shield.locked) return;
     if (current === 'os' || current === 'boot') {
       go('estudo');
       return;
@@ -12239,11 +12133,15 @@ html[data-view="gn"] .tabrail__tab.is-active {
     openInBrowser: openInBrowser,
     openProvider: openProvider,
     setTitle: function (text) { document.title = shield.disguise ? SHIELD_TITLE : text; },
-    /* leitura do disfarce (útil para diagnóstico; sem atalho de fuga) */
-    shieldState: function () { return { disguised: shield.disguise, locked: shield.locked }; }
+    /* leitura do disfarce (útil para diagnóstico) */
+    shieldState: function () { return { disguised: shield.disguise }; }
   };
 
   function boot() {
+    /* chave da antiga trava de troca de janela: não existe mais, não deve
+       ficar sobrando na sessão de quem já usou o site */
+    try { sessionStorage.removeItem('luminsdk:v1:shield'); } catch (error) { /* sem storage */ }
+
     const legacy = routeFromUrl();
     show(initialRoute());
     /* endereço antigo (?view=gn…): limpa a barra para que reabrir o site
