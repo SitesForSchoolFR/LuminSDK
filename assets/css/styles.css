@@ -3047,6 +3047,10 @@ html[data-speed] .site-nav a {
   overflow: hidden;
 }
 .ast-card__avatar img { width: 100%; height: 100%; display: block; }
+.ast-card.is-on .ast-card__avatar {
+  border-color: #ff5fa8;
+  box-shadow: 0 0 0 3px rgba(255, 95, 168, .25), 0 0 18px rgba(255, 95, 168, .65);
+}
 .ast-card__title { font-weight: 700; line-height: 1.25; }
 .ast-card__title small {
   display: block;

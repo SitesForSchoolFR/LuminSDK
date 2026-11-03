@@ -60,7 +60,7 @@
     const link = document.createElement('link');
     link.id = 'astolfo-css';
     link.rel = 'stylesheet';
-    link.href = 'assets/css/astolfo.css?v=51';
+    link.href = 'assets/css/astolfo.css?v=52';
     link.addEventListener('error', function () { link.remove(); });
     document.head.appendChild(link);
   }
@@ -100,8 +100,8 @@
       state.classList.toggle('is-on', enabled);
     }
     if (knob) knob.setAttribute('aria-pressed', enabled ? 'true' : 'false');
-    const art = card.querySelector('.ast-card__avatar img');
-    if (art) art.src = enabled ? 'assets/img/astolfo/knight-256.png' : 'assets/img/astolfo/avatar.svg';
+    /* uma única arte (Doki Theme, MIT): o "ligado" aparece no brilho do avatar */
+    card.classList.toggle('is-on', enabled);
   }
 
   let previousFocus = null;
