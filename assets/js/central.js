@@ -58,6 +58,12 @@
   };
 
   const CHANGELOG = [
+    { v: 'v45', items: [
+      'about:blank agora abre SEMPRE: sem trava de sessão, cada carga tenta; se o navegador barrar, o primeiro toque abre.',
+      'A aba de trás vira google.com e tenta se fechar sozinha (window.close).',
+      'Animação nova de troca de aba: 200 ms, uma para cada aba, no tema tempo/relógio/espaço-tempo.',
+      'A animação toca em TODA troca de aba (Shift+D, crédito e rail) — nada de “só na primeira vez”.'
+    ] },
     { v: 'v44', items: [
       'about:blank de volta ao comportamento esperado: a trava da sessão expira em 3 minutos, então o portal volta a abrir a aba sozinho nas próximas visitas.',
       'Se o pop-up for barrado, aparece a dica “toque em qualquer lugar para abrir em about:blank” (some no primeiro gesto).',
@@ -66,7 +72,7 @@
     { v: 'v43', items: [
       'Correção: a animação de abertura volta a tocar no Shift+D — o script e a folha agora são globais e não dependem mais da rota carregada.',
       'Correção: a página não fica mais travada (a classe que zerava a rolagem saiu; se sobrar de sessão antiga, é limpa no boot).',
-      'Animação editável: tudo em CONFIG no topo de assets/js/reveal.js (duração, cooldown, cores, textos, raridades).'
+      'Animação editável por CONFIG no topo do módulo da animação (hoje: assets/js/anim.js).'
     ] },
     { v: 'v42', items: [
       'Animação de abertura no estilo Sols RNG quando Shift+D (ou o crédito do rodapé) abre o catálogo: aurora, raios, anéis, faíscas, flash e raridade sorteada.',

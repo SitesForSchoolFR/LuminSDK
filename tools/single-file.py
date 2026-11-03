@@ -39,6 +39,7 @@ SCRIPTS = [
     "assets/js/progress.js",
     "assets/js/site.js",
     "assets/js/cloak.js",
+    "assets/js/anim.js",
     "assets/js/atmosphere.js",
     "assets/js/bonus.js",
     "assets/js/app.js",
@@ -170,6 +171,8 @@ def build(root: Path) -> tuple[str, dict[str, object]]:
         (r"[ \t]*<link rel=\"stylesheet\" href=\"assets/css/lcore\.css[^\"]*\"[^>]*>\r?\n", "lcore.css"),
         (r"[ \t]*<script src=\"assets/js/lcore\.js[^\"]*\"[^>]*></script>\r?\n", "lcore.js"),
         (r"[ \t]*<!-- abertura em about:blank[^\n]*\n[ \t]*<script src=\"assets/js/cloak\.js[^\"]*\"[^>]*></script>\r?\n", "cloak.js"),
+        (r"[ \t]*<!-- anima[^\n]*assets/js/anim\.js -->\n[ \t]*<link rel=\"stylesheet\" href=\"assets/css/anim\.css[^\"]*\">\r?\n", "anim.css"),
+        (r"[ \t]*<script src=\"assets/js/anim\.js[^\"]*\"[^>]*></script>\r?\n", "anim.js"),
     ]
     for pattern, label in strip:
         html, count = re.subn(pattern, "", html, count=1)
