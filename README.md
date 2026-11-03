@@ -396,8 +396,14 @@ Como funciona:
   histórico nem a barra mostram o endereço do portal — é o mesmo truque do `openBackup()` do
   [Utopia](https://utopia.myk.sh): `about:blank` com o site no iframe na frente e o Google atrás.
   `?cloak=google` abre a aba em branco mas mantém o portal na aba de trás;
-- **uma aba por sessão**: recarregar não abre aba atrás de aba. Fechou a aba `about:blank`? A próxima
-  recarga do portal volta a abrir outra (senão o endereço real ficaria à mostra);
+- **uma aba por sessão, com validade curta**: recarregar não abre aba atrás de aba, mas a trava
+  (`luminsdk:v1:cloak:spawned`) **expira em 3 minutos** — fechou a aba `about:blank`, trocou de
+  aparelho ou o pop-up foi barrado antes, a próxima visita/recarga tenta de novo (nada de ficar
+  preso no endereço real por causa de uma tentativa antiga);
+- **dica na tela**: se o navegador barrar o pop-up, aparece uma linha discreta (“Toque em qualquer
+  lugar para abrir em about:blank”) que some no primeiro gesto — é só isso que falta para abrir;
+- **aba aberta pelo próprio navegador** (um `target="_blank"` ou um `window.open` de outro módulo)
+  já conta como a aba em branco: o portal não abre uma segunda;
 - dentro do iframe o script se desliga sozinho (`self !== top`), então nunca há iframe dentro de
   iframe; a página emoldurada continua na mesma origem, com `localStorage`, preferências e jogos
   funcionando normalmente;

@@ -384,8 +384,15 @@ How it works:
   the history nor the address bar shows the portal address — the same trick as Utopia's
   `openBackup()`: `about:blank` with the site in the iframe in front, Google behind.
   `?cloak=google` opens the blank tab but keeps the portal in the back tab;
-- **one tab per session**: reloading never opens tab after tab. Closed the `about:blank` tab? The next
-  reload of the portal opens a new one (otherwise the real address would be exposed);
+- **one tab per session, with a short expiry**: reloading never opens tab after tab, but the lock
+  (`luminsdk:v1:cloak:spawned`) **expires after 3 minutes** — if you closed the `about:blank` tab, or
+  the pop-up was blocked earlier, the next visit/reload tries again (never stuck on the real address
+  because of an old attempt);
+- **on-screen hint**: if the browser blocks the pop-up, a discreet one-liner appears (“Toque em
+  qualquer lugar para abrir em about:blank”) and disappears on the first gesture — that single tap is
+  all that is missing;
+- **a tab opened by the browser itself** (a `target="_blank"` or a `window.open` from another module)
+  already counts as the blank tab: the portal does not open a second one;
 - inside the iframe the script turns itself off (`self !== top`), so there is never an iframe inside
   an iframe; the framed page keeps the same origin, with `localStorage`, preferences and games
   working as usual;

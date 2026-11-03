@@ -58,6 +58,11 @@
   };
 
   const CHANGELOG = [
+    { v: 'v44', items: [
+      'about:blank de volta ao comportamento esperado: a trava da sessão expira em 3 minutos, então o portal volta a abrir a aba sozinho nas próximas visitas.',
+      'Se o pop-up for barrado, aparece a dica “toque em qualquer lugar para abrir em about:blank” (some no primeiro gesto).',
+      'Aba já aberta pelo navegador (target=_blank / window.open) conta como about:blank: o portal não abre uma segunda.'
+    ] },
     { v: 'v43', items: [
       'Correção: a animação de abertura volta a tocar no Shift+D — o script e a folha agora são globais e não dependem mais da rota carregada.',
       'Correção: a página não fica mais travada (a classe que zerava a rolagem saiu; se sobrar de sessão antiga, é limpa no boot).',
