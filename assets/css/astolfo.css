@@ -201,7 +201,30 @@ html[data-skin="astolfo"] .tabrail__sep { background: rgba(255, 143, 196, .35); 
    A imagem fica numa camada fixa ATRÁS do conteúdo (z-index negativo,
    como o .bg-fx do site). A "opacidade" vem de duas camadas de degradê
    por cima dela — assim o rosto aparece, mas o texto continua legível.
+
+   POR QUE ELA SUMIA (corrigido): o modo minimalista pinta fundo no html
+   E no body (styles.css: `html, body { background: var(--bg) }`). Pela
+   ordem de pintura do CSS (Apêndice E), quando o html tem fundo próprio,
+   o fundo do body é pintado DEPOIS das camadas posicionadas com z-index
+   negativo — ou seja, o body opaco cobria o ::before em qualquer tela.
+   A cura: com o tema ligado, a cor-base vai para o html e o body fica
+   transparente; as abas que pintavam fundo opaco por cima (os, browser,
+   provider, sites) ganham véu translúcido.
    ========================================================= */
+html[data-skin="astolfo"] { background: #0b0810; }
+html[data-skin="astolfo"][data-theme="light"] { background: #fff7fb; }
+html[data-skin="astolfo"] body { background: transparent !important; }
+
+/* a grade e o ruído do .bg-fx riscavam a arte; com o tema ligado, saem */
+html[data-skin="astolfo"] .bg-fx__grid,
+html[data-skin="astolfo"] .bg-fx__noise { display: none; }
+
+/* abas que pintavam um fundo opaco em cima da camada fixa */
+html[data-skin="astolfo"] #view-browser,
+html[data-skin="astolfo"] #view-provider { background: rgba(11, 8, 16, .38); }
+html[data-skin="astolfo"] #view-os .os { background: rgba(7, 7, 15, .35); }
+html[data-skin="astolfo"] .sites-head { background: rgba(11, 8, 16, .6); }
+
 html[data-skin="astolfo"] body::before {
   content: "";
   position: fixed;
@@ -228,12 +251,16 @@ html[data-skin="astolfo"] body::before {
   animation: ast-breathe 26s ease-in-out infinite alternate;
 }
 
-html[data-skin="astolfo"][data-theme="light"] body::before {
+html[data-skin="astolfo"][data-theme="light"] body::before,
+html[data-skin="astolfo"][data-view="estudo"] body::before {
   background-image:
     linear-gradient(100deg, rgba(255, 247, 251, .98) 0%, rgba(255, 247, 251, .88) 38%, rgba(255, 247, 251, .35) 72%, rgba(255, 247, 251, 0) 100%),
     linear-gradient(0deg, rgba(255, 247, 251, .96) 0%, rgba(255, 247, 251, .4) 34%, rgba(255, 247, 251, 0) 62%),
     linear-gradient(rgba(255, 247, 251, .62), rgba(255, 247, 251, .62)),
     url("../img/astolfo/astolfo-wall-1920.jpg");
+  background-position: 0 0, 0 0, 0 0, 68% 42%;
+  background-size: auto, auto, auto, cover;
+  background-color: #fff7fb;
 }
 
 /* estrelinhas (por cima, mas quase invisíveis e sem capturar clique) */
@@ -257,10 +284,11 @@ html[data-skin="astolfo"] body::after {
 @media (max-width: 860px) {
   html[data-skin="astolfo"] body::before {
     background-image:
-      linear-gradient(0deg, rgba(11, 8, 16, .97) 0%, rgba(11, 8, 16, .55) 44%, rgba(11, 8, 16, .2) 78%, rgba(11, 8, 16, .1) 100%),
-      linear-gradient(rgba(11, 8, 16, .58), rgba(11, 8, 16, .58)),
+      linear-gradient(0deg, rgba(11, 8, 16, .94) 0%, rgba(11, 8, 16, .48) 44%, rgba(11, 8, 16, .14) 78%, rgba(11, 8, 16, .04) 100%),
+      linear-gradient(rgba(11, 8, 16, .42), rgba(11, 8, 16, .42)),
       url("../img/astolfo/astolfo-wall-1280.jpg");
     background-position: 0 0, 0 0, 70% 22%;
+    background-size: auto, auto, cover;
   }
   html[data-skin="astolfo"] body::after { opacity: .4; }
 }
@@ -349,7 +377,7 @@ html[data-skin="astolfo"] #view-estudo {
     radial-gradient(820px 400px at 22% -160px, #ffe4f0 0%, rgba(255, 228, 240, 0) 70%),
     radial-gradient(700px 360px at 96% -80px, #fff0f7 0%, rgba(255, 240, 247, 0) 62%),
     repeating-linear-gradient(0deg, rgba(214, 51, 138, .05) 0 1px, transparent 1px 28px),
-    #fffafd;
+    rgba(255, 250, 253, .82);
 }
 html[data-skin="astolfo"] #view-estudo .study-hero,
 html[data-skin="astolfo"] #view-estudo .hero {
