@@ -80,7 +80,7 @@ O objetivo é simples: **abrir a página e jogar**, sem contas, sem downloads e 
 **Tudo acontece em `https://suckinguptoessry.github.io/LuminSDK/`** — nada depois da última barra.
 
 Ao abrir, o site **já cai no portal de estudos** (o disfarce). Não existe mais tela de escolha:
-quem quiser o catálogo de jogos clica em **Ryan Smith** no rodapé dos estudos, ou Shift + D / Alt + S.
+quem quiser o catálogo de jogos clica (ou toca) em **Ryan Smith** no rodapé dos estudos, ou aperta **Shift + D**.
 E o disfarce é **total**: em qualquer aba — LuminSDK, GN-Math, catálogos, sites, navegador, Hub e
 LuminOS — a página se chama **“StudyHub | Estudos e Quiz”** e usa o logotipo do StudyHub.
 O **LuminOS** não é uma aba: ele é um **site do acervo** (`dylanmc.site`), que abre no navegador do
@@ -301,53 +301,43 @@ teste rápido, dúvidas em duas colunas e um rodapé curto. Sem barras laterais,
 idêntica), mesmo com histórico, preferências ou “última aba” salvos — a aba anterior **não** é
 restaurada. O catálogo de jogos aparece quando a pessoa:
 
-- clica em **Ryan Smith** no rodapé do StudyDesk, ou
-- aperta **`Shift` + `D`** (ou **`Alt` + `S`**), a *combinação de duas teclas* que alterna entre os
-  estudos e o site em qualquer aba.
+- clica (ou toca) em **Ryan Smith** no rodapé do StudyDesk — no celular também, o botão está sempre
+  aceso e clicável, ou
+- aperta **`Shift` + `D`**, a *combinação de duas teclas* que alterna entre os estudos e o site em
+  qualquer aba (`Alt` + `S` foi removido).
 
-### Disfarce total e a trava de troca de janela
+### Disfarce total (sem trava de troca de janela)
 
 O título e o ícone da aba **não são mais os do LuminSDK** em nenhum momento, nem depois de abrir o
 catálogo: em toda aba do site a página se chama **“StudyHub | Estudos e Quiz”** e mostra o
 `studyhub.svg`. O título é reescrito na hora se algum módulo tentar trocá-lo (o navegador interno, por
 exemplo), então o nome real não aparece nem no histórico da janela.
 
-A partir daí vale a **trava de troca de janela**:
+**Não existe mais trava de troca de janela.** Trocar de aba, dar **Alt + Tab**, sair do app ou
+bloquear o celular **não** muda a tela e **não** desliga o crédito “Ryan Smith”: o botão do rodapé
+continua aceso e clicável em qualquer aparelho. Era essa trava que, no celular, disparava a cada troca
+de app (`visibilitychange`) e deixava o crédito apagado e sem ação.
 
-- **Alt + Tab, Windows + Tab ou qualquer troca de aba do navegador** = a página volta para os
-  estudos na hora, com o portal de estudos à vista — **sempre**, quantas vezes for (além dos eventos
-  de foco/visibilidade, a página confere o foco da janela a cada 0,8 s, então não existe “só
-  funcionou uma vez”);
-- nesse estado o crédito **Ryan Smith** fica **desligado** (e os atalhos `Shift`+`D` / `Alt`+`S` param
-  de responder), então quem esbarrar na tela não consegue chegar ao catálogo;
-- a trava sobrevive a recarregar a página dentro da mesma sessão do navegador;
-- **`Ctrl` + `AltGr` + `H`** (o AltGr do Windows chega como Ctrl+Alt) devolve **tudo ao normal**:
-  título e ícone reais voltam, o crédito é liberado e o catálogo abre.
-
-Limites honestos: o navegador **não** deixa uma página interceptar Alt+Tab / Windows+Tab — o site
-reage no instante em que a janela perde o foco (visibilidade da aba ou perda de foco), o que na
-prática dá o mesmo resultado visual. Como a trava olha o foco da janela, **abrir qualquer coisa em
-outra aba** (link externo, “abrir em nova aba” do player, o próprio Alt+Tab) também devolve a página
-aos estudos — é o comportamento pedido, mas vale saber. Clicar dentro de um jogo (iframe) **não** dispara a trava: o
-foco continua nesta janela. Se o foco do teclado estiver **dentro** do iframe do jogo, o
-`Ctrl`+`AltGr`+`H` não chega à página — basta clicar na moldura do player ou voltar para os estudos,
-que o atalho volta a responder.
+- **`Ctrl` + `AltGr` + `H`** (o AltGr do Windows chega como Ctrl+Alt) mostra o título e o ícone reais;
+  é opcional e só serve para quem quiser ver o nome verdadeiro da página.
+- O disfarce (título/ícone do StudyHub) continua valendo em todas as abas do site.
+- A chave antiga da trava (`luminsdk:v1:shield`) é apagada na inicialização.
 
 | Ação | O que acontece |
 |---|---|
 | abrir `…/LuminSDK/` | cai nos estudos |
-| **`Shift` + `D`** / **`Alt` + `S`** | alterna estudos ⇄ site (funciona em qualquer aba, até dentro do jogo, com a trava desarmada) |
+| **`Shift` + `D`** | alterna estudos ⇄ site (funciona em qualquer aba, até dentro do jogo) |
 | Aba **Estudos** na barra da esquerda | abre os estudos |
-| clicar em **Ryan Smith** no rodapé dos estudos | abre o LuminSDK (desligado enquanto a trava está armada) |
+| clicar/tocar em **Ryan Smith** no rodapé dos estudos | abre o LuminSDK (sempre ativo, no desktop e no celular) |
 | aba **Lumin** na barra da esquerda | abre o LuminSDK |
-| **Alt + Tab** / **Windows + Tab** | volta para os estudos e arma a trava |
-| **`Ctrl` + `AltGr` + `H`** | libera tudo e abre o catálogo |
+| **Alt + Tab** / **Windows + Tab** / trocar de app | nada muda: a tela continua onde está |
+| **`Ctrl` + `AltGr` + `H`** | mostra o título e o ícone reais e abre o catálogo |
 
 A URL **nunca** muda ao trocar de aba. Endereços antigos (`/gn/`, `/sites/`, `/study/`) continuam
 funcionando: eles redirecionam para `?view=…`, o app abre a aba pedida e limpa a barra de endereço na
 mesma hora — reabrir o site depois cai, de novo, nos estudos.
 
-O título/ícone, a trava e o atalho de liberação vivem em `assets/js/app.js` (o mesmo arquivo que
+O título/ícone e os atalhos vivem em `assets/js/app.js` (o mesmo arquivo que
 troca de aba); a saída por clique fica em `assets/js/study.js` e o menu Normal/OS em `assets/js/lcore.js`. A versão de arquivo único (`single/index.html`) **não**
 tem estudos — é sempre o catálogo de jogos. Cada arquivo é independente: nada do StudyDesk vaza para
 o visual escuro do LuminSDK.

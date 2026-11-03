@@ -58,6 +58,12 @@
   };
 
   const CHANGELOG = [
+    { v: 'v41', items: [
+      'Abertura em about:blank: o portal passa a viver numa aba em branco (aba original vira google.com) — ?cloak=0 desliga.',
+      'Trava de troca de janela removida: Alt+Tab, troca de aba ou sair do app não mexem mais na tela nem no crédito “Ryan Smith”.',
+      'No celular o botão “Ryan Smith” do rodapé volta a aparecer e a funcionar; Shift+D é o único atalho de troca.',
+      'Alt+S saiu: só Shift+D alterna estudos ⇄ site (Ctrl+AltGr+H continua mostrando o título real).'
+    ] },
     { v: 'v40', items: [
       'Alt+Tab / Windows+Tab voltam aos estudos em toda troca de janela, não só na primeira: a página confere o foco a cada 0,8 s.',
       'A única saída com a trava armada continua sendo Ctrl+AltGr+H; Shift+D e o crédito “Ryan Smith” ficam desligados.',
