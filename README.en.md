@@ -329,6 +329,32 @@ the way out in `assets/js/study.js`. The single-file build (`single/index.html`)
 it is always the games catalog. Each file
 is independent: nothing from StudyDesk leaks into LuminSDK's dark look.
 
+### Opening animation (Sols RNG style)
+
+When **`Shift` + `D`** (or the **Ryan Smith** credit in the footer) opens the catalog, an **opening
+animation** plays on top of everything: breathing aurora, spinning rays, a ring portal, rising sparks,
+a light sweep, a flash and the title with an animated gradient — plus a **rolled “rarity”** on every
+opening (from `1 / 1,100` to `1 / 10,000,000,000`), because opening 1,100 games deserves some drama.
+
+How it works:
+
+- lasts **~2.4 s** and leaves on its own; **click, any key, `Esc` or scrolling** skips it instantly;
+- `Shift` + `D` animates both ways (catalog = “LuminSDK”, Study = “StudyHub”);
+- **plain tab switches do not animate** (rail clicks, opening a game, etc.) and there is a **10 s**
+  cooldown between animations, so nothing loops in your way;
+- **`?anim=0`** disables it; “reduce motion” users get just the fade and the title;
+- the very first visit (the Study portal) does **not** animate by default — run
+  `LuminApp.revealOnFirst(true)` in the console to enable it there too, or `LuminReveal.blast('lumin')`
+  to test;
+- it is all CSS plus a handful of nodes built in `assets/js/reveal.js` (no library, no images).
+
+Files: `assets/js/reveal.js` (build, roll, skip and cooldown), `assets/css/reveal.css` (aurora, rays,
+rings, sparks, gradients and keyframes). The call comes from `assets/js/app.js`, exactly where the app
+switches tabs — the animation lands before the catalog view shows up.
+
+There is also a standalone preview at `tools/reveal-preview/index.html`, which loads the real
+`reveal.js`/`reveal.css` so you can audition the animation without going through the shortcut.
+
 ### Opening in about:blank (the site inside an iframe)
 
 When you open the portal, **LuminSDK moves itself into an `about:blank` tab** and keeps running
@@ -467,6 +493,7 @@ LuminSDK/
 │   │   ├── gnmath.js · sites.js · study.js · os.js · social.js · browser.js
 │   │   ├── settings.js · progress.js · site.js · atmosphere.js · bonus.js
 │   │   ├── cloak.js            # Opens the portal in about:blank (site inside an iframe)
+│   │   ├── reveal.js           # Catalog opening animation (Sols RNG style)
 │   ├── data/sites.json         # Sites tab data: 67 collections / 749 links
 │   └── img/                    # Logo, PWA icons, social banner and Sites artwork
 ├── manifest.webmanifest
