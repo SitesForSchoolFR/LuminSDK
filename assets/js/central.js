@@ -58,6 +58,11 @@
   };
 
   const CHANGELOG = [
+    { v: 'v48', items: [
+      'Animação de troca de aba de volta, e agora à prova de falha: o mostrador usava "clock.dataset = …", que lança TypeError em vários navegadores — a camada morria antes de aparecer e a troca ficava muda.',
+      'Se a coreografia falhar por qualquer motivo, a camada cai para um plano B (só o carimbo da aba) em vez de simplesmente não aparecer.',
+      'O evento pageshow do boot não apaga mais a primeira animação. Duração em 2,5 s (CONFIG.DURATION em assets/js/anim.js).'
+    ] },
     { v: 'v47', items: [
       'A aba do Google agora fecha de verdade: o window.close() roda antes da navegação, e a aba em branco tenta fechar de novo depois de 500 ms.',
       'Bundle novo recarrega a página uma vez: a aba em branco nunca fica presa em JS antigo (era o caso da animação em 200 ms).',

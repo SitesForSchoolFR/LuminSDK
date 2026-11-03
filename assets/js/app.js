@@ -11,8 +11,8 @@
    · não existe mais trava de troca de janela: sair do app (Alt+Tab, trocar
      de aba, bloquear o celular) não muda a tela nem desliga o crédito — no
      celular era isso que sumia com o botão "Ryan Smith"
-   · toda troca de aba toca uma animação curta (~200 ms) daquela aba,
-     feita em assets/js/anim.js (tempo / relógio / espaço-tempo)
+   · toda troca de aba toca a animação daquela aba (2,5 s), feita em
+     assets/js/anim.js (tempo / relógio / espaço-tempo)
    · endereços antigos (/gn/, /sites/, /study/) continuam funcionando pelo
      ?view=…, e a barra de endereço é limpa logo depois
    · cada aba carrega o seu CSS e os seus scripts só na primeira visita
@@ -30,20 +30,20 @@
          desligado quando a rota muda */
       css: [],
       scripts: [
-        'assets/js/anim.js?v=49',
+        'assets/js/anim.js?v=50',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=49',
-        'assets/js/settings.js?v=49',
-        'assets/js/site.js?v=49',
-        'assets/js/atmosphere.js?v=49',
-        'assets/js/progress.js?v=49',
-        'assets/js/bonus.js?v=49'
+        'assets/js/library.js?v=50',
+        'assets/js/settings.js?v=50',
+        'assets/js/site.js?v=50',
+        'assets/js/atmosphere.js?v=50',
+        'assets/js/progress.js?v=50',
+        'assets/js/bonus.js?v=50'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=49'],
-      scripts: ['assets/js/gnmath.js?v=49'],
+      css: ['assets/css/gnmath.css?v=50'],
+      scripts: ['assets/js/gnmath.js?v=50'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -55,60 +55,60 @@
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=49'],
-      scripts: ['assets/js/provider.js?v=49', 'assets/js/atmosphere.js?v=49']
+      css: ['assets/css/provider.css?v=50'],
+      scripts: ['assets/js/provider.js?v=50', 'assets/js/atmosphere.js?v=50']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=49'],
-      scripts: ['assets/js/sites.js?v=49', 'assets/js/atmosphere.js?v=49']
+      css: ['assets/css/sites.css?v=50'],
+      scripts: ['assets/js/sites.js?v=50', 'assets/js/atmosphere.js?v=50']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=49'],
-      scripts: ['assets/js/browser.js?v=49', 'assets/js/atmosphere.js?v=49']
+      css: ['assets/css/browser.css?v=50'],
+      scripts: ['assets/js/browser.js?v=50', 'assets/js/atmosphere.js?v=50']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=49',
-        'assets/js/os.js?v=49',
-        'assets/js/profile.js?v=49',
-        'assets/js/lab.js?v=49',
-        'assets/js/studio.js?v=49',
-        'assets/js/arcade.js?v=49',
-        'assets/js/vault.js?v=49',
-        'assets/js/community.js?v=49',
-        'assets/js/central.js?v=49',
-        'assets/js/atmosphere.js?v=49'
+        'assets/js/player.js?v=50',
+        'assets/js/os.js?v=50',
+        'assets/js/profile.js?v=50',
+        'assets/js/lab.js?v=50',
+        'assets/js/studio.js?v=50',
+        'assets/js/arcade.js?v=50',
+        'assets/js/vault.js?v=50',
+        'assets/js/community.js?v=50',
+        'assets/js/central.js?v=50',
+        'assets/js/atmosphere.js?v=50'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=49', 'assets/css/hub.css?v=49'],
+      css: ['assets/css/os.css?v=50', 'assets/css/hub.css?v=50'],
       scripts: [
-        'assets/js/player.js?v=49',
-        'assets/js/os.js?v=49',
-        'assets/js/profile.js?v=49',
-        'assets/js/lab.js?v=49',
-        'assets/js/studio.js?v=49',
-        'assets/js/arcade.js?v=49',
-        'assets/js/vault.js?v=49',
-        'assets/js/community.js?v=49',
-        'assets/js/central.js?v=49',
-        'assets/js/hub.js?v=49'
+        'assets/js/player.js?v=50',
+        'assets/js/os.js?v=50',
+        'assets/js/profile.js?v=50',
+        'assets/js/lab.js?v=50',
+        'assets/js/studio.js?v=50',
+        'assets/js/arcade.js?v=50',
+        'assets/js/vault.js?v=50',
+        'assets/js/community.js?v=50',
+        'assets/js/central.js?v=50',
+        'assets/js/hub.js?v=50'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=49']
+      scripts: ['assets/js/atmosphere.js?v=50']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=49'],
-      scripts: ['assets/js/study-questions.js?v=49', 'assets/js/anim.js?v=49', 'assets/js/study.js?v=49']
+      css: ['assets/css/study.css?v=50'],
+      scripts: ['assets/js/study-questions.js?v=50', 'assets/js/anim.js?v=50', 'assets/js/study.js?v=50']
     }
   };
 
@@ -310,8 +310,8 @@
   }
 
   /* ---------- animação de troca de aba ----------
-     Cada aba tem a sua animação curta (tempo/relógio/espaço-tempo), de
-     ~200 ms, em assets/js/anim.js. Toca em TODA troca de aba — nada de
+     Cada aba tem a sua animação (tempo/relógio/espaço-tempo), de 2,5 s,
+     em assets/js/anim.js. Toca em TODA troca de aba — nada de
      "só na primeira vez". O script é global (defer no index.html); a cópia
      por rota em ROUTES serve só para furar cache. */
   function roll(route) {
@@ -545,6 +545,23 @@
   };
 
   function boot() {
+    /* diagnóstico: com ?diag=1 o console mostra a versão que está rodando e
+       se a camada da animação montou (a primeira troca de aba é a do boot) */
+    try {
+      if (/[?&]diag=1/.test(window.location.search || '')) {
+        const v = (document.querySelector('script[src*="app.js?v="]') || {}).src || '';
+        const anim = (document.querySelector('script[src*="anim.js?v="]') || {}).src || '';
+        const play = function () {
+          window.dispatchEvent(new CustomEvent('lumin:diag'));
+          console.info('[LuminSDK] app:', v, '· anim:', anim,
+            '· LuminAnim:', !!window.LuminAnim,
+            '· animação do boot:', !!document.getElementById('lum-anim'),
+            '· duração (ms):', window.LuminAnim && window.LuminAnim.state().duration);
+        };
+        window.addEventListener('load', function () { window.setTimeout(play, 250); });
+      }
+    } catch (error) { /* diagnóstico nunca quebra o boot */ }
+
     /* chave da antiga trava de troca de janela: não existe mais, não deve
        ficar sobrando na sessão de quem já usou o site */
     try { sessionStorage.removeItem('luminsdk:v1:shield'); } catch (error) { /* sem storage */ }

@@ -1,6 +1,6 @@
 /* =========================================================
    LuminSDK — animação de troca de aba  ·  ARQUIVO EDITÁVEL
-   Uma animação curta (200 ms, editável abaixo) e DIFERENTE para cada
+   Uma animação curta (2,5 s, editável abaixo) e DIFERENTE para cada
    aba, no tema tempo / relógio / espaço-tempo: funil de espaço-tempo,
    anéis de relógio, ponteiro girando, grade em perspectiva e um
    mostrador digital com o "tempo" daquela aba.
@@ -53,6 +53,7 @@
 
   let layer = null;
   let dropTimer = 0;
+  let born = 0;
   let tick = 0;
   let lastRoute = '';
 
@@ -88,37 +89,39 @@
     /* o CSS foi coreografado para 200 ms; multiplicamos os tempos pelo
        fator da duração para a animação continuar bonita em 2,5 s */
     node.style.setProperty('--la-scale', (CONFIG.DURATION / 200).toFixed(3));
-    /* a duração do CONFIG vale para todas as animações da camada */
-    node.style.animationDuration = CONFIG.DURATION + 'ms';
 
     if (!REDUCED) {
       make('div', 'la-warp', node);
       const rings = [ '', 'la-ring--2', 'la-ring--3' ];
       rings.forEach(function (extra) {
-        const ring = make('div', 'la-ring' + (extra ? ' ' + extra : ''), node);
-        ring.style.animationDuration = CONFIG.DURATION + 'ms';
+        paint(make('div', 'la-ring' + (extra ? ' ' + extra : ''), node));
       });
-      const face = make('div', 'la-face', node);
-      face.style.animationDuration = CONFIG.DURATION + 'ms';
-      const hand = make('div', 'la-hand', node);
-      hand.style.animationDuration = CONFIG.DURATION + 'ms';
-      const grid = make('div', 'la-grid', node);
-      grid.style.animationDuration = CONFIG.DURATION + 'ms';
-      make('div', 'la-flash', node).style.animationDuration = CONFIG.DURATION + 'ms';
+      paint(make('div', 'la-face', node));
+      paint(make('div', 'la-hand', node));
+      paint(make('div', 'la-grid', node));
+      paint(make('div', 'la-flash', node));
     }
 
+    /* o mostrador é o que sobra em qualquer cenário: se algo falhar acima,
+       ele ainda aparece (nunca mais "troquei de aba e nada aconteceu") */
     const stage = make('div', 'la-stage', node);
     const clock = make('b', 'la-time', stage);
     clock.textContent = t.stamp;
-    clock.dataset = { stamp: t.stamp };
+    /* dataset é só leitura em alguns navegadores: escrever nele lançava
+       TypeError, a camada morria e a animação NUNCA aparecia */
+    clock.setAttribute('data-stamp', t.stamp);
     make('span', 'la-label', stage).textContent = t.label + ' · ' + t.hint;
 
     /* os dois textos também acompanham a duração */
-    Array.prototype.forEach.call(stage.children, function (child) {
-      child.style.animationDuration = CONFIG.DURATION + 'ms';
-    });
+    Array.prototype.forEach.call(stage.children, paint);
 
     return node;
+  }
+
+  /* duração no próprio elemento (o CSS já usa --la-scale como rede) */
+  function paint(el) {
+    try { el.style.animationDuration = CONFIG.DURATION + 'ms'; } catch (error) {}
+    return el;
   }
 
   /* roda a animação daquela aba; nunca lança, nunca deixa sobra */
@@ -128,28 +131,55 @@
     try {
       drop();                                  /* troca rápida: troca a camada */
       layer = build(route);
-      document.body.append(layer);
+      /* body pode não existir (script adiantado, aba em branco recém-criada) */
+      (document.body || document.documentElement).append(layer);
+      born = Date.now();
       dropTimer = window.setTimeout(drop, CONFIG.DURATION + 120);
       runClock(layer);
       return true;
     } catch (error) {
       console.warn('[LuminSDK] animação não montou:', error);
       drop();
-      return false;
+      /* última rede: pelo menos o texto da aba, sem coreografia nenhuma */
+      try {
+        const t = theme(route);
+        const simple = document.createElement('div');
+        simple.id = ROOT_ID;
+        simple.setAttribute('aria-hidden', 'true');
+        simple.style.setProperty('--la-1', t.c1);
+        simple.style.setProperty('--la-2', t.c2);
+        simple.style.setProperty('--la-dur', CONFIG.DURATION + 'ms');
+        simple.style.setProperty('--la-scale', '1');
+        simple.className = 'la-simple';
+        simple.textContent = t.stamp + ' · ' + t.label;
+        (document.body || document.documentElement).append(simple);
+        layer = simple;
+        born = Date.now();
+        dropTimer = window.setTimeout(drop, CONFIG.DURATION + 120);
+        return true;
+      } catch (fatal) {
+        drop();
+        return false;
+      }
     }
   }
 
-  /* redes de segurança: nunca deixar uma camada presa */
+  /* rede de segurança: nunca deixar uma camada presa — mas só recolhe a que
+     já passou do próprio tempo de vida (load/pageshow chegam logo depois do
+     boot e apagavam a primeira animação antes de ela aparecer) */
+  function sweep() {
+    if (layer && Date.now() - born > CONFIG.DURATION + 200) drop();
+  }
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible') drop();
+    if (document.visibilityState === 'visible') sweep();
   });
-  window.addEventListener('pageshow', drop);
+  window.addEventListener('pageshow', sweep);
 
   /* o relógio do mostrador avança enquanto a animação roda */
   function runClock(node) {
     if (typeof window.setInterval !== 'function') return;
     const clock = node.querySelector ? node.querySelector('.la-time') : null;
-    const stamp = clock && clock.dataset ? clock.dataset.stamp : '';
+    const stamp = clock ? (clock.getAttribute('data-stamp') || '') : '';
     const parts = /^(\d{1,2}):(\d{2})$/.exec(stamp || '');
     if (!parts) return;
     let minutes = (parseInt(parts[1], 10) * 60 + parseInt(parts[2], 10)) % 1440;

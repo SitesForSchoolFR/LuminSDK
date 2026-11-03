@@ -338,6 +338,9 @@ perspective grid and a digital face showing that tab's “time” (`11:00 · cat
 `15:45 · sites`, `09:15 · gn-math`, `00:00 · luminos`, …).
 
 - the layer is `pointer-events: none` and removes itself — **never blocks clicks, scrolling or focus**;
+- **fails soft**: if the choreography breaks, the layer falls back to just the tab's time stamp instead of
+  silently disappearing — that is how a `clock.dataset = …` (read-only in many browsers) used to leave
+  tab switches silent;
 - the digital face **runs during the animation** (that tab's “time” advances a few minutes);
 - the CSS is choreographed for 200 ms and `anim.js` multiplies the timings by `--la-scale`, so changing
   `DURATION` keeps the choreography (no hard cut mid-way);
@@ -368,7 +371,7 @@ How it works:
   the history nor the address bar shows the portal address — the same trick as Utopia's
   `openBackup()`: `about:blank` with the site in the iframe in front, Google behind.
   `?cloak=google` opens the blank tab but keeps the portal in the back tab;
-- **stale JS never gets stuck**: `app.js` stores the bundle version (`?v=49`) in the session and, when
+- **stale JS never gets stuck**: `app.js` stores the bundle version (`?v=50`) in the session and, when
   it changes, **reloads the page once** — that is what stops the blank tab from running old code after
   a deploy (the service worker also stopped caching 404s/errors);
 - **it always opens**: there is no session lock anymore — every page load tries to open the tab (the
