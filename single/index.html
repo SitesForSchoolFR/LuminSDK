@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=52 -->
+  <!-- assets/css/styles.css?v=53 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -3162,7 +3162,51 @@ html[data-speed] .site-nav a {
   background: #140e1b;
   overflow: hidden;
 }
-.ast-card__avatar img { width: 100%; height: 100%; display: block; }
+.ast-card__avatar img { width: 100%; height: 100%; display: block; object-fit: cover; }
+button.ast-card__avatar { padding: 0; cursor: pointer; transition: transform .18s var(--ease), box-shadow .18s var(--ease); }
+button.ast-card__avatar:hover { transform: rotate(-4deg) scale(1.05); }
+button.ast-card__avatar:active { transform: scale(.94); }
+
+/* galeria do visualizador */
+.ast-gallery {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+.ast-gallery__item {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  padding: 7px 4px 6px;
+  border: 1px solid rgba(255, 158, 203, .28);
+  border-radius: 12px;
+  background: rgba(255, 158, 203, .06);
+  color: var(--muted);
+  font: inherit;
+  font-size: .64rem;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: border-color .18s var(--ease), background .18s var(--ease), transform .18s var(--ease);
+}
+.ast-gallery__item img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+}
+.ast-gallery__item:hover { transform: translateY(-2px); border-color: rgba(255, 158, 203, .6); }
+.ast-gallery__item.is-active {
+  border-color: #ff5fa8;
+  background: rgba(255, 95, 168, .18);
+  color: #ffe7f3;
+}
+.ast-gallery__item.is-active img { border-color: #ff5fa8; }
+@media (max-width: 460px) {
+  .ast-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ast-gallery__item img { width: 48px; height: 48px; }
+}
 .ast-card.is-on .ast-card__avatar {
   border-color: #ff5fa8;
   box-shadow: 0 0 0 3px rgba(255, 95, 168, .25), 0 0 18px rgba(255, 95, 168, .65);
@@ -4131,7 +4175,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=52 -->
+  <!-- assets/css/app.css?v=53 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -4282,7 +4326,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
 }
   </style>
   <!-- personalização Astolfo (opcional): só age com html[data-skin="astolfo"] -->
-  <link rel="stylesheet" href="assets/css/astolfo.css?v=52" id="astolfo-css">
+  <link rel="stylesheet" href="assets/css/astolfo.css?v=53" id="astolfo-css">
 </head>
 <body>
 
@@ -5036,9 +5080,9 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
           <div class="ast-card" id="astolfo-card">
             <div class="ast-card__head">
-              <span class="ast-card__avatar" aria-hidden="true">
-                <img src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/art-avatar.png" alt="" width="46" height="46" decoding="async">
-              </span>
+              <button class="ast-card__avatar" type="button" data-astolfo="art" title="Trocar a arte do cartão" aria-label="Trocar a arte do cartão entre as quatro ilustrações">
+                <img src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/kouromo-avatar.png" alt="" width="46" height="46" decoding="async">
+              </button>
               <span class="ast-card__title">
                 Astolfo
                 <small>femboy knight · rosa, preto e estrela</small>
@@ -5073,7 +5117,22 @@ html[data-view="gn"] .tabrail__tab.is-active {
       </header>
 
       <div class="sheet__body">
-        <img class="ast-sheet__art" src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/art-full.jpg" alt="Ilustração do Astolfo em traje de cavaleiro, com capa branca e cabelo rosa" width="1280" height="720" decoding="async">
+        <img class="ast-sheet__art" id="astolfo-stage" src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/kouromo-full.jpg" alt="Close-up do Astolfo em rosa e preto" width="1280" height="720" decoding="async">
+
+        <div class="ast-gallery" id="astolfo-gallery" role="group" aria-label="Ilustrações do tema">
+          <button class="ast-gallery__item is-active" type="button" data-astolfo-art="kouromo-full.jpg" data-alt="Close-up do Astolfo em rosa e preto" aria-pressed="true">
+            <img src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/kouromo-avatar.png" alt="" width="76" height="76" loading="lazy" decoding="async"><span>Close-up</span>
+          </button>
+          <button class="ast-gallery__item" type="button" data-astolfo-art="dex-casual.jpg" data-alt="Astolfo sentada, de moletom e mochila" aria-pressed="false">
+            <img src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/dex-avatar.png" alt="" width="76" height="76" loading="lazy" decoding="async"><span>Dia a dia</span>
+          </button>
+          <button class="ast-gallery__item" type="button" data-astolfo-art="hypr-banner.jpg" data-alt="Astolfo em fundo roxo, com a mão esticada" aria-pressed="false">
+            <img src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/hypr-avatar.png" alt="" width="76" height="76" loading="lazy" decoding="async"><span>Roxo</span>
+          </button>
+          <button class="ast-gallery__item" type="button" data-astolfo-art="doki-banner.jpg" data-alt="Astolfo em traje de cavaleiro com capa branca" aria-pressed="false">
+            <img src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/doki-avatar.png" alt="" width="76" height="76" loading="lazy" decoding="async"><span>Cavaleiro</span>
+          </button>
+        </div>
 
         <div class="ast-sheet__swatches" aria-label="Cores do tema">
           <span class="ast-sheet__swatch"><i style="background:#ff9ecb"></i>rosa</span>
@@ -5084,7 +5143,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
           <span class="ast-sheet__swatch"><i style="background:#fff6fb"></i>creme</span>
         </div>
 
-        <p class="ast-card__note">Arte: <b>Doki Theme</b> (github.com/doki-theme/doki-theme-web, licença MIT) · Astolfo é personagem de <i>Fate/Apocrypha</i> (© Type-Moon). Créditos completos em <code>assets/img/astolfo/CREDITS.md</code>.</p>
+        <p class="ast-card__note">Arte 100% humana (sem IA), recortada de três projetos <b>MIT</b> do GitHub: <b>Doki Theme</b>, <b>astolfo-dex</b> e <b>Hyprland-dotfiles-astolfo</b>. Astolfo é personagem de <i>Fate/Apocrypha</i> (© Type-Moon). Créditos completos em <code>assets/img/astolfo/CREDITS.md</code>.</p>
 
         <ul class="ast-sheet__list">
           <li>Cabeçalho com faixa de bandeirinhas, marca com laço e barra lateral preta de borda rosa.</li>
@@ -5443,7 +5502,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="assets/js/astolfo.js?v=52" defer></script>
+  <script src="assets/js/astolfo.js?v=53" defer></script>
   <!-- CSS e JS do site embutidos por tools/single-file.py -->
   <script>
   window.__LUMIN_SINGLE__ = true;
@@ -10369,6 +10428,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
   'use strict';
 
   const KEY = 'luminsdk:astolfo';          /* 'on' | 'off' */
+  const ART_KEY = 'luminsdk:astolfo:art';  /* índice da arte do cartão */
   const root = document.documentElement;
   const THEME_COLOR = { dark: '#ff5fa8', light: '#f7b6d6' };
   let enabled = false;
@@ -10411,7 +10471,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
     const link = document.createElement('link');
     link.id = 'astolfo-css';
     link.rel = 'stylesheet';
-    link.href = 'assets/css/astolfo.css?v=52';
+    link.href = 'assets/css/astolfo.css?v=53';
     link.addEventListener('error', function () { link.remove(); });
     document.head.appendChild(link);
   }
@@ -10438,6 +10498,43 @@ html[data-view="gn"] .tabrail__tab.is-active {
     fx.append(ring, label);
     document.body.append(fx);
     window.setTimeout(function () { if (fx.parentNode) fx.parentNode.removeChild(fx); }, 1000);
+  }
+
+  /* ---------- arte: quatro ilustrações humanas (MIT) ---------- */
+  const ARTS = [
+    { name: 'Close-up', avatar: 'assets/img/astolfo/kouromo-avatar.png', full: 'assets/img/astolfo/kouromo-full.jpg' },
+    { name: 'Dia a dia', avatar: 'assets/img/astolfo/dex-avatar.png', full: 'assets/img/astolfo/dex-casual.jpg' },
+    { name: 'Roxo', avatar: 'assets/img/astolfo/hypr-avatar.png', full: 'assets/img/astolfo/hypr-banner.jpg' },
+    { name: 'Cavaleiro', avatar: 'assets/img/astolfo/doki-avatar.png', full: 'assets/img/astolfo/doki-banner.jpg' }
+  ];
+  let artIndex = 0;
+
+  /* toque no avatar do cartão: passa para a próxima arte (e grava) */
+  function nextArt() {
+    artIndex = (artIndex + 1) % ARTS.length;
+    const art = ARTS[artIndex];
+    const img = document.querySelector('#astolfo-card .ast-card__avatar img');
+    if (img) {
+      img.src = art.avatar;
+      img.alt = 'Astolfo — ' + art.name;
+    }
+    try { localStorage.setItem(ART_KEY, String(artIndex)); } catch (error) { /* sem storage */ }
+    stageArt(artIndex);
+    return art;
+  }
+
+  function stageArt(index) {
+    const stage = document.getElementById('astolfo-stage');
+    const art = ARTS[index] || ARTS[0];
+    if (stage) {
+      stage.src = art.full;
+      stage.alt = 'Astolfo — ' + art.name;
+    }
+    document.querySelectorAll('#astolfo-gallery .ast-gallery__item').forEach(function (button, i) {
+      const active = i === index;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
   }
 
   /* ---------- painel: botão, estado e atalho de teclado ---------- */
@@ -10560,32 +10657,39 @@ html[data-view="gn"] .tabrail__tab.is-active {
   }
 
   function initUI() {
-    const card = document.getElementById('astolfo-card');
-    if (card) {
-      card.addEventListener('click', function (event) {
-        const action = event.target && event.target.closest ? event.target.closest('[data-astolfo]') : null;
-        if (!action) return;
-        const what = action.getAttribute('data-astolfo');
-        if (what === 'toggle') toggle();
-        else if (what === 'preview') openPreview();
-        else if (what === 'css') {
-          /* abre a folha do tema numa aba nova: útil para copiar as cores */
-          window.open('assets/css/astolfo.css', '_blank', 'noopener');
-        }
-      });
-    }
+    /* um único ouvinte no documento: serve para o cartão, o visualizador e
+       qualquer botão [data-astolfo], mesmo que apareça depois (aba nova,
+       painel reconstruído) — nada de "o botão não respondeu" */
+    document.addEventListener('click', function (event) {
+      const action = event.target && event.target.closest ? event.target.closest('[data-astolfo]') : null;
+      if (!action) return;
+      const what = action.getAttribute('data-astolfo');
+      if (what === 'toggle') toggle();
+      else if (what === 'preview') openPreview();
+      else if (what === 'art') nextArt();
+      else if (what === 'close') closePreview();
+      else if (what === 'css') {
+        /* abre a folha do tema numa aba nova: útil para copiar as cores */
+        window.open('assets/css/astolfo.css', '_blank', 'noopener');
+      }
+    });
 
-    document.querySelectorAll('[data-astolfo="toggle"]').forEach(function (button) {
-      if (card && card.contains(button)) return;
-      button.addEventListener('click', function () { toggle(); });
+    /* a galeria escolhe a arte grande */
+    document.addEventListener('click', function (event) {
+      const item = event.target && event.target.closest ? event.target.closest('#astolfo-gallery .ast-gallery__item') : null;
+      if (!item) return;
+      const all = Array.prototype.slice.call(document.querySelectorAll('#astolfo-gallery .ast-gallery__item'));
+      const index = all.indexOf(item);
+      if (index < 0) return;
+      artIndex = index;
+      stageArt(index);
+      try { localStorage.setItem(ART_KEY, String(index)); } catch (error) { /* sem storage */ }
     });
 
     const preview = document.getElementById('astolfo-preview');
     if (preview) {
       preview.addEventListener('click', function (event) {
         if (event.target === preview) closePreview();
-        const closer = event.target.closest ? event.target.closest('[data-astolfo="close"]') : null;
-        if (closer) closePreview();
       });
       document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape' && preview.open) closePreview();
@@ -10612,6 +10716,19 @@ html[data-view="gn"] .tabrail__tab.is-active {
     set(event.newValue === 'on', { silent: true, force: true });
   });
 
+  /* arte escolhida por último (sobrevive a recarregar) */
+  try {
+    const raw = localStorage.getItem(ART_KEY);
+    const index = raw === null ? 0 : parseInt(raw, 10);
+    if (Number.isFinite(index) && index >= 0 && index < ARTS.length) artIndex = index;
+  } catch (error) { artIndex = 0; }
+  if (artIndex) {
+    const art = ARTS[artIndex];
+    const img = document.querySelector('#astolfo-card .ast-card__avatar img');
+    if (img) { img.src = art.avatar; img.alt = 'Astolfo — ' + art.name; }
+    stageArt(artIndex);
+  }
+
   const saved = stored();
   if (saved) {
     ensureCss();
@@ -10620,8 +10737,10 @@ html[data-view="gn"] .tabrail__tab.is-active {
     if (document.body) document.body.classList.toggle('is-astolfo', enabled);
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initUI);
-  else initUI();
+  /* o ouvinte do documento pode ser registrado já; o que depende do DOM
+     (estado do cartão) roda no DOMContentLoaded */
+  initUI();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderCard);
 
   window.LuminAstolfo = {
     on: function () { return set(true); },
@@ -10630,6 +10749,12 @@ html[data-view="gn"] .tabrail__tab.is-active {
     state: function () { return { on: enabled, saved: stored(), css: !!document.getElementById('astolfo-css') }; },
     preview: openPreview,
     close: closePreview,
+    art: function (index) {
+      if (typeof index === 'number') { artIndex = ((index % ARTS.length) + ARTS.length) % ARTS.length; stageArt(artIndex); return ARTS[artIndex]; }
+      return { index: artIndex, name: ARTS[artIndex].name, total: ARTS.length };
+    },
+    nextArt: nextArt,
+    arts: ARTS.map(function (a) { return a.name; }),
     key: 'Ctrl + AltGr + Y'
   };
 })();
@@ -12359,20 +12484,20 @@ html[data-view="gn"] .tabrail__tab.is-active {
          desligado quando a rota muda */
       css: [],
       scripts: [
-        'assets/js/anim.js?v=52',
+        'assets/js/anim.js?v=53',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=52',
-        'assets/js/settings.js?v=52',
-        'assets/js/site.js?v=52',
-        'assets/js/atmosphere.js?v=52',
-        'assets/js/progress.js?v=52',
-        'assets/js/bonus.js?v=52'
+        'assets/js/library.js?v=53',
+        'assets/js/settings.js?v=53',
+        'assets/js/site.js?v=53',
+        'assets/js/atmosphere.js?v=53',
+        'assets/js/progress.js?v=53',
+        'assets/js/bonus.js?v=53'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=52'],
-      scripts: ['assets/js/gnmath.js?v=52'],
+      css: ['assets/css/gnmath.css?v=53'],
+      scripts: ['assets/js/gnmath.js?v=53'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -12384,60 +12509,60 @@ html[data-view="gn"] .tabrail__tab.is-active {
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=52'],
-      scripts: ['assets/js/provider.js?v=52', 'assets/js/atmosphere.js?v=52']
+      css: ['assets/css/provider.css?v=53'],
+      scripts: ['assets/js/provider.js?v=53', 'assets/js/atmosphere.js?v=53']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=52'],
-      scripts: ['assets/js/sites.js?v=52', 'assets/js/atmosphere.js?v=52']
+      css: ['assets/css/sites.css?v=53'],
+      scripts: ['assets/js/sites.js?v=53', 'assets/js/atmosphere.js?v=53']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=52'],
-      scripts: ['assets/js/browser.js?v=52', 'assets/js/atmosphere.js?v=52']
+      css: ['assets/css/browser.css?v=53'],
+      scripts: ['assets/js/browser.js?v=53', 'assets/js/atmosphere.js?v=53']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=52',
-        'assets/js/os.js?v=52',
-        'assets/js/profile.js?v=52',
-        'assets/js/lab.js?v=52',
-        'assets/js/studio.js?v=52',
-        'assets/js/arcade.js?v=52',
-        'assets/js/vault.js?v=52',
-        'assets/js/community.js?v=52',
-        'assets/js/central.js?v=52',
-        'assets/js/atmosphere.js?v=52'
+        'assets/js/player.js?v=53',
+        'assets/js/os.js?v=53',
+        'assets/js/profile.js?v=53',
+        'assets/js/lab.js?v=53',
+        'assets/js/studio.js?v=53',
+        'assets/js/arcade.js?v=53',
+        'assets/js/vault.js?v=53',
+        'assets/js/community.js?v=53',
+        'assets/js/central.js?v=53',
+        'assets/js/atmosphere.js?v=53'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=52', 'assets/css/hub.css?v=52'],
+      css: ['assets/css/os.css?v=53', 'assets/css/hub.css?v=53'],
       scripts: [
-        'assets/js/player.js?v=52',
-        'assets/js/os.js?v=52',
-        'assets/js/profile.js?v=52',
-        'assets/js/lab.js?v=52',
-        'assets/js/studio.js?v=52',
-        'assets/js/arcade.js?v=52',
-        'assets/js/vault.js?v=52',
-        'assets/js/community.js?v=52',
-        'assets/js/central.js?v=52',
-        'assets/js/hub.js?v=52'
+        'assets/js/player.js?v=53',
+        'assets/js/os.js?v=53',
+        'assets/js/profile.js?v=53',
+        'assets/js/lab.js?v=53',
+        'assets/js/studio.js?v=53',
+        'assets/js/arcade.js?v=53',
+        'assets/js/vault.js?v=53',
+        'assets/js/community.js?v=53',
+        'assets/js/central.js?v=53',
+        'assets/js/hub.js?v=53'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=52']
+      scripts: ['assets/js/atmosphere.js?v=53']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=52'],
-      scripts: ['assets/js/study-questions.js?v=52', 'assets/js/anim.js?v=52', 'assets/js/study.js?v=52']
+      css: ['assets/css/study.css?v=53'],
+      scripts: ['assets/js/study-questions.js?v=53', 'assets/js/anim.js?v=53', 'assets/js/study.js?v=53']
     }
   };
 

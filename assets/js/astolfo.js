@@ -18,6 +18,7 @@
   'use strict';
 
   const KEY = 'luminsdk:astolfo';          /* 'on' | 'off' */
+  const ART_KEY = 'luminsdk:astolfo:art';  /* índice da arte do cartão */
   const root = document.documentElement;
   const THEME_COLOR = { dark: '#ff5fa8', light: '#f7b6d6' };
   let enabled = false;
@@ -60,7 +61,7 @@
     const link = document.createElement('link');
     link.id = 'astolfo-css';
     link.rel = 'stylesheet';
-    link.href = 'assets/css/astolfo.css?v=52';
+    link.href = 'assets/css/astolfo.css?v=53';
     link.addEventListener('error', function () { link.remove(); });
     document.head.appendChild(link);
   }
@@ -87,6 +88,43 @@
     fx.append(ring, label);
     document.body.append(fx);
     window.setTimeout(function () { if (fx.parentNode) fx.parentNode.removeChild(fx); }, 1000);
+  }
+
+  /* ---------- arte: quatro ilustrações humanas (MIT) ---------- */
+  const ARTS = [
+    { name: 'Close-up', avatar: 'assets/img/astolfo/kouromo-avatar.png', full: 'assets/img/astolfo/kouromo-full.jpg' },
+    { name: 'Dia a dia', avatar: 'assets/img/astolfo/dex-avatar.png', full: 'assets/img/astolfo/dex-casual.jpg' },
+    { name: 'Roxo', avatar: 'assets/img/astolfo/hypr-avatar.png', full: 'assets/img/astolfo/hypr-banner.jpg' },
+    { name: 'Cavaleiro', avatar: 'assets/img/astolfo/doki-avatar.png', full: 'assets/img/astolfo/doki-banner.jpg' }
+  ];
+  let artIndex = 0;
+
+  /* toque no avatar do cartão: passa para a próxima arte (e grava) */
+  function nextArt() {
+    artIndex = (artIndex + 1) % ARTS.length;
+    const art = ARTS[artIndex];
+    const img = document.querySelector('#astolfo-card .ast-card__avatar img');
+    if (img) {
+      img.src = art.avatar;
+      img.alt = 'Astolfo — ' + art.name;
+    }
+    try { localStorage.setItem(ART_KEY, String(artIndex)); } catch (error) { /* sem storage */ }
+    stageArt(artIndex);
+    return art;
+  }
+
+  function stageArt(index) {
+    const stage = document.getElementById('astolfo-stage');
+    const art = ARTS[index] || ARTS[0];
+    if (stage) {
+      stage.src = art.full;
+      stage.alt = 'Astolfo — ' + art.name;
+    }
+    document.querySelectorAll('#astolfo-gallery .ast-gallery__item').forEach(function (button, i) {
+      const active = i === index;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
   }
 
   /* ---------- painel: botão, estado e atalho de teclado ---------- */
@@ -209,32 +247,39 @@
   }
 
   function initUI() {
-    const card = document.getElementById('astolfo-card');
-    if (card) {
-      card.addEventListener('click', function (event) {
-        const action = event.target && event.target.closest ? event.target.closest('[data-astolfo]') : null;
-        if (!action) return;
-        const what = action.getAttribute('data-astolfo');
-        if (what === 'toggle') toggle();
-        else if (what === 'preview') openPreview();
-        else if (what === 'css') {
-          /* abre a folha do tema numa aba nova: útil para copiar as cores */
-          window.open('assets/css/astolfo.css', '_blank', 'noopener');
-        }
-      });
-    }
+    /* um único ouvinte no documento: serve para o cartão, o visualizador e
+       qualquer botão [data-astolfo], mesmo que apareça depois (aba nova,
+       painel reconstruído) — nada de "o botão não respondeu" */
+    document.addEventListener('click', function (event) {
+      const action = event.target && event.target.closest ? event.target.closest('[data-astolfo]') : null;
+      if (!action) return;
+      const what = action.getAttribute('data-astolfo');
+      if (what === 'toggle') toggle();
+      else if (what === 'preview') openPreview();
+      else if (what === 'art') nextArt();
+      else if (what === 'close') closePreview();
+      else if (what === 'css') {
+        /* abre a folha do tema numa aba nova: útil para copiar as cores */
+        window.open('assets/css/astolfo.css', '_blank', 'noopener');
+      }
+    });
 
-    document.querySelectorAll('[data-astolfo="toggle"]').forEach(function (button) {
-      if (card && card.contains(button)) return;
-      button.addEventListener('click', function () { toggle(); });
+    /* a galeria escolhe a arte grande */
+    document.addEventListener('click', function (event) {
+      const item = event.target && event.target.closest ? event.target.closest('#astolfo-gallery .ast-gallery__item') : null;
+      if (!item) return;
+      const all = Array.prototype.slice.call(document.querySelectorAll('#astolfo-gallery .ast-gallery__item'));
+      const index = all.indexOf(item);
+      if (index < 0) return;
+      artIndex = index;
+      stageArt(index);
+      try { localStorage.setItem(ART_KEY, String(index)); } catch (error) { /* sem storage */ }
     });
 
     const preview = document.getElementById('astolfo-preview');
     if (preview) {
       preview.addEventListener('click', function (event) {
         if (event.target === preview) closePreview();
-        const closer = event.target.closest ? event.target.closest('[data-astolfo="close"]') : null;
-        if (closer) closePreview();
       });
       document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape' && preview.open) closePreview();
@@ -261,6 +306,19 @@
     set(event.newValue === 'on', { silent: true, force: true });
   });
 
+  /* arte escolhida por último (sobrevive a recarregar) */
+  try {
+    const raw = localStorage.getItem(ART_KEY);
+    const index = raw === null ? 0 : parseInt(raw, 10);
+    if (Number.isFinite(index) && index >= 0 && index < ARTS.length) artIndex = index;
+  } catch (error) { artIndex = 0; }
+  if (artIndex) {
+    const art = ARTS[artIndex];
+    const img = document.querySelector('#astolfo-card .ast-card__avatar img');
+    if (img) { img.src = art.avatar; img.alt = 'Astolfo — ' + art.name; }
+    stageArt(artIndex);
+  }
+
   const saved = stored();
   if (saved) {
     ensureCss();
@@ -269,8 +327,10 @@
     if (document.body) document.body.classList.toggle('is-astolfo', enabled);
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initUI);
-  else initUI();
+  /* o ouvinte do documento pode ser registrado já; o que depende do DOM
+     (estado do cartão) roda no DOMContentLoaded */
+  initUI();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', renderCard);
 
   window.LuminAstolfo = {
     on: function () { return set(true); },
@@ -279,6 +339,12 @@
     state: function () { return { on: enabled, saved: stored(), css: !!document.getElementById('astolfo-css') }; },
     preview: openPreview,
     close: closePreview,
+    art: function (index) {
+      if (typeof index === 'number') { artIndex = ((index % ARTS.length) + ARTS.length) % ARTS.length; stageArt(artIndex); return ARTS[artIndex]; }
+      return { index: artIndex, name: ARTS[artIndex].name, total: ARTS.length };
+    },
+    nextArt: nextArt,
+    arts: ARTS.map(function (a) { return a.name; }),
     key: 'Ctrl + AltGr + Y'
   };
 })();

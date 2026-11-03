@@ -1,26 +1,34 @@
 # Créditos da arte — tema Astolfo
 
-**Nenhuma imagem deste diretório foi gerada por IA.** Tudo aqui é arte humana: uma ilustração de
-terceiro com licença declarada e desenhos vetoriais feitos à mão no próprio projeto.
+**Nenhuma imagem deste diretório foi gerada por IA.** Todas são arte humana, recortada de três
+projetos **MIT** do GitHub, mais os desenhos vetoriais feitos à mão neste repositório.
 
-## `art-avatar.png`, `art-banner.jpg`, `art-full.jpg`
+## Ilustrações (4)
 
-- **Obra:** ilustração do Astolfo usada como papel de parede do tema *"Astolfo's Extensions"*.
-- **Autor / origem:** [Doki Theme](https://github.com/doki-theme/doki-theme-web) — arquivo original
-  `chromeThemes/Astolfo's Extensions/newTab/backgrounds/astolfo_dark.png` (3840 × 2160).
-- **Licença do projeto:** MIT (arquivo `LICENSE` em `doki-theme/doki-theme-web`).
-- **O que foi feito aqui:** apenas recorte, redimensionamento e composição (banner com fundo plum,
-  avatar circular e versão 1280 × 720). A ilustração em si não foi alterada nem redesenhada.
-- **Personagem:** Astolfo, de *Fate/Apocrypha* — personagem e design © **Type-Moon**. A licença MIT
-  cobre o código e os arquivos do projeto Doki Theme, **não** a franquia. Uso aqui é não comercial e
-  creditado; se a Type-Moon ou o artista pedirem a remoção, o arquivo sai do repositório.
+| Arquivos | Obra / origem | Licença |
+|---|---|---|
+| `kouromo-avatar.png`, `kouromo-banner.jpg`, `kouromo-full.jpg` | [Kouromo/astolfo-vscode-theme](https://github.com/Kouromo/astolfo-vscode-theme) → `images/AstolfoBackground.png` | MIT (`LICENSE.md`) |
+| `dex-avatar.png`, `dex-casual.jpg` | [DarkCh4osss/astolfo-dex](https://github.com/DarkCh4osss/astolfo-dex) → `src/img/astolfoimg.png` | MIT (`LICENSE`) |
+| `hypr-avatar.png`, `hypr-banner.jpg` | [jujuffm/Hyprland-dotfiles-astolfo](https://github.com/jujuffm/Hyprland-dotfiles-astolfo) → `images/background.png` | MIT (`LICENSE`) |
+| `doki-avatar.png`, `doki-banner.jpg` | [Doki Theme](https://github.com/doki-theme/doki-theme-web) → `chromeThemes/Astolfo's Extensions/newTab/backgrounds/astolfo_dark.png` | MIT (`LICENSE`) |
 
-## `ribbon.svg`, `star.svg`, `heart.svg`, `plaid.svg`, `fishnet.svg`
+**O que foi feito aqui:** apenas recorte, enquadramento, máscara circular, redimensionamento e
+composição (fundo e degradê). Nenhuma ilustração foi redesenhada, repintada ou filtrada para "parecer
+outra coisa" — e nada foi feito com gerador de imagem.
 
-Desenhados à mão neste projeto (SVG escrito no código, sem traço de gerador de imagem), liberados sob
-a mesma licença MIT do restante do LuminSDK.
+## Personagem
+
+Astolfo, de *Fate/Apocrypha* — personagem e design © **Type-Moon**. As licenças MIT acima cobrem os
+arquivos dos projetos, **não** a franquia. O uso aqui é não comercial e creditado. Se a Type-Moon ou
+qualquer um dos autores pedir a remoção, o arquivo sai do repositório — o tema funciona sem as
+ilustrações (basta apagar os `*-avatar.png`, `*-banner.jpg`, `*-casual.jpg` e `*-full.jpg`; o cartão
+cai no brasão em CSS).
+
+## Desenhos vetoriais
+
+`ribbon.svg`, `star.svg`, `heart.svg`, `plaid.svg`, `fishnet.svg` — escritos à mão neste projeto, sob a
+mesma licença MIT do LuminSDK.
 
 ## Se você é o artista ou o detentor dos direitos
 
-Abra uma issue em <https://github.com/SuckingUpToesSry/LuminSDK/issues> que a arte é removida na hora —
-o tema funciona sem ela (basta apagar os três arquivos `art-*.{png,jpg}`; o cartão cai no brasão em CSS).
+Abra uma issue em <https://github.com/SuckingUpToesSry/LuminSDK/issues> que a arte é removida na hora.
