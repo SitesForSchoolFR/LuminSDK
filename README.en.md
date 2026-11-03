@@ -336,6 +336,35 @@ the way out in `assets/js/study.js`. The single-file build (`single/index.html`)
 it is always the games catalog. Each file
 is independent: nothing from StudyDesk leaks into LuminSDK's dark look.
 
+### Opening in about:blank (the site inside an iframe)
+
+When you open the portal, **LuminSDK moves itself into an `about:blank` tab** and keeps running
+inside an iframe there: the address bar shows `about:blank` while the original site (games, Sites,
+Study, LuminOS) stays fully alive inside it. Anyone looking at the address bar sees a blank tab;
+anyone in front of the screen sees the usual site.
+
+How it works:
+
+- browsers **only allow a tab to be opened in response to a click/key press**. The script tries on
+  page load and, if the pop-up is blocked, the second attempt happens on the **first click or key
+  press anywhere on the page** — after that, normal navigation (opening a game, switching tabs)
+  counts as permission;
+- the `about:blank` tab starts empty (same origin as the portal), receives a minimal document with a
+  full-screen iframe pointing at the original address and then **mirrors the site title**
+  (“StudyHub | Estudos e Quiz”);
+- **one tab per session**: reloading never opens tab after tab. Closed the `about:blank` tab? The next
+  reload of the portal opens a new one (otherwise the real address would be exposed);
+- inside the iframe the script turns itself off (`self !== top`), so there is never an iframe inside
+  an iframe; the framed page keeps the same origin, with `localStorage`, preferences and games
+  working as usual;
+- **`?cloak=0`** in the address disables everything (handy for debugging), and
+  `window.LuminCloak.state()` / `window.LuminCloak.open()` report the state and force the opening;
+- the single-file build (`single/index.html`) is left out: a loose file opened over `file://` does not
+  open another tab.
+
+Honest limit: without a click/key press the browser may block the first attempt — in that case the
+page explains the state and migrates on the first tap. The code lives in `assets/js/cloak.js`.
+
 The **GN-Math** tab is a separate page, not a theme, but it is organised like LuminSDK's library: a
 header with search, filter chips, sorting, a responsive grid of square covers with readable names (no
 tiny text over big artwork), favorites, “continue playing” and a player that opens the game right here
@@ -440,6 +469,7 @@ LuminSDK/
 │   │   ├── provider.js         # DuckMath/Astra catalogs: filters, search, minimal and player
 │   │   ├── gnmath.js · sites.js · study.js · os.js · social.js · browser.js
 │   │   ├── settings.js · progress.js · site.js · atmosphere.js · bonus.js
+│   │   ├── cloak.js            # Opens the portal in about:blank (site inside an iframe)
 │   ├── data/sites.json         # Sites tab data: 67 collections / 749 links
 │   └── img/                    # Logo, PWA icons, social banner and Sites artwork
 ├── manifest.webmanifest
