@@ -1,7 +1,7 @@
 /* =========================================================
    LuminSDK — animação de troca de aba (tempo · relógio · espaço-tempo)
-   Uma animação curta (200 ms, editável no CONFIG de assets/js/anim.js) e
-   diferente para cada aba: funil de espaço-tempo, anéis de relógio,
+   Uma animação curta (2,5 s por padrão, editável em CONFIG.DURATION de
+   assets/js/anim.js) e diferente para cada aba: funil de espaço-tempo, anéis de relógio,
    ponteiro girando, grade em perspectiva e um mostrador com o "tempo" da
    aba. A cor e os textos vêm de --la-1 / --la-2 e do CONFIG.
 
@@ -22,7 +22,9 @@
   place-items: center;
   background: radial-gradient(circle at 50% 50%,
     rgba(12, 8, 25, .55) 0%, rgba(5, 4, 9, .85) 62%, rgba(5, 4, 9, .95) 100%);
-  animation: la-fade 200ms ease-out both;
+  /* todos os tempos usam --la-scale: o CSS foi coreografado para 200 ms e
+     o anim.js multiplica pelo fator da duração escolhida (2,5 s = 12,5) */
+  animation: la-fade calc(200ms * var(--la-scale, 1)) ease-out both;
   will-change: opacity;
 }
 
@@ -40,7 +42,7 @@
     transparent 76% 100%);
   filter: blur(7px);
   opacity: .9;
-  animation: la-warp 200ms cubic-bezier(.22, .9, .25, 1) both;
+  animation: la-warp calc(200ms * var(--la-scale, 1)) cubic-bezier(.22, .9, .25, 1) both;
 }
 
 /* ---------- anéis de relógio ---------- */
@@ -51,10 +53,10 @@
   border-radius: 50%;
   border: 1px solid color-mix(in srgb, var(--la-1) 70%, transparent);
   box-shadow: 0 0 26px color-mix(in srgb, var(--la-2) 35%, transparent) inset;
-  animation: la-ring 200ms cubic-bezier(.2, .85, .3, 1) both;
+  animation: la-ring calc(200ms * var(--la-scale, 1)) cubic-bezier(.2, .85, .3, 1) both;
 }
-#lum-anim .la-ring--2 { animation-delay: 24ms; width: min(46vmin, 330px); border-style: dashed; }
-#lum-anim .la-ring--3 { animation-delay: 48ms; width: min(28vmin, 200px); opacity: .8; }
+#lum-anim .la-ring--2 { animation-delay: calc(24ms * var(--la-scale, 1)); width: min(46vmin, 330px); border-style: dashed; }
+#lum-anim .la-ring--3 { animation-delay: calc(48ms * var(--la-scale, 1)); width: min(28vmin, 200px); opacity: .8; }
 
 /* ---------- mostrador: marcas + ponteiro ---------- */
 #lum-anim .la-face {
@@ -69,7 +71,7 @@
   mask: radial-gradient(circle, transparent 62%, #000 64%, #000 74%, transparent 76%);
   -webkit-mask: radial-gradient(circle, transparent 62%, #000 64%, #000 74%, transparent 76%);
   opacity: .9;
-  animation: la-spin 200ms linear both;
+  animation: la-spin calc(200ms * var(--la-scale, 1)) linear both;
 }
 #lum-anim .la-hand {
   position: absolute;
@@ -78,7 +80,7 @@
   background: linear-gradient(to top, transparent, var(--la-2));
   transform-origin: bottom center;
   filter: drop-shadow(0 0 8px var(--la-2));
-  animation: la-hand 200ms cubic-bezier(.3, .9, .3, 1) both;
+  animation: la-hand calc(200ms * var(--la-scale, 1)) cubic-bezier(.3, .9, .3, 1) both;
 }
 #lum-anim .la-hand::after {
   content: "";
@@ -106,7 +108,7 @@
   opacity: .55;
   mask: linear-gradient(to bottom, #000, transparent 78%);
   -webkit-mask: linear-gradient(to bottom, #000, transparent 78%);
-  animation: la-grid 200ms ease-out both;
+  animation: la-grid calc(200ms * var(--la-scale, 1)) ease-out both;
 }
 
 /* ---------- flash curto ---------- */
@@ -116,7 +118,7 @@
   background: radial-gradient(circle at 50% 50%,
     color-mix(in srgb, var(--la-2) 60%, #fff) 0%, transparent 58%);
   opacity: 0;
-  animation: la-flash 200ms ease-out both;
+  animation: la-flash calc(200ms * var(--la-scale, 1)) ease-out both;
 }
 
 /* ---------- mostrador digital ---------- */
@@ -137,17 +139,17 @@
   color: #fff;
   text-shadow: 0 0 22px color-mix(in srgb, var(--la-1) 85%, transparent),
     0 0 46px color-mix(in srgb, var(--la-2) 55%, transparent);
-  animation: la-zoom 200ms cubic-bezier(.2, .9, .3, 1) both;
+  animation: la-zoom calc(200ms * var(--la-scale, 1)) cubic-bezier(.2, .9, .3, 1) both;
 }
 #lum-anim .la-label {
   font-size: clamp(.62rem, 1.7vmin, .78rem);
   letter-spacing: .3em;
   text-transform: uppercase;
   color: color-mix(in srgb, var(--la-2) 80%, #fff);
-  animation: la-zoom 200ms ease-out 20ms both;
+  animation: la-zoom calc(200ms * var(--la-scale, 1)) ease-out calc(20ms * var(--la-scale, 1)) both;
 }
 
-/* ---------- keyframes (tudo dentro dos 200 ms) ---------- */
+/* ---------- keyframes (coreografados em 200 ms, escalados por --la-scale) ---------- */
 @keyframes la-fade {
   0% { opacity: 0; }
   12% { opacity: 1; }
@@ -161,13 +163,15 @@
 }
 @keyframes la-ring {
   0% { opacity: 0; transform: scale(.4) rotate(0deg); }
-  30% { opacity: 1; }
-  100% { opacity: 0; transform: scale(1.35) rotate(24deg); }
+  22% { opacity: 1; }
+  78% { opacity: .85; }
+  100% { opacity: 0; transform: scale(1.42) rotate(30deg); }
 }
 @keyframes la-spin {
-  from { transform: rotate(-120deg); opacity: 0; }
-  30% { opacity: 1; }
-  to { transform: rotate(210deg); opacity: .15; }
+  from { transform: rotate(-160deg); opacity: 0; }
+  14% { opacity: 1; }
+  88% { opacity: .9; }
+  to { transform: rotate(560deg); opacity: .12; }
 }
 @keyframes la-hand {
   from { transform: rotate(-150deg); }
@@ -184,9 +188,10 @@
   100% { opacity: 0; }
 }
 @keyframes la-zoom {
-  0% { opacity: 0; transform: scale(.7); filter: blur(6px); }
-  45% { opacity: 1; transform: scale(1.04); filter: blur(0); }
-  100% { opacity: 0; transform: scale(1.12); filter: blur(2px); }
+  0% { opacity: 0; transform: scale(.72); filter: blur(6px); }
+  22% { opacity: 1; transform: scale(1.04); filter: blur(0); }
+  86% { opacity: 1; transform: scale(1.02); filter: blur(0); }
+  100% { opacity: 0; transform: scale(1.1); filter: blur(2px); }
 }
 
 /* quem pediu menos movimento: só o fade e o nome da aba */

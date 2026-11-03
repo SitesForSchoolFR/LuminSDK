@@ -58,6 +58,10 @@
   };
 
   const CHANGELOG = [
+    { v: 'v46', items: [
+      'Animação de troca de aba agora dura 2,5 s (DURATION no anim.js; 2000 = 2 s), com a coreografia inteira escalada por --la-scale.',
+      'O mostrador de tempo corre durante a animação: o relógio da aba avança alguns minutos.'
+    ] },
     { v: 'v45', items: [
       'about:blank agora abre SEMPRE: sem trava de sessão, cada carga tenta; se o navegador barrar, o primeiro toque abre.',
       'A aba de trás vira google.com e tenta se fechar sozinha (window.close).',

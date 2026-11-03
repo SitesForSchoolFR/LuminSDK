@@ -331,15 +331,19 @@ is independent: nothing from StudyDesk leaks into LuminSDK's dark look.
 
 ### Tab-switch animation (time · clock · space-time)
 
-**Every** tab switch plays a **200 ms** clip — no more “only the first time”. Each tab gets its **own**
+**Every** tab switch plays a **2.5 s** clip (adjustable; `DURATION: 2000` gives 2 s) — no more “only
+the first time”. Each tab gets its **own**
 animation in the time/clock/space-time theme: a space-time funnel, clock rings, a spinning hand, a
 perspective grid and a digital face showing that tab's “time” (`11:00 · catalog`, `07:30 · study`,
 `15:45 · sites`, `09:15 · gn-math`, `00:00 · luminos`, …).
 
 - the layer is `pointer-events: none` and removes itself — **never blocks clicks, scrolling or focus**;
+- the digital face **runs during the animation** (that tab's “time” advances a few minutes);
+- the CSS is choreographed for 200 ms and `anim.js` multiplies the timings by `--la-scale`, so changing
+  `DURATION` keeps the choreography (no hard cut mid-way);
 - fast switching (four `Shift` + `D` in a row) never stacks layers: the previous one is replaced;
 - `?anim=0` disables it; “reduce motion” users get just the fade with the tab name;
-- **to edit**: `CONFIG` at the top of `assets/js/anim.js` — `DURATION` (200 ms) and `THEMES` with
+- **to edit**: `CONFIG` at the top of `assets/js/anim.js` — `DURATION` (2500; use `2000` for 2 s) and `THEMES` with
   `c1`/`c2` (colours), `label`, `stamp` and `hint` **per tab**. The look lives in `assets/css/anim.css`,
   reading `--la-1`/`--la-2`;
 - live: `LuminAnim.config.DURATION = 600`, or `LuminAnim.play('estudo')` to replay.

@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=47 -->
+  <!-- assets/css/styles.css?v=48 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -4025,7 +4025,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=47 -->
+  <!-- assets/css/app.css?v=48 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -9976,14 +9976,14 @@ html[data-view="gn"] .tabrail__tab.is-active {
    ---------------------------------------------------------
    EDITE AQUI
    ---------------------------------------------------------
-   · DURATION  duração em ms (200 = pedido)
+   · DURATION  duração em ms (2500 = 2,5 s; use 2000 para 2 s)
    · THEMES    uma entrada por aba: c1/c2 (cores), label, stamp, hint
    ========================================================= */
 (function () {
   'use strict';
 
   const CONFIG = {
-    DURATION: 200,
+    DURATION: 2500,
 
     /* c1/c2 = cores do gradiente · label = nome da aba
        stamp = "tempo" mostrado · hint = marcações do mostrador */
@@ -10015,6 +10015,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
   let layer = null;
   let dropTimer = 0;
+  let tick = 0;
   let lastRoute = '';
 
   function theme(route) {
@@ -10030,6 +10031,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
   function drop() {
     window.clearTimeout(dropTimer);
+    if (tick) { window.clearInterval(tick); tick = 0; }
     dropTimer = 0;
     if (!layer) return;
     const node = layer;
@@ -10045,6 +10047,9 @@ html[data-view="gn"] .tabrail__tab.is-active {
     node.style.setProperty('--la-1', t.c1);
     node.style.setProperty('--la-2', t.c2);
     node.style.setProperty('--la-dur', CONFIG.DURATION + 'ms');
+    /* o CSS foi coreografado para 200 ms; multiplicamos os tempos pelo
+       fator da duração para a animação continuar bonita em 2,5 s */
+    node.style.setProperty('--la-scale', (CONFIG.DURATION / 200).toFixed(3));
     /* a duração do CONFIG vale para todas as animações da camada */
     node.style.animationDuration = CONFIG.DURATION + 'ms';
 
@@ -10065,7 +10070,9 @@ html[data-view="gn"] .tabrail__tab.is-active {
     }
 
     const stage = make('div', 'la-stage', node);
-    make('b', 'la-time', stage).textContent = t.stamp;
+    const clock = make('b', 'la-time', stage);
+    clock.textContent = t.stamp;
+    clock.dataset = { stamp: t.stamp };
     make('span', 'la-label', stage).textContent = t.label + ' · ' + t.hint;
 
     /* os dois textos também acompanham a duração */
@@ -10085,6 +10092,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
       layer = build(route);
       document.body.append(layer);
       dropTimer = window.setTimeout(drop, CONFIG.DURATION + 120);
+      runClock(layer);
       return true;
     } catch (error) {
       console.warn('[LuminSDK] animação não montou:', error);
@@ -10098,6 +10106,23 @@ html[data-view="gn"] .tabrail__tab.is-active {
     if (document.visibilityState === 'visible') drop();
   });
   window.addEventListener('pageshow', drop);
+
+  /* o relógio do mostrador avança enquanto a animação roda */
+  function runClock(node) {
+    if (typeof window.setInterval !== 'function') return;
+    const clock = node.querySelector ? node.querySelector('.la-time') : null;
+    const stamp = clock && clock.dataset ? clock.dataset.stamp : '';
+    const parts = /^(\d{1,2}):(\d{2})$/.exec(stamp || '');
+    if (!parts) return;
+    let minutes = (parseInt(parts[1], 10) * 60 + parseInt(parts[2], 10)) % 1440;
+    const step = Math.max(220, Math.round(CONFIG.DURATION / 5));
+    tick = window.setInterval(function () {
+      if (!layer) { window.clearInterval(tick); tick = 0; return; }
+      minutes = (minutes + 1) % 1440;
+      clock.textContent = String(Math.floor(minutes / 60)).padStart(2, '0') + ':' +
+        String(minutes % 60).padStart(2, '0');
+    }, step);
+  }
 
   window.LuminAnim = {
     config: CONFIG,
@@ -11822,20 +11847,20 @@ html[data-view="gn"] .tabrail__tab.is-active {
          desligado quando a rota muda */
       css: [],
       scripts: [
-        'assets/js/anim.js?v=47',
+        'assets/js/anim.js?v=48',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=47',
-        'assets/js/settings.js?v=47',
-        'assets/js/site.js?v=47',
-        'assets/js/atmosphere.js?v=47',
-        'assets/js/progress.js?v=47',
-        'assets/js/bonus.js?v=47'
+        'assets/js/library.js?v=48',
+        'assets/js/settings.js?v=48',
+        'assets/js/site.js?v=48',
+        'assets/js/atmosphere.js?v=48',
+        'assets/js/progress.js?v=48',
+        'assets/js/bonus.js?v=48'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=47'],
-      scripts: ['assets/js/gnmath.js?v=47'],
+      css: ['assets/css/gnmath.css?v=48'],
+      scripts: ['assets/js/gnmath.js?v=48'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -11847,60 +11872,60 @@ html[data-view="gn"] .tabrail__tab.is-active {
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=47'],
-      scripts: ['assets/js/provider.js?v=47', 'assets/js/atmosphere.js?v=47']
+      css: ['assets/css/provider.css?v=48'],
+      scripts: ['assets/js/provider.js?v=48', 'assets/js/atmosphere.js?v=48']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=47'],
-      scripts: ['assets/js/sites.js?v=47', 'assets/js/atmosphere.js?v=47']
+      css: ['assets/css/sites.css?v=48'],
+      scripts: ['assets/js/sites.js?v=48', 'assets/js/atmosphere.js?v=48']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=47'],
-      scripts: ['assets/js/browser.js?v=47', 'assets/js/atmosphere.js?v=47']
+      css: ['assets/css/browser.css?v=48'],
+      scripts: ['assets/js/browser.js?v=48', 'assets/js/atmosphere.js?v=48']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=47',
-        'assets/js/os.js?v=47',
-        'assets/js/profile.js?v=47',
-        'assets/js/lab.js?v=47',
-        'assets/js/studio.js?v=47',
-        'assets/js/arcade.js?v=47',
-        'assets/js/vault.js?v=47',
-        'assets/js/community.js?v=47',
-        'assets/js/central.js?v=47',
-        'assets/js/atmosphere.js?v=47'
+        'assets/js/player.js?v=48',
+        'assets/js/os.js?v=48',
+        'assets/js/profile.js?v=48',
+        'assets/js/lab.js?v=48',
+        'assets/js/studio.js?v=48',
+        'assets/js/arcade.js?v=48',
+        'assets/js/vault.js?v=48',
+        'assets/js/community.js?v=48',
+        'assets/js/central.js?v=48',
+        'assets/js/atmosphere.js?v=48'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=47', 'assets/css/hub.css?v=47'],
+      css: ['assets/css/os.css?v=48', 'assets/css/hub.css?v=48'],
       scripts: [
-        'assets/js/player.js?v=47',
-        'assets/js/os.js?v=47',
-        'assets/js/profile.js?v=47',
-        'assets/js/lab.js?v=47',
-        'assets/js/studio.js?v=47',
-        'assets/js/arcade.js?v=47',
-        'assets/js/vault.js?v=47',
-        'assets/js/community.js?v=47',
-        'assets/js/central.js?v=47',
-        'assets/js/hub.js?v=47'
+        'assets/js/player.js?v=48',
+        'assets/js/os.js?v=48',
+        'assets/js/profile.js?v=48',
+        'assets/js/lab.js?v=48',
+        'assets/js/studio.js?v=48',
+        'assets/js/arcade.js?v=48',
+        'assets/js/vault.js?v=48',
+        'assets/js/community.js?v=48',
+        'assets/js/central.js?v=48',
+        'assets/js/hub.js?v=48'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=47']
+      scripts: ['assets/js/atmosphere.js?v=48']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=47'],
-      scripts: ['assets/js/study-questions.js?v=47', 'assets/js/anim.js?v=47', 'assets/js/study.js?v=47']
+      css: ['assets/css/study.css?v=48'],
+      scripts: ['assets/js/study-questions.js?v=48', 'assets/js/anim.js?v=48', 'assets/js/study.js?v=48']
     }
   };
 
