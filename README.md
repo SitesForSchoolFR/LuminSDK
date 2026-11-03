@@ -383,13 +383,17 @@ Como funciona:
   histórico nem a barra mostram o endereço do portal — é o mesmo truque do `openBackup()` do
   [Utopia](https://utopia.myk.sh): `about:blank` com o site no iframe na frente e o Google atrás.
   `?cloak=google` abre a aba em branco mas mantém o portal na aba de trás;
+- **nunca fica JS velho preso**: o `app.js` grava a versão do bundle (`?v=49`) na sessão e, quando ela
+  muda, **recarrega a página uma vez** — é o que impede a aba em branco de continuar rodando o código
+  antigo depois de uma atualização (o service worker também parou de guardar 404/erro em cache);
 - **abre SEMPRE**: não existe mais trava de sessão nenhuma — cada carga da página tenta abrir a aba
   (o navegador só exige gesto na primeiríssima vez no domínio; depois libera sozinho). Se o pop-up for
   barrado, o primeiro clique/tecla em qualquer lugar abre e o aviso some;
-- **a aba de trás vira `https://www.google.com` e tenta se fechar** (`window.close()` depois de
-  ~900 ms): fechar só é aceito quando a aba foi aberta por script — se o navegador recusar, ela fica no
-  Google, que é o comportamento pedido. Ajuste em `CONFIG.CLOSE_PARENT` / `CONFIG.CLOSE_DELAY` no topo
-  de `assets/js/cloak.js`;
+- **a aba de trás vira `https://www.google.com` e se fecha**: o `window.close()` é chamado **antes** da
+  navegação (agendado com `setTimeout` ele morria junto com o documento — era por isso que o Google
+  ficava aberto), e a aba em branco ainda dá uma segunda tentativa (`opener.close()` ~500 ms depois);
+  fechar só é aceito quando a aba foi aberta por script. Ajuste em `CONFIG.CLOSE_PARENT` /
+  `CONFIG.CLOSE_DELAY` no topo de `assets/js/cloak.js`;
 - **dica na tela**: se o navegador barrar o pop-up, aparece uma linha discreta (“Toque em qualquer
   lugar para abrir em about:blank”) que some no primeiro gesto — é só isso que falta para abrir;
 - **aba aberta pelo próprio navegador** (um `target="_blank"` ou um `window.open` de outro módulo)

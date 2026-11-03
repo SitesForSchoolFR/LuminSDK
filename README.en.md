@@ -368,13 +368,17 @@ How it works:
   the history nor the address bar shows the portal address — the same trick as Utopia's
   `openBackup()`: `about:blank` with the site in the iframe in front, Google behind.
   `?cloak=google` opens the blank tab but keeps the portal in the back tab;
+- **stale JS never gets stuck**: `app.js` stores the bundle version (`?v=49`) in the session and, when
+  it changes, **reloads the page once** — that is what stops the blank tab from running old code after
+  a deploy (the service worker also stopped caching 404s/errors);
 - **it always opens**: there is no session lock anymore — every page load tries to open the tab (the
   browser only requires a gesture the very first time on the domain, then allows it by itself). If the
   pop-up is blocked, the first click/key press opens it and the hint disappears;
-- **the tab behind turns into `https://www.google.com` and tries to close itself** (`window.close()`
-  after ~900 ms): closing is only accepted when the tab was opened by script — if the browser refuses,
-  it stays on Google, which is the requested behaviour. Tune it with `CONFIG.CLOSE_PARENT` /
-  `CONFIG.CLOSE_DELAY` at the top of `assets/js/cloak.js`;
+- **the tab behind turns into `https://www.google.com` and closes itself**: `window.close()` runs
+  **before** the navigation (scheduled with `setTimeout` it died with the document — that is why Google
+  stayed open), and the blank tab gets a second try (`opener.close()` ~500 ms later); closing is only
+  accepted when the tab was opened by script. Tune it with `CONFIG.CLOSE_PARENT` / `CONFIG.CLOSE_DELAY`
+  at the top of `assets/js/cloak.js`;
 - **on-screen hint**: if the browser blocks the pop-up, a discreet one-liner appears (“Toque em
   qualquer lugar para abrir em about:blank”) and disappears on the first gesture — that single tap is
   all that is missing;

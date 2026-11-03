@@ -58,6 +58,11 @@
   };
 
   const CHANGELOG = [
+    { v: 'v47', items: [
+      'A aba do Google agora fecha de verdade: o window.close() roda antes da navegação, e a aba em branco tenta fechar de novo depois de 500 ms.',
+      'Bundle novo recarrega a página uma vez: a aba em branco nunca fica presa em JS antigo (era o caso da animação em 200 ms).',
+      'Service worker não guarda mais 404/erro em cache — arquivo recém-publicado não vira cache permanente.'
+    ] },
     { v: 'v46', items: [
       'Animação de troca de aba agora dura 2,5 s (DURATION no anim.js; 2000 = 2 s), com a coreografia inteira escalada por --la-scale.',
       'O mostrador de tempo corre durante a animação: o relógio da aba avança alguns minutos.'

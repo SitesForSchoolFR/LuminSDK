@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=48 -->
+  <!-- assets/css/styles.css?v=49 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -4025,7 +4025,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=48 -->
+  <!-- assets/css/app.css?v=49 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -9778,8 +9778,8 @@ html[data-view="gn"] .tabrail__tab.is-active {
    EDITE AQUI
    ---------------------------------------------------------
    · REDIRECT     para onde a aba de trás vai depois de abrir a branca
-   · CLOSE_PARENT a aba de trás tenta se fechar depois do redirect?
-   · CLOSE_DELAY  espera (ms) antes de tentar fechar
+   · CLOSE_PARENT a aba de trás tenta se fechar (antes de virar Google)
+   · CLOSE_DELAY  espera (ms) antes da segunda tentativa, já no Google
    · HINT         texto da dica quando o pop-up é barrado
    ========================================================= */
 (function () {
@@ -9788,7 +9788,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
   const CONFIG = {
     REDIRECT: 'https://www.google.com/',
     CLOSE_PARENT: true,
-    CLOSE_DELAY: 900,
+    CLOSE_DELAY: 700,
     HINT: 'Toque em qualquer lugar para abrir em about:blank'
   };
 
@@ -9840,6 +9840,8 @@ html[data-view="gn"] .tabrail__tab.is-active {
       'w.addEventListener("click",function(){try{w.remove();}catch(e){}' +
       'try{f.contentWindow.focus();}catch(e){}});' +
       'd.body.appendChild(w);}}catch(e){}});' +
+      'try{var p=window.opener;if(p&&!p.closed){' +
+      'setTimeout(function(){try{p.close();}catch(e){}},500);}}catch(e){}' +
       '})();<\\/script>' +
       '</body></html>';
   }
@@ -9874,13 +9876,16 @@ html[data-view="gn"] .tabrail__tab.is-active {
      window.close() só é aceito quando a aba foi aberta por script (nosso
      caso); se o navegador recusar, ela fica no Google — que é o pedido. */
   function leaveToGoogle() {
+    /* ORDEM IMPORTA: window.close() agendado e seguido de navegação morre
+       junto com o documento (era por isso que o Google nunca fechava).
+       Fecha direto, agora, e navega. A segunda tentativa vem da aba em
+       branco (mesma origem), que também pode fechar esta janela. */
+    if (CONFIG.CLOSE_PARENT) {
+      try { window.close(); } catch (error) { /* navegador recusou */ }
+    }
     try { window.location.replace(CONFIG.REDIRECT); } catch (error) {
       try { window.location.href = CONFIG.REDIRECT; } catch (error2) { /* sem saída */ }
     }
-    if (!CONFIG.CLOSE_PARENT) return;
-    window.setTimeout(function () {
-      try { window.close(); } catch (error) { /* navegador recusou */ }
-    }, Math.max(0, CONFIG.CLOSE_DELAY));
   }
 
   /* dica de uma linha (some no primeiro gesto ou em 12 s) */
@@ -11847,20 +11852,20 @@ html[data-view="gn"] .tabrail__tab.is-active {
          desligado quando a rota muda */
       css: [],
       scripts: [
-        'assets/js/anim.js?v=48',
+        'assets/js/anim.js?v=49',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=48',
-        'assets/js/settings.js?v=48',
-        'assets/js/site.js?v=48',
-        'assets/js/atmosphere.js?v=48',
-        'assets/js/progress.js?v=48',
-        'assets/js/bonus.js?v=48'
+        'assets/js/library.js?v=49',
+        'assets/js/settings.js?v=49',
+        'assets/js/site.js?v=49',
+        'assets/js/atmosphere.js?v=49',
+        'assets/js/progress.js?v=49',
+        'assets/js/bonus.js?v=49'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=48'],
-      scripts: ['assets/js/gnmath.js?v=48'],
+      css: ['assets/css/gnmath.css?v=49'],
+      scripts: ['assets/js/gnmath.js?v=49'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -11872,60 +11877,60 @@ html[data-view="gn"] .tabrail__tab.is-active {
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=48'],
-      scripts: ['assets/js/provider.js?v=48', 'assets/js/atmosphere.js?v=48']
+      css: ['assets/css/provider.css?v=49'],
+      scripts: ['assets/js/provider.js?v=49', 'assets/js/atmosphere.js?v=49']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=48'],
-      scripts: ['assets/js/sites.js?v=48', 'assets/js/atmosphere.js?v=48']
+      css: ['assets/css/sites.css?v=49'],
+      scripts: ['assets/js/sites.js?v=49', 'assets/js/atmosphere.js?v=49']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=48'],
-      scripts: ['assets/js/browser.js?v=48', 'assets/js/atmosphere.js?v=48']
+      css: ['assets/css/browser.css?v=49'],
+      scripts: ['assets/js/browser.js?v=49', 'assets/js/atmosphere.js?v=49']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=48',
-        'assets/js/os.js?v=48',
-        'assets/js/profile.js?v=48',
-        'assets/js/lab.js?v=48',
-        'assets/js/studio.js?v=48',
-        'assets/js/arcade.js?v=48',
-        'assets/js/vault.js?v=48',
-        'assets/js/community.js?v=48',
-        'assets/js/central.js?v=48',
-        'assets/js/atmosphere.js?v=48'
+        'assets/js/player.js?v=49',
+        'assets/js/os.js?v=49',
+        'assets/js/profile.js?v=49',
+        'assets/js/lab.js?v=49',
+        'assets/js/studio.js?v=49',
+        'assets/js/arcade.js?v=49',
+        'assets/js/vault.js?v=49',
+        'assets/js/community.js?v=49',
+        'assets/js/central.js?v=49',
+        'assets/js/atmosphere.js?v=49'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=48', 'assets/css/hub.css?v=48'],
+      css: ['assets/css/os.css?v=49', 'assets/css/hub.css?v=49'],
       scripts: [
-        'assets/js/player.js?v=48',
-        'assets/js/os.js?v=48',
-        'assets/js/profile.js?v=48',
-        'assets/js/lab.js?v=48',
-        'assets/js/studio.js?v=48',
-        'assets/js/arcade.js?v=48',
-        'assets/js/vault.js?v=48',
-        'assets/js/community.js?v=48',
-        'assets/js/central.js?v=48',
-        'assets/js/hub.js?v=48'
+        'assets/js/player.js?v=49',
+        'assets/js/os.js?v=49',
+        'assets/js/profile.js?v=49',
+        'assets/js/lab.js?v=49',
+        'assets/js/studio.js?v=49',
+        'assets/js/arcade.js?v=49',
+        'assets/js/vault.js?v=49',
+        'assets/js/community.js?v=49',
+        'assets/js/central.js?v=49',
+        'assets/js/hub.js?v=49'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=48']
+      scripts: ['assets/js/atmosphere.js?v=49']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=48'],
-      scripts: ['assets/js/study-questions.js?v=48', 'assets/js/anim.js?v=48', 'assets/js/study.js?v=48']
+      css: ['assets/css/study.css?v=49'],
+      scripts: ['assets/js/study-questions.js?v=49', 'assets/js/anim.js?v=49', 'assets/js/study.js?v=49']
     }
   };
 
@@ -12369,6 +12374,22 @@ html[data-view="gn"] .tabrail__tab.is-active {
     /* rede de segurança: a classe da animação (versão antiga) travava o
        body com overflow:hidden; se sobrou de uma sessão velha, sai agora */
     document.documentElement.classList.remove('is-revealing');
+
+    /* bundle novo publicado? recarrega UMA vez — assim o JS antigo nunca
+       fica preso na aba em branco (era o que fazia a animação continuar em
+       200 ms depois de uma atualização) */
+    try {
+      const stamp = document.querySelector('script[src*="app.js?v="]');
+      const version = stamp ? (stamp.getAttribute('src') || '').split('v=')[1] : '';
+      const KEY = 'luminsdk:v1:bundle';
+      const seen = sessionStorage.getItem(KEY);
+      if (version && seen && seen !== version) {
+        sessionStorage.setItem(KEY, version);
+        window.location.reload();
+        return;
+      }
+      if (version && !seen) sessionStorage.setItem(KEY, version);
+    } catch (error) { /* storage indisponível: segue sem recarregar */ }
 
     const legacy = routeFromUrl();
     show(initialRoute());

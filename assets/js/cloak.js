@@ -22,8 +22,8 @@
    EDITE AQUI
    ---------------------------------------------------------
    · REDIRECT     para onde a aba de trás vai depois de abrir a branca
-   · CLOSE_PARENT a aba de trás tenta se fechar depois do redirect?
-   · CLOSE_DELAY  espera (ms) antes de tentar fechar
+   · CLOSE_PARENT a aba de trás tenta se fechar (antes de virar Google)
+   · CLOSE_DELAY  espera (ms) antes da segunda tentativa, já no Google
    · HINT         texto da dica quando o pop-up é barrado
    ========================================================= */
 (function () {
@@ -32,7 +32,7 @@
   const CONFIG = {
     REDIRECT: 'https://www.google.com/',
     CLOSE_PARENT: true,
-    CLOSE_DELAY: 900,
+    CLOSE_DELAY: 700,
     HINT: 'Toque em qualquer lugar para abrir em about:blank'
   };
 
@@ -84,6 +84,8 @@
       'w.addEventListener("click",function(){try{w.remove();}catch(e){}' +
       'try{f.contentWindow.focus();}catch(e){}});' +
       'd.body.appendChild(w);}}catch(e){}});' +
+      'try{var p=window.opener;if(p&&!p.closed){' +
+      'setTimeout(function(){try{p.close();}catch(e){}},500);}}catch(e){}' +
       '})();<\\/script>' +
       '</body></html>';
   }
@@ -118,13 +120,16 @@
      window.close() só é aceito quando a aba foi aberta por script (nosso
      caso); se o navegador recusar, ela fica no Google — que é o pedido. */
   function leaveToGoogle() {
+    /* ORDEM IMPORTA: window.close() agendado e seguido de navegação morre
+       junto com o documento (era por isso que o Google nunca fechava).
+       Fecha direto, agora, e navega. A segunda tentativa vem da aba em
+       branco (mesma origem), que também pode fechar esta janela. */
+    if (CONFIG.CLOSE_PARENT) {
+      try { window.close(); } catch (error) { /* navegador recusou */ }
+    }
     try { window.location.replace(CONFIG.REDIRECT); } catch (error) {
       try { window.location.href = CONFIG.REDIRECT; } catch (error2) { /* sem saída */ }
     }
-    if (!CONFIG.CLOSE_PARENT) return;
-    window.setTimeout(function () {
-      try { window.close(); } catch (error) { /* navegador recusou */ }
-    }, Math.max(0, CONFIG.CLOSE_DELAY));
   }
 
   /* dica de uma linha (some no primeiro gesto ou em 12 s) */
