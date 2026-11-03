@@ -344,7 +344,8 @@ o visual escuro do LuminSDK.
 
 ### Animação de troca de aba (tempo · relógio · espaço-tempo)
 
-**Toda** troca de aba toca uma animação curta de **200 ms** — não existe mais “só na primeira vez”.
+**Toda** troca de aba toca uma animação de **2,5 s** (ajustável; `DURATION: 2000` deixa em 2 s) — não
+existe mais “só na primeira vez”.
 Cada aba tem a **sua** animação, no tema tempo/relógio/espaço-tempo: funil de espaço-tempo, anéis de
 relógio, ponteiro girando, grade em perspectiva e um mostrador digital com o “tempo” daquela aba
 (`11:00 · catálogo`, `07:30 · estudos`, `15:45 · sites`, `09:15 · gn-math`, `00:00 · luminos`, …).
@@ -352,9 +353,12 @@ relógio, ponteiro girando, grade em perspectiva e um mostrador digital com o �
 Como funciona:
 
 - a camada é `pointer-events: none` e desaparece sozinha — **nunca bloqueia clique, rolagem ou foco**;
+- o mostrador digital **corre durante a animação** (o “tempo” da aba avança alguns minutos);
+- o CSS é coreografado em 200 ms e o `anim.js` multiplica os tempos por `--la-scale`, então mudar
+  `DURATION` mantém a coreografia (nada de corte seco no meio);
 - troca rápida (quatro `Shift` + `D` seguidos) não empilha camadas: a anterior é substituída;
 - `?anim=0` desliga; quem usa “menos movimento” vê só o fade com o nome da aba;
-- **para editar**: `CONFIG` no topo de `assets/js/anim.js` — `DURATION` (200 ms) e `THEMES`, com
+- **para editar**: `CONFIG` no topo de `assets/js/anim.js` — `DURATION` (2500; use `2000` para 2 s) e `THEMES`, com
   `c1`/`c2` (cores), `label`, `stamp` (o “tempo” mostrado) e `hint` de **cada aba**. O visual
   (funil, anéis, mostrador, grade) fica em `assets/css/anim.css`, lendo as variáveis `--la-1`/`--la-2`;
 - em tempo real: `LuminAnim.config.DURATION = 600`, ou `LuminAnim.play('estudo')` para ver de novo.

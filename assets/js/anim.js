@@ -14,14 +14,14 @@
    ---------------------------------------------------------
    EDITE AQUI
    ---------------------------------------------------------
-   · DURATION  duração em ms (200 = pedido)
+   · DURATION  duração em ms (2500 = 2,5 s; use 2000 para 2 s)
    · THEMES    uma entrada por aba: c1/c2 (cores), label, stamp, hint
    ========================================================= */
 (function () {
   'use strict';
 
   const CONFIG = {
-    DURATION: 200,
+    DURATION: 2500,
 
     /* c1/c2 = cores do gradiente · label = nome da aba
        stamp = "tempo" mostrado · hint = marcações do mostrador */
@@ -53,6 +53,7 @@
 
   let layer = null;
   let dropTimer = 0;
+  let tick = 0;
   let lastRoute = '';
 
   function theme(route) {
@@ -68,6 +69,7 @@
 
   function drop() {
     window.clearTimeout(dropTimer);
+    if (tick) { window.clearInterval(tick); tick = 0; }
     dropTimer = 0;
     if (!layer) return;
     const node = layer;
@@ -83,6 +85,9 @@
     node.style.setProperty('--la-1', t.c1);
     node.style.setProperty('--la-2', t.c2);
     node.style.setProperty('--la-dur', CONFIG.DURATION + 'ms');
+    /* o CSS foi coreografado para 200 ms; multiplicamos os tempos pelo
+       fator da duração para a animação continuar bonita em 2,5 s */
+    node.style.setProperty('--la-scale', (CONFIG.DURATION / 200).toFixed(3));
     /* a duração do CONFIG vale para todas as animações da camada */
     node.style.animationDuration = CONFIG.DURATION + 'ms';
 
@@ -103,7 +108,9 @@
     }
 
     const stage = make('div', 'la-stage', node);
-    make('b', 'la-time', stage).textContent = t.stamp;
+    const clock = make('b', 'la-time', stage);
+    clock.textContent = t.stamp;
+    clock.dataset = { stamp: t.stamp };
     make('span', 'la-label', stage).textContent = t.label + ' · ' + t.hint;
 
     /* os dois textos também acompanham a duração */
@@ -123,6 +130,7 @@
       layer = build(route);
       document.body.append(layer);
       dropTimer = window.setTimeout(drop, CONFIG.DURATION + 120);
+      runClock(layer);
       return true;
     } catch (error) {
       console.warn('[LuminSDK] animação não montou:', error);
@@ -136,6 +144,23 @@
     if (document.visibilityState === 'visible') drop();
   });
   window.addEventListener('pageshow', drop);
+
+  /* o relógio do mostrador avança enquanto a animação roda */
+  function runClock(node) {
+    if (typeof window.setInterval !== 'function') return;
+    const clock = node.querySelector ? node.querySelector('.la-time') : null;
+    const stamp = clock && clock.dataset ? clock.dataset.stamp : '';
+    const parts = /^(\d{1,2}):(\d{2})$/.exec(stamp || '');
+    if (!parts) return;
+    let minutes = (parseInt(parts[1], 10) * 60 + parseInt(parts[2], 10)) % 1440;
+    const step = Math.max(220, Math.round(CONFIG.DURATION / 5));
+    tick = window.setInterval(function () {
+      if (!layer) { window.clearInterval(tick); tick = 0; return; }
+      minutes = (minutes + 1) % 1440;
+      clock.textContent = String(Math.floor(minutes / 60)).padStart(2, '0') + ':' +
+        String(minutes % 60).padStart(2, '0');
+    }, step);
+  }
 
   window.LuminAnim = {
     config: CONFIG,
