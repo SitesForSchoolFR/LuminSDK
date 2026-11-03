@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=40 -->
+  <!-- assets/css/styles.css?v=42 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -4025,7 +4025,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=40 -->
+  <!-- assets/css/app.css?v=42 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -9753,6 +9753,193 @@ html[data-view="gn"] .tabrail__tab.is-active {
   }
 })();
 
+/* ==================== assets/js/cloak.js ==================== */
+/* =========================================================
+   LuminSDK — abertura em about:blank
+   Quando o portal é aberto, ele se muda para uma aba about:blank e o site
+   original continua vivo dentro de um iframe nessa aba: a barra de endereço
+   mostra about:blank e o LuminSDK (jogos, sites, estudos, os) segue
+   funcionando igual, só que emoldurado.
+
+   Como funciona:
+   · o navegador só deixa abrir uma aba em resposta a um clique/tecla, então
+     tentamos na carga do site e, se o pop-up for barrado, armamos UM
+     clique/tecla em qualquer lugar da página para a segunda tentativa
+   · a aba about:blank nasce vazia (mesma origem do portal), recebe um
+     documento mínimo com o iframe apontando para o endereço original e
+     depois o título da aba passa a espelhar o do site (StudyHub)
+   · a aba ORIGINAL não fica no LuminSDK: ela vira https://www.google.com
+     (é o "openBackup()" do Utopia: about:blank com o site no iframe +
+     location.replace(google) na aba de trás), então nem o histórico nem a
+     barra de endereço mostram o endereço do portal
+   · uma aba só gera outra uma vez por sessão (sessionStorage): recarregar
+     não abre aba atrás de aba; fechou a aba about:blank, a próxima
+     recarga volta a abrir
+   · dentro do iframe este script se desliga sozinho (self !== top), então
+     não existe laço de iframe dentro de iframe
+   · ?cloak=0 no endereço desliga tudo (útil para depurar)
+
+   Sem bibliotecas, sem build.
+   Autor: Ryan Smith · Licença MIT
+   ========================================================= */
+(function () {
+  'use strict';
+
+  const KEY = 'luminsdk:v1:cloak:spawned';
+  const NAME = 'luminsdk-cloak';
+  /* para onde a aba original vai depois que o portal nasce no about:blank
+     (mesmo destino do Utopia) */
+  const REDIRECT = 'https://www.google.com/';
+  const HERE = window.location.href;
+  const BLANK = 'about:blank';
+  const TITLE = document.title || 'LuminSDK';
+
+  /* já estamos dentro do iframe, já somos a aba about:blank, ou é o
+     arquivo único (que não deve migrar): nada a fazer */
+  if (window.self !== window.top) return;
+  if (window.name === NAME) return;
+  if (window.__LUMIN_SINGLE__) return;
+
+  if (/(?:^|[?&])cloak=0(?:&|$)/.test(window.location.search || '')) return;
+
+  function alreadySpawned() {
+    try { return sessionStorage.getItem(KEY) === '1'; } catch (error) { return false; }
+  }
+
+  function markSpawned(on) {
+    try {
+      if (on) sessionStorage.setItem(KEY, '1');
+      else sessionStorage.removeItem(KEY);
+    } catch (error) { /* modo privado sem storage */ }
+  }
+
+  function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* documento da aba about:blank: só o iframe, em tela cheia */
+  function shellHtml(url, pageTitle) {
+    return '<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+      '<meta name="referrer" content="no-referrer">' +
+      '<title>' + escapeHtml(pageTitle) + '</title><style>' +
+      'html,body{height:100%;margin:0;overflow:hidden;background:#07070c}' +
+      '#luminsdk-surface{position:fixed;inset:0;width:100%;height:100%;border:0;' +
+      'display:block;background:#07070c}' +
+      '</style></head><body>' +
+      '<iframe id="luminsdk-surface" src="' + escapeHtml(url) + '"' +
+      ' title="' + escapeHtml(pageTitle) + '" referrerpolicy="no-referrer" allowfullscreen' +
+      ' allow="autoplay; fullscreen; gamepad; clipboard-write; clipboard-read;' +
+      ' encrypted-media; pointer-lock; midi; accelerometer; gyroscope"></iframe>' +
+      '<script>(function(){var f=document.getElementById("luminsdk-surface");' +
+      'function t(){try{var x=f.contentDocument&&f.contentDocument.title;' +
+      'if(x&&document.title!==x)document.title=x;}catch(e){}}' +
+      'f.addEventListener("load",t);setInterval(t,1200);})();<\/script>' +
+      '</body></html>';
+  }
+
+  let child = null;
+  let trying = 0;
+
+  /* abre (ou reaproveita) a aba about:blank e despeja o iframe dentro */
+  function spawn() {
+    if (alreadySpawned()) return false;
+    /* dois eventos do mesmo gesto (pointerdown + click) não viram duas
+       tentativas de abertura */
+    const now = Date.now();
+    if (now - trying < 250) return false;
+    trying = now;
+
+    let win = null;
+    try { win = window.open(BLANK, NAME); } catch (error) { win = null; }
+    if (!win || win.closed) return false;         /* pop-up bloqueado */
+
+    try { win.name = NAME; } catch (error) { /* nome já vem da abertura */ }
+
+    try {
+      win.document.open();
+      win.document.write(shellHtml(HERE, TITLE));
+      win.document.close();
+    } catch (error) {
+      /* não deu para escrever: não deixa uma aba em branco perdida */
+      try { win.close(); } catch (error2) { /* nada a fazer */ }
+      return false;
+    }
+
+    child = win;
+    markSpawned(true);
+    watchClosing();
+    try { win.focus(); } catch (error) { /* aba já recebeu o foco */ }
+
+    /* a página de trás sai do LuminSDK na hora: quem voltar para ela (ou
+       olhar o histórico) encontra o Google, não o portal */
+    leaveToGoogle();
+    return true;
+  }
+
+  /* vira o Google na aba original — sem deixar um endereço do LuminSDK
+     aparecendo depois das costas (mesma ideia do openBackup() do Utopia).
+     ?cloak=google desliga só esta troca, para quem quiser o portal na aba
+     de trás. */
+  function leaveToGoogle() {
+    if (/(?:^|[?&])cloak=google(?:&|$)/.test(window.location.search || '')) return;
+    try {
+      window.location.replace(REDIRECT);
+    } catch (error) {
+      try { window.location.href = REDIRECT; } catch (error2) { /* sem saída */ }
+    }
+  }
+
+  /* fechou a aba about:blank: libera a trava para a próxima recarga abrir
+     outra (senão a pessoa ficaria presa no portal com o endereço à mostra) */
+  function watchClosing() {
+    const timer = window.setInterval(function () {
+      try {
+        if (child && !child.closed) return;
+      } catch (error) { /* aba inacessível */ }
+      window.clearInterval(timer);
+      child = null;
+      markSpawned(false);
+    }, 2000);
+  }
+
+  /* pop-up barrado na carga: a segunda tentativa é o primeiro clique/tecla,
+     que é justamente o que o navegador aceita como permissão */
+  function watchGesture() {
+    const EVENTS = ['pointerdown', 'pointerup', 'mousedown', 'touchend', 'click', 'keydown'];
+
+    function stop() {
+      EVENTS.forEach(function (type) {
+        document.removeEventListener(type, attempt, true);
+      });
+    }
+
+    function attempt() {
+      if (alreadySpawned()) { stop(); return; }
+      if (spawn()) stop();
+    }
+
+    /* ouvimos mais de um evento do mesmo gesto: alguns navegadores só
+       liberam a aba no click, outros no keydown — o guarda de tempo em
+       spawn() evita tentativa duplicada */
+    EVENTS.forEach(function (type) {
+      document.addEventListener(type, attempt, true);
+    });
+  }
+
+  if (!spawn()) watchGesture();
+
+  /* diagnóstico: window.LuminCloak.state() / window.LuminCloak.open() */
+  window.LuminCloak = {
+    open: function () { return spawn(); },
+    state: function () {
+      return { cloaked: !!child, spawned: alreadySpawned(), redirect: REDIRECT };
+    }
+  };
+})();
+
 /* ==================== assets/js/atmosphere.js ==================== */
 /* =========================================================
    LuminSDK — atmosfera e aparência
@@ -11459,18 +11646,18 @@ html[data-view="gn"] .tabrail__tab.is-active {
       css: [],
       scripts: [
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=40',
-        'assets/js/settings.js?v=40',
-        'assets/js/site.js?v=40',
-        'assets/js/atmosphere.js?v=40',
-        'assets/js/progress.js?v=40',
-        'assets/js/bonus.js?v=40'
+        'assets/js/library.js?v=42',
+        'assets/js/settings.js?v=42',
+        'assets/js/site.js?v=42',
+        'assets/js/atmosphere.js?v=42',
+        'assets/js/progress.js?v=42',
+        'assets/js/bonus.js?v=42'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=40'],
-      scripts: ['assets/js/gnmath.js?v=40'],
+      css: ['assets/css/gnmath.css?v=42'],
+      scripts: ['assets/js/gnmath.js?v=42'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -11482,60 +11669,60 @@ html[data-view="gn"] .tabrail__tab.is-active {
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=40'],
-      scripts: ['assets/js/provider.js?v=40', 'assets/js/atmosphere.js?v=40']
+      css: ['assets/css/provider.css?v=42'],
+      scripts: ['assets/js/provider.js?v=42', 'assets/js/atmosphere.js?v=42']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=40'],
-      scripts: ['assets/js/sites.js?v=40', 'assets/js/atmosphere.js?v=40']
+      css: ['assets/css/sites.css?v=42'],
+      scripts: ['assets/js/sites.js?v=42', 'assets/js/atmosphere.js?v=42']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=40'],
-      scripts: ['assets/js/browser.js?v=40', 'assets/js/atmosphere.js?v=40']
+      css: ['assets/css/browser.css?v=42'],
+      scripts: ['assets/js/browser.js?v=42', 'assets/js/atmosphere.js?v=42']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=40',
-        'assets/js/os.js?v=40',
-        'assets/js/profile.js?v=40',
-        'assets/js/lab.js?v=40',
-        'assets/js/studio.js?v=40',
-        'assets/js/arcade.js?v=40',
-        'assets/js/vault.js?v=40',
-        'assets/js/community.js?v=40',
-        'assets/js/central.js?v=40',
-        'assets/js/atmosphere.js?v=40'
+        'assets/js/player.js?v=42',
+        'assets/js/os.js?v=42',
+        'assets/js/profile.js?v=42',
+        'assets/js/lab.js?v=42',
+        'assets/js/studio.js?v=42',
+        'assets/js/arcade.js?v=42',
+        'assets/js/vault.js?v=42',
+        'assets/js/community.js?v=42',
+        'assets/js/central.js?v=42',
+        'assets/js/atmosphere.js?v=42'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=40', 'assets/css/hub.css?v=40'],
+      css: ['assets/css/os.css?v=42', 'assets/css/hub.css?v=42'],
       scripts: [
-        'assets/js/player.js?v=40',
-        'assets/js/os.js?v=40',
-        'assets/js/profile.js?v=40',
-        'assets/js/lab.js?v=40',
-        'assets/js/studio.js?v=40',
-        'assets/js/arcade.js?v=40',
-        'assets/js/vault.js?v=40',
-        'assets/js/community.js?v=40',
-        'assets/js/central.js?v=40',
-        'assets/js/hub.js?v=40'
+        'assets/js/player.js?v=42',
+        'assets/js/os.js?v=42',
+        'assets/js/profile.js?v=42',
+        'assets/js/lab.js?v=42',
+        'assets/js/studio.js?v=42',
+        'assets/js/arcade.js?v=42',
+        'assets/js/vault.js?v=42',
+        'assets/js/community.js?v=42',
+        'assets/js/central.js?v=42',
+        'assets/js/hub.js?v=42'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=40']
+      scripts: ['assets/js/atmosphere.js?v=42']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=40'],
-      scripts: ['assets/js/study-questions.js?v=40', 'assets/js/study.js?v=40']
+      css: ['assets/css/study.css?v=42'],
+      scripts: ['assets/js/study-questions.js?v=42', 'assets/js/study.js?v=42']
     }
   };
 

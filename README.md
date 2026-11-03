@@ -352,6 +352,39 @@ troca de aba); a saída por clique fica em `assets/js/study.js` e o menu Normal/
 tem estudos — é sempre o catálogo de jogos. Cada arquivo é independente: nada do StudyDesk vaza para
 o visual escuro do LuminSDK.
 
+### Abertura em about:blank (o site dentro de um iframe)
+
+Ao abrir o portal, o **LuminSDK se muda para uma aba `about:blank`** e continua rodando dentro de um
+iframe nela: o que aparece na barra de endereço é `about:blank`, e o site original (jogos, Sites,
+Estudos, LuminOS) segue intacto lá dentro. Quem olha a barra vê uma aba em branco; quem está na frente
+da tela vê o site de sempre.
+
+Como funciona:
+
+- o navegador **só deixa abrir uma aba em resposta a um clique/tecla**. O script tenta na carga da
+  página e, se o pop-up for barrado, a segunda tentativa acontece no **primeiro clique ou tecla em
+  qualquer lugar da página** — depois disso a navegação normal (clicar num jogo, trocar de aba) já
+  funciona como permissão;
+- a aba `about:blank` nasce vazia (mesma origem do portal), recebe um documento mínimo com um iframe
+  em tela cheia apontando para o endereço original e passa a **espelhar o título** do site
+  (“StudyHub | Estudos e Quiz”);
+- **a aba original vira `https://www.google.com`** logo depois (`location.replace`), então nem o
+  histórico nem a barra mostram o endereço do portal — é o mesmo truque do `openBackup()` do
+  [Utopia](https://utopia.myk.sh): `about:blank` com o site no iframe na frente e o Google atrás.
+  `?cloak=google` abre a aba em branco mas mantém o portal na aba de trás;
+- **uma aba por sessão**: recarregar não abre aba atrás de aba. Fechou a aba `about:blank`? A próxima
+  recarga do portal volta a abrir outra (senão o endereço real ficaria à mostra);
+- dentro do iframe o script se desliga sozinho (`self !== top`), então nunca há iframe dentro de
+  iframe; a página emoldurada continua na mesma origem, com `localStorage`, preferências e jogos
+  funcionando normalmente;
+- **`?cloak=0`** no endereço desliga tudo (útil para depurar), e `window.LuminCloak.state()` /
+  `window.LuminCloak.open()` mostram o estado e forçam a abertura;
+- a versão de arquivo único (`single/index.html`) fica de fora: um arquivo solto aberto por
+  `file://` não abre outra aba.
+
+Limite honesto: sem um clique/tecla o navegador pode barrar a primeira tentativa — nesse caso a
+página explica o estado e migra no primeiro toque. O código vive em `assets/js/cloak.js`.
+
 A aba **GN-Math** é uma página separada, não um tema, mas organizada como a biblioteca do LuminSDK:
 cabeçalho com busca, filtros em chips, ordenação, grade responsiva de capas quadradas com nome
 legível (nada de texto miúdo sobre imagem grande), favorito, “continuar jogando” e um player que abre
@@ -495,6 +528,7 @@ LuminSDK/
 │   │   ├── settings.js         # Personalização (21 opções), perfis e sugestão
 │   │   ├── progress.js         # Estatísticas do jogador e conquistas
 │   │   ├── site.js             # Tema, animações, PWA e cópia do snippet
+│   │   ├── cloak.js            # Abre o portal em about:blank (site dentro de um iframe)
 │   │   ├── atmosphere.js       # Paleta, partículas, parallax e cursor
 │   │   ├── bonus.js            # Central de bônus: controle, rede, cache, estatísticas e conquistas
 │   │   ├── app.js              # Aba única: rotas por sessionStorage, carrega cada aba sob demanda
