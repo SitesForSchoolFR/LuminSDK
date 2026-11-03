@@ -342,39 +342,22 @@ troca de aba); a saída por clique fica em `assets/js/study.js` e o menu Normal/
 tem estudos — é sempre o catálogo de jogos. Cada arquivo é independente: nada do StudyDesk vaza para
 o visual escuro do LuminSDK.
 
-### Animação de abertura (estilo Sols RNG)
+### Animação de troca de aba (tempo · relógio · espaço-tempo)
 
-Quando o **`Shift` + `D`** (ou o crédito **Ryan Smith** do rodapé) abre o catálogo, entra uma
-**animação de abertura** por cima de tudo: aurora respirando, raios girando, portal de anéis, faíscas
-subindo, varredura de luz, flash e o título com gradiente animado — e uma **“raridade” sorteada** a
-cada abertura (de `1 / 1.100` a `1 / 10.000.000.000`), porque convenhamos que abrir 1.100 jogos merece
-um pouco de drama.
+**Toda** troca de aba toca uma animação curta de **200 ms** — não existe mais “só na primeira vez”.
+Cada aba tem a **sua** animação, no tema tempo/relógio/espaço-tempo: funil de espaço-tempo, anéis de
+relógio, ponteiro girando, grade em perspectiva e um mostrador digital com o “tempo” daquela aba
+(`11:00 · catálogo`, `07:30 · estudos`, `15:45 · sites`, `09:15 · gn-math`, `00:00 · luminos`, …).
 
 Como funciona:
 
-- dura **~2,4 s** e some sozinha; **clique, qualquer tecla, `Esc` ou rolar** pula na hora;
-- `Shift` + `D` indo e voltando anima nos dois sentidos (catálogo = “LuminSDK”, estudos = “StudyHub”);
-- **troca de aba comum não anima** (clicar no rail, abrir um jogo, etc.) e existe um intervalo de
-  **10 s** entre animações, então nada fica em loop atrapalhando;
-- **`?anim=0`** desliga a animação; quem usa “menos movimento” no sistema recebe só o fade e o título;
-- a primeira entrada do site (o portal de estudos) **não** anima por padrão — para animar também nela,
-  rode `LuminApp.revealOnFirst(true)` no console (ou `LuminReveal.blast('lumin')` para testar);
-- tudo é CSS + um punhado de nós criados em `assets/js/reveal.js` (nenhuma biblioteca, nenhuma imagem).
-
-Arquivos: `assets/js/reveal.js` (montagem, sorteio, pular e cooldown; carregado globalmente pelo
-`index.html`, com uma cópia por rota só para furar cache), `assets/css/reveal.css` (aurora, raios,
-anéis, faíscas, gradientes e keyframes, também global). A chamada sai de `assets/js/app.js`, no mesmo
-lugar que troca de aba — a animação entra antes de a view do catálogo aparecer. Se algo der errado ao
-montar, o módulo limpa tudo na hora: **a animação nunca deixa a página travada**.
-
-**Para editar a animação**, abra `assets/js/reveal.js`: o bloco `CONFIG`, no topo, concentra tudo —
-`DURATION` (duração em ms), `COOLDOWN` (intervalo entre animações), `SPARKS` (máximo de faíscas),
-`PALETTE` (cores das auroras, raios e anéis), `TEXTS` (tag e dica de pular), `TIERS` (nome, chance,
-cor e faíscas de cada raridade), `ON_FIRST` (animar na primeira entrada?) e `LABEL` (título por
-destino). Nada de caçar valor no meio do arquivo. O visual em si (formas, tempos dos keyframes) fica
-em `assets/css/reveal.css`, que usa as variáveis `--rv-*` preenchidas pelo próprio CONFIG. Em tempo
-real dá para mexer em `LuminReveal.config` no console ou no preview
-(`tools/reveal-preview/index.html`, que tem um botão “Ver/config”).
+- a camada é `pointer-events: none` e desaparece sozinha — **nunca bloqueia clique, rolagem ou foco**;
+- troca rápida (quatro `Shift` + `D` seguidos) não empilha camadas: a anterior é substituída;
+- `?anim=0` desliga; quem usa “menos movimento” vê só o fade com o nome da aba;
+- **para editar**: `CONFIG` no topo de `assets/js/anim.js` — `DURATION` (200 ms) e `THEMES`, com
+  `c1`/`c2` (cores), `label`, `stamp` (o “tempo” mostrado) e `hint` de **cada aba**. O visual
+  (funil, anéis, mostrador, grade) fica em `assets/css/anim.css`, lendo as variáveis `--la-1`/`--la-2`;
+- em tempo real: `LuminAnim.config.DURATION = 600`, ou `LuminAnim.play('estudo')` para ver de novo.
 
 ### Abertura em about:blank (o site dentro de um iframe)
 
@@ -396,10 +379,13 @@ Como funciona:
   histórico nem a barra mostram o endereço do portal — é o mesmo truque do `openBackup()` do
   [Utopia](https://utopia.myk.sh): `about:blank` com o site no iframe na frente e o Google atrás.
   `?cloak=google` abre a aba em branco mas mantém o portal na aba de trás;
-- **uma aba por sessão, com validade curta**: recarregar não abre aba atrás de aba, mas a trava
-  (`luminsdk:v1:cloak:spawned`) **expira em 3 minutos** — fechou a aba `about:blank`, trocou de
-  aparelho ou o pop-up foi barrado antes, a próxima visita/recarga tenta de novo (nada de ficar
-  preso no endereço real por causa de uma tentativa antiga);
+- **abre SEMPRE**: não existe mais trava de sessão nenhuma — cada carga da página tenta abrir a aba
+  (o navegador só exige gesto na primeiríssima vez no domínio; depois libera sozinho). Se o pop-up for
+  barrado, o primeiro clique/tecla em qualquer lugar abre e o aviso some;
+- **a aba de trás vira `https://www.google.com` e tenta se fechar** (`window.close()` depois de
+  ~900 ms): fechar só é aceito quando a aba foi aberta por script — se o navegador recusar, ela fica no
+  Google, que é o comportamento pedido. Ajuste em `CONFIG.CLOSE_PARENT` / `CONFIG.CLOSE_DELAY` no topo
+  de `assets/js/cloak.js`;
 - **dica na tela**: se o navegador barrar o pop-up, aparece uma linha discreta (“Toque em qualquer
   lugar para abrir em about:blank”) que some no primeiro gesto — é só isso que falta para abrir;
 - **aba aberta pelo próprio navegador** (um `target="_blank"` ou um `window.open` de outro módulo)
@@ -559,7 +545,7 @@ LuminSDK/
 │   │   ├── progress.js         # Estatísticas do jogador e conquistas
 │   │   ├── site.js             # Tema, animações, PWA e cópia do snippet
 │   │   ├── cloak.js            # Abre o portal em about:blank (site dentro de um iframe)
-│   │   ├── reveal.js           # Animação de abertura do catálogo (estilo Sols RNG)
+│   │   ├── anim.js             # Animação de troca de aba (tempo/relógio), editável no CONFIG
 │   │   ├── atmosphere.js       # Paleta, partículas, parallax e cursor
 │   │   ├── bonus.js            # Central de bônus: controle, rede, cache, estatísticas e conquistas
 │   │   ├── app.js              # Aba única: rotas por sessionStorage, carrega cada aba sob demanda
@@ -580,7 +566,7 @@ LuminSDK/
 │   │   ├── sites.js            # Aba Sites (coleções + visualizador + aba limpa)
 │   │   └── study.js            # Aba Estudos (busca, planejador, cronômetro, teste rápido)
 │   ├── css/app.css             # Casca do app de aba única (mostra/esconde a view)
-│   ├── css/reveal.css          # Aurora, raios, anéis e faíscas da animação de abertura
+│   ├── css/anim.css            # Funil, anéis de relógio, ponteiro e grade da animação de aba
 │   ├── css/hub.css             # Aba Hub: moldura, chips e palco dos apps do OS
 │   ├── css/provider.css        # Catálogos DuckMath/Astra: chips, grade, lista minimal e player
 │   ├── data/

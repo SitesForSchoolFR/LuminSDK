@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=46 -->
+  <!-- assets/css/styles.css?v=47 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -4025,7 +4025,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=46 -->
+  <!-- assets/css/app.css?v=47 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -4173,351 +4173,6 @@ html[data-view="gn"] .tabrail__tab.is-active {
     white-space: nowrap;
     border: 0;
   }
-}
-  </style>
-  <!-- animação de abertura do catálogo (coreografada por assets/js/reveal.js) -->
-  <!-- assets/css/reveal.css?v=46 -->
-  <style>
-/* =========================================================
-   LuminSDK — abertura do catálogo (animação)
-   A "revelação" que toca quando Shift+D (ou o crédito do rodapé)
-   abre o LuminSDK: céu de aurora, raios girando, portal de anéis,
-   faíscas subindo, varredura de luz e o título com brilho — no
-   espírito das aberturas do Sols RNG.
-
-   · tudo em CSS + um punhado de nós criados aqui (sem biblioteca)
-   · ~2,4 s e some sozinha; clique, tecla ou Esc pula na hora
-   · ?anim=0 desliga; quem pediu "menos movimento" vê só um fade
-   · z-index acima de tudo e pointer-events:none ao sair
-   ========================================================= */
-
-/* valores padrão; o reveal.js sobrescreve nas variáveis --rv-* ao montar */
-#lumin-reveal {
-  --rv-tier: #a5b4fc;
-  --rv-a: rgba(139, 92, 246, .85);
-  --rv-b: rgba(34, 211, 238, .7);
-  --rv-c: rgba(244, 114, 182, .55);
-  --rv-rays: rgba(167, 139, 250, .22);
-  --rv-rings: rgba(196, 181, 253, .38);
-  position: fixed;
-  inset: 0;
-  z-index: 9000;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  isolation: isolate;
-  background:
-    radial-gradient(120% 120% at 50% 42%, #1a1035 0%, #0c0819 46%, #050409 100%);
-  opacity: 1;
-  transition: opacity .55s ease, transform .7s cubic-bezier(.16, 1, .3, 1);
-  will-change: opacity, transform;
-  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
-}
-#lumin-reveal.is-out {
-  opacity: 0;
-  transform: scale(1.08);
-  pointer-events: none;
-}
-
-/* ---------- céu: auroras que respiram ---------- */
-#lumin-reveal .rv-aurora {
-  position: absolute;
-  width: 70vmax;
-  height: 70vmax;
-  border-radius: 50%;
-  filter: blur(70px);
-  opacity: .55;
-  mix-blend-mode: screen;
-  animation: rv-drift 9s ease-in-out infinite alternate;
-}
-#lumin-reveal .rv-aurora--a {
-  left: -22vmax;
-  top: -26vmax;
-  background: radial-gradient(circle, var(--rv-a) 0%, rgba(99, 102, 241, .3) 45%, transparent 70%);
-}
-#lumin-reveal .rv-aurora--b {
-  right: -24vmax;
-  bottom: -28vmax;
-  background: radial-gradient(circle, var(--rv-b) 0%, rgba(59, 130, 246, .3) 45%, transparent 70%);
-  animation-delay: -3s;
-  animation-duration: 11s;
-}
-#lumin-reveal .rv-aurora--c {
-  left: 22%;
-  bottom: -34vmax;
-  width: 55vmax;
-  height: 55vmax;
-  background: radial-gradient(circle, var(--rv-c) 0%, rgba(250, 204, 21, .18) 50%, transparent 72%);
-  animation-delay: -6s;
-  animation-duration: 13s;
-}
-
-/* ---------- raios girando em volta do portal ---------- */
-#lumin-reveal .rv-rays {
-  position: absolute;
-  inset: -45%;
-  background: conic-gradient(from 0deg,
-    transparent 0 6%, rgba(167, 139, 250, .22) 7% 8%, transparent 9% 17%,
-    rgba(34, 211, 238, .2) 18% 19%, transparent 20% 29%,
-    rgba(244, 114, 182, .18) 30% 31%, transparent 32% 41%,
-    rgba(250, 204, 21, .14) 42% 43%, transparent 44% 55%,
-    rgba(129, 140, 248, .2) 56% 57%, transparent 58% 68%,
-    rgba(34, 211, 238, .16) 69% 70%, transparent 71% 100%);
-  filter: blur(9px);
-  opacity: .85;
-  animation: rv-spin 16s linear infinite;
-  mix-blend-mode: screen;
-}
-
-/* ---------- anéis do portal ---------- */
-#lumin-reveal .rv-rings {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  width: min(78vmin, 620px);
-  aspect-ratio: 1;
-}
-#lumin-reveal .rv-ring {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 1.5px solid var(--rv-rings);
-  box-shadow: 0 0 30px rgba(139, 92, 246, .28) inset, 0 0 26px rgba(34, 211, 238, .18);
-  opacity: 0;
-  animation: rv-ring 2.4s cubic-bezier(.2, .7, .2, 1) forwards;
-}
-#lumin-reveal .rv-ring:nth-child(2) { animation-delay: .18s; border-color: rgba(34, 211, 238, .38); }
-#lumin-reveal .rv-ring:nth-child(3) { animation-delay: .36s; border-color: rgba(244, 114, 182, .32); }
-#lumin-reveal .rv-ring:nth-child(4) { animation-delay: .54s; border-color: rgba(250, 204, 21, .28); }
-#lumin-reveal .rv-ring--tight {
-  inset: 26%;
-  border-style: dashed;
-  animation-duration: 2.8s;
-  animation-direction: normal;
-}
-
-/* ---------- núcleo luminoso ---------- */
-#lumin-reveal .rv-core {
-  position: absolute;
-  width: min(34vmin, 260px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(255, 255, 255, .95) 0%,
-    var(--rv-tier) 26%,
-    rgba(139, 92, 246, .35) 48%,
-    transparent 72%);
-  filter: blur(6px);
-  opacity: 0;
-  animation: rv-core 2.4s ease-out forwards;
-  mix-blend-mode: screen;
-}
-
-/* ---------- faíscas ---------- */
-#lumin-reveal .rv-spark {
-  position: absolute;
-  bottom: -6vh;
-  left: var(--x, 50%);
-  width: var(--s, 4px);
-  height: var(--s, 4px);
-  border-radius: 50%;
-  background: var(--c, #e9d5ff);
-  box-shadow: 0 0 var(--g, 12px) var(--c, #e9d5ff);
-  opacity: 0;
-  animation: rv-spark var(--d, 2.4s) linear var(--t, 0s) forwards;
-  mix-blend-mode: screen;
-}
-
-/* ---------- varredura de luz ---------- */
-#lumin-reveal .rv-sweep {
-  position: absolute;
-  top: -30%;
-  bottom: -30%;
-  width: 26vmax;
-  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .16), rgba(196, 181, 253, .28), transparent);
-  filter: blur(14px);
-  opacity: 0;
-  animation: rv-sweep 2.4s ease-in-out .25s forwards;
-  mix-blend-mode: screen;
-}
-
-/* ---------- flash final ---------- */
-#lumin-reveal .rv-flash {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, .9) 0%, rgba(196, 181, 253, .35) 30%, transparent 62%);
-  opacity: 0;
-  pointer-events: none;
-  animation: rv-flash 2.4s ease-out forwards;
-  mix-blend-mode: screen;
-}
-
-/* ---------- conteúdo ---------- */
-#lumin-reveal .rv-stage {
-  position: relative;
-  z-index: 3;
-  display: grid;
-  justify-items: center;
-  gap: 14px;
-  padding: 24px;
-  text-align: center;
-}
-#lumin-reveal .rv-tag {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(196, 181, 253, .45);
-  background: rgba(24, 16, 44, .55);
-  color: #e9d5ff;
-  font-size: .68rem;
-  font-weight: 600;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  overflow: hidden;
-  opacity: 0;
-  animation: rv-up .6s ease .1s forwards;
-  backdrop-filter: blur(6px);
-}
-#lumin-reveal .rv-tag::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(100deg, transparent 35%, rgba(255, 255, 255, .55) 50%, transparent 65%);
-  transform: translateX(-120%);
-  animation: rv-shine 2.2s ease-in-out .5s infinite;
-}
-#lumin-reveal .rv-title {
-  margin: 0;
-  font-size: clamp(2.6rem, 11vmin, 6.4rem);
-  font-weight: 700;
-  line-height: .95;
-  letter-spacing: -.04em;
-  background: linear-gradient(100deg, #ffffff 0%, #c4b5fd 26%, #22d3ee 50%, #f9a8d4 74%, #fde68a 100%);
-  background-size: 220% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 0 26px rgba(196, 181, 253, .55));
-  opacity: 0;
-  animation: rv-up .7s ease .2s forwards, rv-flow 4s linear infinite;
-}
-#lumin-reveal .rv-title b { font-weight: 700; }
-#lumin-reveal .rv-sub {
-  margin: 0;
-  color: rgba(233, 213, 255, .78);
-  font-size: clamp(.78rem, 1.9vmin, .95rem);
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  opacity: 0;
-  animation: rv-up .6s ease .38s forwards;
-}
-#lumin-reveal .rv-bar {
-  position: relative;
-  width: min(56vw, 320px);
-  height: 3px;
-  margin-top: 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, .12);
-  overflow: hidden;
-  opacity: 0;
-  animation: rv-up .5s ease .5s forwards;
-}
-#lumin-reveal .rv-bar i {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #8b5cf6, #22d3ee, #f472b6, #fde68a);
-  background-size: 200% 100%;
-  transform: scaleX(0);
-  transform-origin: left center;
-  animation: rv-load 2.1s cubic-bezier(.3, .8, .25, 1) .45s forwards, rv-flow 1.6s linear infinite;
-}
-#lumin-reveal .rv-skip {
-  margin: 2px 0 0;
-  color: rgba(233, 213, 255, .45);
-  font-size: .7rem;
-  letter-spacing: .12em;
-  opacity: 0;
-  animation: rv-up .5s ease 1.1s forwards;
-}
-
-/* ---------- keyframes ---------- */
-@keyframes rv-spin { to { transform: rotate(360deg); } }
-@keyframes rv-drift {
-  from { transform: translate3d(0, 0, 0) scale(1); }
-  to { transform: translate3d(4vmax, -3vmax, 0) scale(1.16); }
-}
-@keyframes rv-ring {
-  0% { opacity: 0; transform: scale(.55) rotate(0deg); }
-  35% { opacity: .95; }
-  100% { opacity: 0; transform: scale(1.5) rotate(28deg); }
-}
-@keyframes rv-core {
-  0% { opacity: 0; transform: scale(.4); }
-  40% { opacity: 1; transform: scale(1); }
-  75% { opacity: .7; transform: scale(1.08); }
-  100% { opacity: 0; transform: scale(1.35); }
-}
-@keyframes rv-spark {
-  0% { opacity: 0; transform: translate3d(0, 0, 0) scale(.5); }
-  12% { opacity: 1; }
-  70% { opacity: .9; }
-  100% { opacity: 0; transform: translate3d(var(--dx, 0), -108vh, 0) scale(1.1); }
-}
-@keyframes rv-sweep {
-  0% { opacity: 0; transform: translateX(-60vw) skewX(-12deg); }
-  30% { opacity: 1; }
-  100% { opacity: 0; transform: translateX(70vw) skewX(-12deg); }
-}
-@keyframes rv-flash {
-  0%, 68% { opacity: 0; }
-  82% { opacity: .95; }
-  100% { opacity: 0; }
-}
-@keyframes rv-up {
-  from { opacity: 0; transform: translateY(18px) scale(.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes rv-flow {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 220% 50%; }
-}
-@keyframes rv-shine {
-  0% { transform: translateX(-120%); }
-  55%, 100% { transform: translateX(140%); }
-}
-@keyframes rv-load {
-  0% { transform: scaleX(0); }
-  100% { transform: scaleX(1); }
-}
-
-/* ---------- o app entra com um leve zoom ----------
-   Nada de overflow:hidden aqui: uma classe presa travava a rolagem do site.
-   A camada já cobre a tela e captura clique/tecla enquanto está no ar. */
-html.is-revealing .app-view.is-active {
-  animation: rv-in .8s cubic-bezier(.16, 1, .3, 1) both;
-}
-@keyframes rv-in {
-  from { opacity: .2; transform: scale(.975); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-/* ---------- quem pediu menos movimento ---------- */
-@media (prefers-reduced-motion: reduce) {
-  #lumin-reveal .rv-rays,
-  #lumin-reveal .rv-spark,
-  #lumin-reveal .rv-sweep,
-  #lumin-reveal .rv-ring,
-  #lumin-reveal .rv-aurora,
-  #lumin-reveal .rv-flash {
-    display: none;
-  }
-  #lumin-reveal .rv-core { animation: none; opacity: .5; }
-  #lumin-reveal .rv-bar i { animation: none; transform: scaleX(1); }
-  html.is-revealing .app-view.is-active { animation: none; }
 }
   </style>
 </head>
@@ -5611,7 +5266,6 @@ html.is-revealing .app-view.is-active {
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="assets/js/reveal.js?v=46" defer></script>
   <!-- CSS e JS do site embutidos por tools/single-file.py -->
   <script>
   window.__LUMIN_SINGLE__ = true;
@@ -10101,84 +9755,54 @@ html.is-revealing .app-view.is-active {
 
 /* ==================== assets/js/cloak.js ==================== */
 /* =========================================================
-   LuminSDK — abertura em about:blank
-   Quando o portal é aberto, ele se muda para uma aba about:blank e o site
-   original continua vivo dentro de um iframe nessa aba: a barra de endereço
-   mostra about:blank e o LuminSDK (jogos, sites, estudos, os) segue
-   funcionando igual, só que emoldurado.
+   LuminSDK — abertura em about:blank  ·  ARQUIVO EDITÁVEL
+   Ao abrir o portal, ele se muda para uma aba about:blank e o site
+   original continua vivo dentro de um iframe nessa aba. A aba de trás
+   vira https://www.google.com e tenta se fechar sozinha.
 
-   Como funciona:
-   · o navegador só deixa abrir uma aba em resposta a um clique/tecla, então
-     tentamos na carga do site e, se o pop-up for barrado, armamos UM
-     clique/tecla em qualquer lugar da página para a segunda tentativa
-   · a aba about:blank nasce vazia (mesma origem do portal), recebe um
-     documento mínimo com o iframe apontando para o endereço original e
-     depois o título da aba passa a espelhar o do site (StudyHub)
-   · a aba ORIGINAL não fica no LuminSDK: ela vira https://www.google.com
-     (é o "openBackup()" do Utopia: about:blank com o site no iframe +
-     location.replace(google) na aba de trás), então nem o histórico nem a
-     barra de endereço mostram o endereço do portal
-   · a trava da sessão dura no máximo alguns minutos (não para sempre):
-     fechou a aba about:blank e outros eventos de bloqueio, o portal volta
-     a abrir a aba sozinho na próxima visita/recarga — nada de ficar preso
-     no endereço real só porque uma tentativa antiga falhou
-   · dentro do iframe este script se desliga sozinho (self !== top), então
-     não existe laço de iframe dentro de iframe
-   · ?cloak=0 no endereço desliga tudo (útil para depurar)
+   REGRA DE OURO (por pedido): a aba about:blank abre SEMPRE que o portal
+   é aberto direto no endereço. Nada de trava de sessão, nada de "já abri
+   uma vez hoje": cada carga da página tenta.
 
-   Sem bibliotecas, sem build.
-   Autor: Ryan Smith · Licença MIT
+   Como o navegador se comporta:
+   · abrir aba exige gesto na PRIMEIRA carga; depois disso o navegador
+     costuma liberar o domínio e as cargas seguintes abrem sozinhas
+   · por isso, se a abertura automática for barrada, o primeiro clique ou
+     tecla em qualquer lugar da página abre a aba (e aparece uma dica)
+   · fechar a aba de trás só é permitido quando ela foi aberta por script
+     (é o nosso caso): window.close() na aba do Google é recusado — aí ela
+     simplesmente fica no Google, como você pediu ("vira Google e tenta
+     fechar")
+
+   ---------------------------------------------------------
+   EDITE AQUI
+   ---------------------------------------------------------
+   · REDIRECT     para onde a aba de trás vai depois de abrir a branca
+   · CLOSE_PARENT a aba de trás tenta se fechar depois do redirect?
+   · CLOSE_DELAY  espera (ms) antes de tentar fechar
+   · HINT         texto da dica quando o pop-up é barrado
    ========================================================= */
 (function () {
   'use strict';
 
-  const KEY = 'luminsdk:v1:cloak:spawned';
-  /* a trava da sessão não pode durar para sempre: 3 min depois de uma
-     abertura, a próxima visita/recarga tenta de novo */
-  const TTL = 3 * 60 * 1000;
+  const CONFIG = {
+    REDIRECT: 'https://www.google.com/',
+    CLOSE_PARENT: true,
+    CLOSE_DELAY: 900,
+    HINT: 'Toque em qualquer lugar para abrir em about:blank'
+  };
+
   const NAME = 'luminsdk-cloak';
-  /* para onde a aba original vai depois que o portal nasce no about:blank
-     (mesmo destino do Utopia) */
-  const REDIRECT = 'https://www.google.com/';
-  const HERE = window.location.href;
   const BLANK = 'about:blank';
+  const HERE = window.location.href;
   const TITLE = document.title || 'LuminSDK';
 
-  /* já estamos dentro do iframe, já somos a aba about:blank, ou é o
-     arquivo único (que não deve migrar): nada a fazer */
+  /* já estamos dentro do iframe, já somos a aba em branco, ou é o arquivo
+     único (que não deve migrar): nada a fazer */
   if (window.self !== window.top) return;
   if (window.name === NAME) return;
   if (window.__LUMIN_SINGLE__) return;
-
   if (/(?:^|[?&])cloak=0(?:&|$)/.test(window.location.search || '')) return;
-
-  function alreadySpawned() {
-    try {
-      const raw = sessionStorage.getItem(KEY);
-      if (!raw) return false;
-      if (raw === '1') {
-        /* marca antiga (versões anteriores): expira agora — melhor tentar
-           de novo do que ficar sem about:blank para sempre */
-        sessionStorage.removeItem(KEY);
-        return false;
-      }
-      const at = parseInt(raw, 10);
-      if (!at || Date.now() - at > TTL) {
-        sessionStorage.removeItem(KEY);
-        return false;
-      }
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }
-
-  function markSpawned(on) {
-    try {
-      if (on) sessionStorage.setItem(KEY, String(Date.now()));
-      else sessionStorage.removeItem(KEY);
-    } catch (error) { /* modo privado sem storage */ }
-  }
 
   function escapeHtml(text) {
     return String(text).replace(/[&<>"']/g, function (c) {
@@ -10195,51 +9819,38 @@ html.is-revealing .app-view.is-active {
       'html,body{height:100%;margin:0;overflow:hidden;background:#07070c}' +
       '#luminsdk-surface{position:fixed;inset:0;width:100%;height:100%;border:0;' +
       'display:block;background:#07070c}' +
+      '.luminsdk-wake{position:fixed;inset:0;display:grid;place-items:center;cursor:pointer;' +
+      'background:radial-gradient(circle at 50% 45%,#1a1035,#07070c 70%);' +
+      'font:600 14px/1.5 system-ui,sans-serif;color:#e9d5ff;text-align:center;padding:24px}' +
       '</style></head><body>' +
       '<iframe id="luminsdk-surface" src="' + escapeHtml(url) + '"' +
       ' title="' + escapeHtml(pageTitle) + '" referrerpolicy="no-referrer" allowfullscreen' +
       ' allow="autoplay; fullscreen; gamepad; clipboard-write; clipboard-read;' +
       ' encrypted-media; pointer-lock; midi; accelerometer; gyroscope"></iframe>' +
-      '<script>(function(){var f=document.getElementById("luminsdk-surface");' +
+      '<script>(function(){' +
+      'var f=document.getElementById("luminsdk-surface");' +
       'function t(){try{var x=f.contentDocument&&f.contentDocument.title;' +
       'if(x&&document.title!==x)document.title=x;}catch(e){}}' +
       'f.addEventListener("load",t);setInterval(t,1200);' +
-      '/* avisa o portal (mesma origem) que a aba em branco está viva */' +
-      'try{if(window.opener&&!window.opener.closed){' +
-      'window.opener.sessionStorage.setItem("luminsdk:v1:cloak:spawned",String(Date.now()));}}catch(e){}' +
-      '})();<\/script>' +
+      'f.addEventListener("load",function(){try{' +
+      'var d=f.contentDocument;if(d&&d.body&&!d.querySelector(".luminsdk-wake")){' +
+      'var w=d.createElement("div");w.className="luminsdk-wake";' +
+      'w.innerHTML="<div><b style=\"font-size:17px\">LuminSDK</b><br>' +
+      'toque para continuar</div>";' +
+      'w.addEventListener("click",function(){try{w.remove();}catch(e){}' +
+      'try{f.contentWindow.focus();}catch(e){}});' +
+      'd.body.appendChild(w);}}catch(e){}});' +
+      '})();<\\/script>' +
       '</body></html>';
   }
 
   let child = null;
-  let trying = 0;
 
-  /* a aba que o próprio navegador abriu (link _blank, window.open de outro
-     módulo) é a nossa: evita uma segunda aba em branco em cima dela */
-  function noteOpenedWindow() {
-    try {
-      window.addEventListener('load', function () {
-        try {
-          if (window.opener && window.opener !== window) markSpawned(true);
-        } catch (error) { /* origem diferente */ }
-      }, { once: true });
-    } catch (error) { /* navegador antigo sem once */ }
-  }
-
-  noteOpenedWindow();
-
-  /* abre (ou reaproveita) a aba about:blank e despeja o iframe dentro */
+  /* abre a aba about:blank e despeja o iframe dentro */
   function spawn() {
-    if (alreadySpawned()) return false;
-    /* dois eventos do mesmo gesto (pointerdown + click) não viram duas
-       tentativas de abertura */
-    const now = Date.now();
-    if (now - trying < 250) return false;
-    trying = now;
-
     let win = null;
     try { win = window.open(BLANK, NAME); } catch (error) { win = null; }
-    if (!win || win.closed) return false;         /* pop-up bloqueado */
+    if (!win || win.closed) return false;          /* pop-up bloqueado */
 
     try { win.name = NAME; } catch (error) { /* nome já vem da abertura */ }
 
@@ -10254,73 +9865,22 @@ html.is-revealing .app-view.is-active {
     }
 
     child = win;
-    markSpawned(true);
-    watchClosing();
-    try { win.focus(); } catch (error) { /* aba já recebeu o foco */ }
-
-    /* a página de trás sai do LuminSDK na hora: quem voltar para ela (ou
-       olhar o histórico) encontra o Google, não o portal */
+    try { win.focus(); } catch (error) { /* a aba já recebeu o foco */ }
     leaveToGoogle();
     return true;
   }
 
-  /* vira o Google na aba original — sem deixar um endereço do LuminSDK
-     aparecendo depois das costas (mesma ideia do openBackup() do Utopia).
-     ?cloak=google desliga só esta troca, para quem quiser o portal na aba
-     de trás. */
+  /* a aba de trás sai do LuminSDK na hora e tenta se fechar sozinha.
+     window.close() só é aceito quando a aba foi aberta por script (nosso
+     caso); se o navegador recusar, ela fica no Google — que é o pedido. */
   function leaveToGoogle() {
-    if (/(?:^|[?&])cloak=google(?:&|$)/.test(window.location.search || '')) return;
-    try {
-      window.location.replace(REDIRECT);
-    } catch (error) {
-      try { window.location.href = REDIRECT; } catch (error2) { /* sem saída */ }
+    try { window.location.replace(CONFIG.REDIRECT); } catch (error) {
+      try { window.location.href = CONFIG.REDIRECT; } catch (error2) { /* sem saída */ }
     }
-  }
-
-  /* fechou a aba about:blank: libera a trava para a próxima recarga abrir
-     outra (senão a pessoa ficaria presa no portal com o endereço à mostra) */
-  function watchClosing() {
-    const timer = window.setInterval(function () {
-      try {
-        if (child && !child.closed) return;
-      } catch (error) { /* aba inacessível */ }
-      window.clearInterval(timer);
-      child = null;
-      markSpawned(false);
-    }, 2000);
-  }
-
-  /* pop-up barrado na carga: a segunda tentativa é o primeiro clique/tecla,
-     que é justamente o que o navegador aceita como permissão */
-  function watchGesture() {
-    const EVENTS = ['pointerdown', 'pointerup', 'mousedown', 'touchend', 'click', 'keydown'];
-
-    function stop() {
-      EVENTS.forEach(function (type) {
-        document.removeEventListener(type, attempt, true);
-      });
-    }
-
-    function attempt() {
-      if (alreadySpawned()) { stop(); return; }
-      if (spawn()) stop();
-    }
-
-    /* se ainda não abriu, os ouvintes continuam armados nos próximos gestos */
-
-    /* ouvimos mais de um evento do mesmo gesto: alguns navegadores só
-       liberam a aba no click, outros no keydown — o guarda de tempo em
-       spawn() evita tentativa duplicada */
-    EVENTS.forEach(function (type) {
-      document.addEventListener(type, attempt, true);
-    });
-  }
-
-  /* o navegador só abre aba com gesto: tentamos na carga e, se barrar,
-     armamos o primeiro clique/tecla e mostramos uma dica discreta */
-  if (!spawn()) {
-    watchGesture();
-    hint();
+    if (!CONFIG.CLOSE_PARENT) return;
+    window.setTimeout(function () {
+      try { window.close(); } catch (error) { /* navegador recusou */ }
+    }, Math.max(0, CONFIG.CLOSE_DELAY));
   }
 
   /* dica de uma linha (some no primeiro gesto ou em 12 s) */
@@ -10331,13 +9891,13 @@ html.is-revealing .app-view.is-active {
       tip = null;
     };
     const build = function () {
-      if (tip || alreadySpawned()) return;
+      if (tip) return;
       tip = document.createElement('div');
       tip.style.cssText = 'position:fixed;left:50%;bottom:18px;transform:translateX(-50%);' +
         'z-index:9999;padding:9px 14px;border-radius:999px;font:600 12px/1.3 system-ui,sans-serif;' +
         'color:#e9d5ff;background:rgba(24,16,44,.92);border:1px solid rgba(196,181,253,.35);' +
         'box-shadow:0 10px 30px rgba(0,0,0,.45);pointer-events:none;white-space:nowrap';
-      tip.textContent = 'Toque em qualquer lugar para abrir em about:blank';
+      tip.textContent = CONFIG.HINT;
       document.body.append(tip);
       window.setTimeout(remove, 12000);
     };
@@ -10347,11 +9907,205 @@ html.is-revealing .app-view.is-active {
     });
   }
 
+  /* pop-up barrado: o primeiro clique/tecla em qualquer lugar abre a aba.
+     Os ouvintes ficam armados até uma tentativa dar certo — nunca mais
+     "só funcionou uma vez". */
+  function watchGesture() {
+    const EVENTS = ['pointerdown', 'pointerup', 'mousedown', 'touchend', 'click', 'keydown'];
+    let trying = 0;
+
+    function stop() {
+      EVENTS.forEach(function (type) {
+        document.removeEventListener(type, attempt, true);
+      });
+    }
+
+    function attempt() {
+      const now = Date.now();
+      if (now - trying < 250) return;     /* mesmo gesto, dois eventos */
+      trying = now;
+      if (spawn()) stop();
+    }
+
+    EVENTS.forEach(function (type) {
+      document.addEventListener(type, attempt, true);
+    });
+  }
+
+  /* tenta agora; se o navegador barrar, tenta no primeiro gesto */
+  let opened = false;
+  try { opened = spawn(); } catch (error) { opened = false; }
+  if (!opened) {
+    watchGesture();
+    hint();
+    /* algumas cargas liberam o pop-up um instante depois (a permissão do
+       domínio chega com o primeiro frame): mais duas chances silenciosas */
+    [400, 1500].forEach(function (delay) {
+      window.setTimeout(function () {
+        if (!child || (child && child.closed)) {
+          try { spawn(); } catch (error) { /* segue no gesto */ }
+        }
+      }, delay);
+    });
+  }
+
   /* diagnóstico: window.LuminCloak.state() / window.LuminCloak.open() */
   window.LuminCloak = {
+    config: CONFIG,
     open: function () { return spawn(); },
     state: function () {
-      return { cloaked: !!child, spawned: alreadySpawned(), redirect: REDIRECT };
+      return { cloaked: !!child && !child.closed, redirect: CONFIG.REDIRECT };
+    }
+  };
+})();
+
+/* ==================== assets/js/anim.js ==================== */
+/* =========================================================
+   LuminSDK — animação de troca de aba  ·  ARQUIVO EDITÁVEL
+   Uma animação curta (200 ms, editável abaixo) e DIFERENTE para cada
+   aba, no tema tempo / relógio / espaço-tempo: funil de espaço-tempo,
+   anéis de relógio, ponteiro girando, grade em perspectiva e um
+   mostrador digital com o "tempo" daquela aba.
+
+   · carregado globalmente (defer no index.html): funciona em toda troca
+     de aba, sempre — nada de "só na primeira vez"
+   · cada aba tem cor, rótulo e um "carimbo de tempo" próprio (THEMES)
+   · a camada é pointer-events:none e morre sozinha; nunca trava a página
+   · ?anim=0 desliga; "menos movimento" cai para o fade + nome da aba
+
+   ---------------------------------------------------------
+   EDITE AQUI
+   ---------------------------------------------------------
+   · DURATION  duração em ms (200 = pedido)
+   · THEMES    uma entrada por aba: c1/c2 (cores), label, stamp, hint
+   ========================================================= */
+(function () {
+  'use strict';
+
+  const CONFIG = {
+    DURATION: 200,
+
+    /* c1/c2 = cores do gradiente · label = nome da aba
+       stamp = "tempo" mostrado · hint = marcações do mostrador */
+    THEMES: {
+      lumin:    { c1: '#a78bfa', c2: '#22d3ee', label: 'catálogo',       stamp: '11:00',    hint: '1.100 jogos' },
+      estudo:   { c1: '#60a5fa', c2: '#f9a8d4', label: 'estudos',        stamp: '07:30',    hint: 'aula' },
+      sites:    { c1: '#f472b6', c2: '#fde68a', label: 'sites',          stamp: '15:45',    hint: 'portais' },
+      gn:       { c1: '#34d399', c2: '#22d3ee', label: 'gn-math',        stamp: '09:15',    hint: '840 jogos' },
+      os:       { c1: '#818cf8', c2: '#c084fc', label: 'luminos',        stamp: '00:00',    hint: 'área de trabalho' },
+      hub:      { c1: '#38bdf8', c2: '#a78bfa', label: 'hub',            stamp: '12:00',    hint: 'perfil' },
+      browser:  { c1: '#22d3ee', c2: '#818cf8', label: 'navegador',      stamp: '16:20',    hint: 'endereço' },
+      provider: { c1: '#fbbf24', c2: '#f472b6', label: 'catálogo',       stamp: '13:10',    hint: 'duckmath · astra' },
+      boot:     { c1: '#a78bfa', c2: '#f9a8d4', label: 'entrada',        stamp: '23:59',    hint: 'escolha' }
+    }
+  };
+
+  const ROOT_ID = 'lum-anim';
+  const FALLBACK = { c1: '#a78bfa', c2: '#22d3ee', label: 'lumin', stamp: '00:00', hint: 'lumin sdk' };
+
+  if (/(?:^|[?&])anim=0(?:&|$)/.test(window.location.search || '')) {
+    window.LuminAnim = { play: function () { return false; }, state: function () { return { disabled: true }; } };
+    return;
+  }
+
+  /* o app.js carrega este arquivo por rota (para furar cache): não duplica */
+  if (window.LuminAnim) return;
+
+  const REDUCED = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
+
+  let layer = null;
+  let dropTimer = 0;
+  let lastRoute = '';
+
+  function theme(route) {
+    return CONFIG.THEMES[route] || FALLBACK;
+  }
+
+  function make(tag, className, parent) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (parent) parent.append(node);
+    return node;
+  }
+
+  function drop() {
+    window.clearTimeout(dropTimer);
+    dropTimer = 0;
+    if (!layer) return;
+    const node = layer;
+    layer = null;
+    if (node.parentNode) node.parentNode.removeChild(node);
+  }
+
+  function build(route) {
+    const t = theme(route);
+    const node = document.createElement('div');
+    node.id = ROOT_ID;
+    node.setAttribute('aria-hidden', 'true');
+    node.style.setProperty('--la-1', t.c1);
+    node.style.setProperty('--la-2', t.c2);
+    node.style.setProperty('--la-dur', CONFIG.DURATION + 'ms');
+    /* a duração do CONFIG vale para todas as animações da camada */
+    node.style.animationDuration = CONFIG.DURATION + 'ms';
+
+    if (!REDUCED) {
+      make('div', 'la-warp', node);
+      const rings = [ '', 'la-ring--2', 'la-ring--3' ];
+      rings.forEach(function (extra) {
+        const ring = make('div', 'la-ring' + (extra ? ' ' + extra : ''), node);
+        ring.style.animationDuration = CONFIG.DURATION + 'ms';
+      });
+      const face = make('div', 'la-face', node);
+      face.style.animationDuration = CONFIG.DURATION + 'ms';
+      const hand = make('div', 'la-hand', node);
+      hand.style.animationDuration = CONFIG.DURATION + 'ms';
+      const grid = make('div', 'la-grid', node);
+      grid.style.animationDuration = CONFIG.DURATION + 'ms';
+      make('div', 'la-flash', node).style.animationDuration = CONFIG.DURATION + 'ms';
+    }
+
+    const stage = make('div', 'la-stage', node);
+    make('b', 'la-time', stage).textContent = t.stamp;
+    make('span', 'la-label', stage).textContent = t.label + ' · ' + t.hint;
+
+    /* os dois textos também acompanham a duração */
+    Array.prototype.forEach.call(stage.children, function (child) {
+      child.style.animationDuration = CONFIG.DURATION + 'ms';
+    });
+
+    return node;
+  }
+
+  /* roda a animação daquela aba; nunca lança, nunca deixa sobra */
+  function play(route) {
+    route = typeof route === 'string' && route ? route : 'lumin';
+    lastRoute = route;
+    try {
+      drop();                                  /* troca rápida: troca a camada */
+      layer = build(route);
+      document.body.append(layer);
+      dropTimer = window.setTimeout(drop, CONFIG.DURATION + 120);
+      return true;
+    } catch (error) {
+      console.warn('[LuminSDK] animação não montou:', error);
+      drop();
+      return false;
+    }
+  }
+
+  /* redes de segurança: nunca deixar uma camada presa */
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') drop();
+  });
+  window.addEventListener('pageshow', drop);
+
+  window.LuminAnim = {
+    config: CONFIG,
+    play: play,
+    hide: drop,
+    state: function () {
+      return { running: !!layer, duration: CONFIG.DURATION, reduced: REDUCED,
+        last: lastRoute, themes: Object.keys(CONFIG.THEMES) };
     }
   };
 })();
@@ -12049,6 +11803,8 @@ html.is-revealing .app-view.is-active {
    · não existe mais trava de troca de janela: sair do app (Alt+Tab, trocar
      de aba, bloquear o celular) não muda a tela nem desliga o crédito — no
      celular era isso que sumia com o botão "Ryan Smith"
+   · toda troca de aba toca uma animação curta (~200 ms) daquela aba,
+     feita em assets/js/anim.js (tempo / relógio / espaço-tempo)
    · endereços antigos (/gn/, /sites/, /study/) continuam funcionando pelo
      ?view=…, e a barra de endereço é limpa logo depois
    · cada aba carrega o seu CSS e os seus scripts só na primeira visita
@@ -12066,20 +11822,20 @@ html.is-revealing .app-view.is-active {
          desligado quando a rota muda */
       css: [],
       scripts: [
-        'assets/js/reveal.js?v=46',
+        'assets/js/anim.js?v=47',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=46',
-        'assets/js/settings.js?v=46',
-        'assets/js/site.js?v=46',
-        'assets/js/atmosphere.js?v=46',
-        'assets/js/progress.js?v=46',
-        'assets/js/bonus.js?v=46'
+        'assets/js/library.js?v=47',
+        'assets/js/settings.js?v=47',
+        'assets/js/site.js?v=47',
+        'assets/js/atmosphere.js?v=47',
+        'assets/js/progress.js?v=47',
+        'assets/js/bonus.js?v=47'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=46'],
-      scripts: ['assets/js/gnmath.js?v=46'],
+      css: ['assets/css/gnmath.css?v=47'],
+      scripts: ['assets/js/gnmath.js?v=47'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -12091,60 +11847,60 @@ html.is-revealing .app-view.is-active {
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=46'],
-      scripts: ['assets/js/provider.js?v=46', 'assets/js/atmosphere.js?v=46']
+      css: ['assets/css/provider.css?v=47'],
+      scripts: ['assets/js/provider.js?v=47', 'assets/js/atmosphere.js?v=47']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=46'],
-      scripts: ['assets/js/sites.js?v=46', 'assets/js/atmosphere.js?v=46']
+      css: ['assets/css/sites.css?v=47'],
+      scripts: ['assets/js/sites.js?v=47', 'assets/js/atmosphere.js?v=47']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=46'],
-      scripts: ['assets/js/browser.js?v=46', 'assets/js/atmosphere.js?v=46']
+      css: ['assets/css/browser.css?v=47'],
+      scripts: ['assets/js/browser.js?v=47', 'assets/js/atmosphere.js?v=47']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=46',
-        'assets/js/os.js?v=46',
-        'assets/js/profile.js?v=46',
-        'assets/js/lab.js?v=46',
-        'assets/js/studio.js?v=46',
-        'assets/js/arcade.js?v=46',
-        'assets/js/vault.js?v=46',
-        'assets/js/community.js?v=46',
-        'assets/js/central.js?v=46',
-        'assets/js/atmosphere.js?v=46'
+        'assets/js/player.js?v=47',
+        'assets/js/os.js?v=47',
+        'assets/js/profile.js?v=47',
+        'assets/js/lab.js?v=47',
+        'assets/js/studio.js?v=47',
+        'assets/js/arcade.js?v=47',
+        'assets/js/vault.js?v=47',
+        'assets/js/community.js?v=47',
+        'assets/js/central.js?v=47',
+        'assets/js/atmosphere.js?v=47'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=46', 'assets/css/hub.css?v=46'],
+      css: ['assets/css/os.css?v=47', 'assets/css/hub.css?v=47'],
       scripts: [
-        'assets/js/player.js?v=46',
-        'assets/js/os.js?v=46',
-        'assets/js/profile.js?v=46',
-        'assets/js/lab.js?v=46',
-        'assets/js/studio.js?v=46',
-        'assets/js/arcade.js?v=46',
-        'assets/js/vault.js?v=46',
-        'assets/js/community.js?v=46',
-        'assets/js/central.js?v=46',
-        'assets/js/hub.js?v=46'
+        'assets/js/player.js?v=47',
+        'assets/js/os.js?v=47',
+        'assets/js/profile.js?v=47',
+        'assets/js/lab.js?v=47',
+        'assets/js/studio.js?v=47',
+        'assets/js/arcade.js?v=47',
+        'assets/js/vault.js?v=47',
+        'assets/js/community.js?v=47',
+        'assets/js/central.js?v=47',
+        'assets/js/hub.js?v=47'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=46']
+      scripts: ['assets/js/atmosphere.js?v=47']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=46'],
-      scripts: ['assets/js/study-questions.js?v=46', 'assets/js/reveal.js?v=46', 'assets/js/study.js?v=46']
+      css: ['assets/css/study.css?v=47'],
+      scripts: ['assets/js/study-questions.js?v=47', 'assets/js/anim.js?v=47', 'assets/js/study.js?v=47']
     }
   };
 
@@ -12345,22 +12101,19 @@ html.is-revealing .app-view.is-active {
     });
   }
 
-  /* ---------- animação de abertura ----------
-     A rolagem estilo Sols RNG toca quando o catálogo é aberto pelo atalho
-     Shift+D ou pelo crédito do rodapé ('roll') e, se ligada, na primeira
-     entrada do dia ('first'). Os scripts da aba carregam sob demanda, então
-     esperamos o reveal.js aparecer (no máximo ~2 s) para não perder a
-     primeira animação; depois disso ele já está na memória. */
-  function roll(route, reason) {
-    if (!reason) return;
+  /* ---------- animação de troca de aba ----------
+     Cada aba tem a sua animação curta (tempo/relógio/espaço-tempo), de
+     ~200 ms, em assets/js/anim.js. Toca em TODA troca de aba — nada de
+     "só na primeira vez". O script é global (defer no index.html); a cópia
+     por rota em ROUTES serve só para furar cache. */
+  function roll(route) {
+    if (!route || route === 'boot') return;
     const open = function () {
-      if (!window.LuminReveal) return false;
-      return window.LuminReveal.show(route, reason);
+      if (!window.LuminAnim) return false;
+      return window.LuminAnim.play(route);
     };
     if (open()) return;
 
-    /* o reveal.js normalmente já está na página (defer no index.html); isto
-       é só a rede de segurança para script bloqueado/lento (~2 s) */
     let tries = 20;
     const wait = function () {
       if (open() || tries-- <= 0) return;
@@ -12413,10 +12166,11 @@ html.is-revealing .app-view.is-active {
 
     if (first) {
       document.documentElement.classList.add('is-ready');
-      /* a primeira entrada também pode ter a sua rolagem (se ligada) */
-      if (route !== 'boot' && route !== 'os') roll(route, 'first');
     }
     if (route !== 'boot' && route !== 'os') window.scrollTo(0, 0);
+
+    /* a animação da aba entra por cima, já com a view pronta embaixo */
+    roll(route);
 
     try {
       window.dispatchEvent(new CustomEvent('lumin:view', { detail: { route: route } }));
@@ -12439,8 +12193,6 @@ html.is-revealing .app-view.is-active {
     if (route === 'lumin' && opts.reveal) {
       try { sessionStorage.setItem(REVEAL, '1'); } catch (error) {}
     }
-    /* atalho e crédito pedem a rolagem; troca de aba comum não */
-    roll(route, opts.roll ? 'roll' : '');
     show(route);
   }
 
@@ -12580,13 +12332,6 @@ html.is-revealing .app-view.is-active {
     openInBrowser: openInBrowser,
     openProvider: openProvider,
     setTitle: function (text) { document.title = shield.disguise ? SHIELD_TITLE : text; },
-    /* a rolagem também pode tocar na primeira entrada do dia */
-    revealOnFirst: function (on) {
-      try {
-        if (on) sessionStorage.setItem('luminsdk:v1:reveal:first', '1');
-        else sessionStorage.setItem('luminsdk:v1:reveal:first', '0');
-      } catch (error) { /* modo privado sem storage */ }
-    },
     /* leitura do disfarce (útil para diagnóstico) */
     shieldState: function () { return { disguised: shield.disguise }; }
   };

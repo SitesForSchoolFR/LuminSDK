@@ -11,6 +11,8 @@
    · não existe mais trava de troca de janela: sair do app (Alt+Tab, trocar
      de aba, bloquear o celular) não muda a tela nem desliga o crédito — no
      celular era isso que sumia com o botão "Ryan Smith"
+   · toda troca de aba toca uma animação curta (~200 ms) daquela aba,
+     feita em assets/js/anim.js (tempo / relógio / espaço-tempo)
    · endereços antigos (/gn/, /sites/, /study/) continuam funcionando pelo
      ?view=…, e a barra de endereço é limpa logo depois
    · cada aba carrega o seu CSS e os seus scripts só na primeira visita
@@ -28,20 +30,20 @@
          desligado quando a rota muda */
       css: [],
       scripts: [
-        'assets/js/reveal.js?v=46',
+        'assets/js/anim.js?v=47',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=46',
-        'assets/js/settings.js?v=46',
-        'assets/js/site.js?v=46',
-        'assets/js/atmosphere.js?v=46',
-        'assets/js/progress.js?v=46',
-        'assets/js/bonus.js?v=46'
+        'assets/js/library.js?v=47',
+        'assets/js/settings.js?v=47',
+        'assets/js/site.js?v=47',
+        'assets/js/atmosphere.js?v=47',
+        'assets/js/progress.js?v=47',
+        'assets/js/bonus.js?v=47'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=46'],
-      scripts: ['assets/js/gnmath.js?v=46'],
+      css: ['assets/css/gnmath.css?v=47'],
+      scripts: ['assets/js/gnmath.js?v=47'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -53,60 +55,60 @@
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=46'],
-      scripts: ['assets/js/provider.js?v=46', 'assets/js/atmosphere.js?v=46']
+      css: ['assets/css/provider.css?v=47'],
+      scripts: ['assets/js/provider.js?v=47', 'assets/js/atmosphere.js?v=47']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=46'],
-      scripts: ['assets/js/sites.js?v=46', 'assets/js/atmosphere.js?v=46']
+      css: ['assets/css/sites.css?v=47'],
+      scripts: ['assets/js/sites.js?v=47', 'assets/js/atmosphere.js?v=47']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=46'],
-      scripts: ['assets/js/browser.js?v=46', 'assets/js/atmosphere.js?v=46']
+      css: ['assets/css/browser.css?v=47'],
+      scripts: ['assets/js/browser.js?v=47', 'assets/js/atmosphere.js?v=47']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=46',
-        'assets/js/os.js?v=46',
-        'assets/js/profile.js?v=46',
-        'assets/js/lab.js?v=46',
-        'assets/js/studio.js?v=46',
-        'assets/js/arcade.js?v=46',
-        'assets/js/vault.js?v=46',
-        'assets/js/community.js?v=46',
-        'assets/js/central.js?v=46',
-        'assets/js/atmosphere.js?v=46'
+        'assets/js/player.js?v=47',
+        'assets/js/os.js?v=47',
+        'assets/js/profile.js?v=47',
+        'assets/js/lab.js?v=47',
+        'assets/js/studio.js?v=47',
+        'assets/js/arcade.js?v=47',
+        'assets/js/vault.js?v=47',
+        'assets/js/community.js?v=47',
+        'assets/js/central.js?v=47',
+        'assets/js/atmosphere.js?v=47'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=46', 'assets/css/hub.css?v=46'],
+      css: ['assets/css/os.css?v=47', 'assets/css/hub.css?v=47'],
       scripts: [
-        'assets/js/player.js?v=46',
-        'assets/js/os.js?v=46',
-        'assets/js/profile.js?v=46',
-        'assets/js/lab.js?v=46',
-        'assets/js/studio.js?v=46',
-        'assets/js/arcade.js?v=46',
-        'assets/js/vault.js?v=46',
-        'assets/js/community.js?v=46',
-        'assets/js/central.js?v=46',
-        'assets/js/hub.js?v=46'
+        'assets/js/player.js?v=47',
+        'assets/js/os.js?v=47',
+        'assets/js/profile.js?v=47',
+        'assets/js/lab.js?v=47',
+        'assets/js/studio.js?v=47',
+        'assets/js/arcade.js?v=47',
+        'assets/js/vault.js?v=47',
+        'assets/js/community.js?v=47',
+        'assets/js/central.js?v=47',
+        'assets/js/hub.js?v=47'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=46']
+      scripts: ['assets/js/atmosphere.js?v=47']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=46'],
-      scripts: ['assets/js/study-questions.js?v=46', 'assets/js/reveal.js?v=46', 'assets/js/study.js?v=46']
+      css: ['assets/css/study.css?v=47'],
+      scripts: ['assets/js/study-questions.js?v=47', 'assets/js/anim.js?v=47', 'assets/js/study.js?v=47']
     }
   };
 
@@ -307,22 +309,19 @@
     });
   }
 
-  /* ---------- animação de abertura ----------
-     A rolagem estilo Sols RNG toca quando o catálogo é aberto pelo atalho
-     Shift+D ou pelo crédito do rodapé ('roll') e, se ligada, na primeira
-     entrada do dia ('first'). Os scripts da aba carregam sob demanda, então
-     esperamos o reveal.js aparecer (no máximo ~2 s) para não perder a
-     primeira animação; depois disso ele já está na memória. */
-  function roll(route, reason) {
-    if (!reason) return;
+  /* ---------- animação de troca de aba ----------
+     Cada aba tem a sua animação curta (tempo/relógio/espaço-tempo), de
+     ~200 ms, em assets/js/anim.js. Toca em TODA troca de aba — nada de
+     "só na primeira vez". O script é global (defer no index.html); a cópia
+     por rota em ROUTES serve só para furar cache. */
+  function roll(route) {
+    if (!route || route === 'boot') return;
     const open = function () {
-      if (!window.LuminReveal) return false;
-      return window.LuminReveal.show(route, reason);
+      if (!window.LuminAnim) return false;
+      return window.LuminAnim.play(route);
     };
     if (open()) return;
 
-    /* o reveal.js normalmente já está na página (defer no index.html); isto
-       é só a rede de segurança para script bloqueado/lento (~2 s) */
     let tries = 20;
     const wait = function () {
       if (open() || tries-- <= 0) return;
@@ -375,10 +374,11 @@
 
     if (first) {
       document.documentElement.classList.add('is-ready');
-      /* a primeira entrada também pode ter a sua rolagem (se ligada) */
-      if (route !== 'boot' && route !== 'os') roll(route, 'first');
     }
     if (route !== 'boot' && route !== 'os') window.scrollTo(0, 0);
+
+    /* a animação da aba entra por cima, já com a view pronta embaixo */
+    roll(route);
 
     try {
       window.dispatchEvent(new CustomEvent('lumin:view', { detail: { route: route } }));
@@ -401,8 +401,6 @@
     if (route === 'lumin' && opts.reveal) {
       try { sessionStorage.setItem(REVEAL, '1'); } catch (error) {}
     }
-    /* atalho e crédito pedem a rolagem; troca de aba comum não */
-    roll(route, opts.roll ? 'roll' : '');
     show(route);
   }
 
@@ -542,13 +540,6 @@
     openInBrowser: openInBrowser,
     openProvider: openProvider,
     setTitle: function (text) { document.title = shield.disguise ? SHIELD_TITLE : text; },
-    /* a rolagem também pode tocar na primeira entrada do dia */
-    revealOnFirst: function (on) {
-      try {
-        if (on) sessionStorage.setItem('luminsdk:v1:reveal:first', '1');
-        else sessionStorage.setItem('luminsdk:v1:reveal:first', '0');
-      } catch (error) { /* modo privado sem storage */ }
-    },
     /* leitura do disfarce (útil para diagnóstico) */
     shieldState: function () { return { disguised: shield.disguise }; }
   };
