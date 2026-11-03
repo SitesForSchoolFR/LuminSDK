@@ -79,10 +79,16 @@
   }
 
   let child = null;
+  let trying = 0;
 
   /* abre (ou reaproveita) a aba about:blank e despeja o iframe dentro */
   function spawn() {
     if (alreadySpawned()) return false;
+    /* dois eventos do mesmo gesto (pointerdown + click) não viram duas
+       tentativas de abertura */
+    const now = Date.now();
+    if (now - trying < 250) return false;
+    trying = now;
 
     let win = null;
     try { win = window.open(BLANK, NAME); } catch (error) { win = null; }
@@ -123,10 +129,12 @@
   /* pop-up barrado na carga: a segunda tentativa é o primeiro clique/tecla,
      que é justamente o que o navegador aceita como permissão */
   function watchGesture() {
+    const EVENTS = ['pointerdown', 'pointerup', 'mousedown', 'touchend', 'click', 'keydown'];
+
     function stop() {
-      document.removeEventListener('pointerdown', attempt, true);
-      document.removeEventListener('keydown', attempt, true);
-      document.removeEventListener('touchend', attempt, true);
+      EVENTS.forEach(function (type) {
+        document.removeEventListener(type, attempt, true);
+      });
     }
 
     function attempt() {
@@ -134,9 +142,12 @@
       if (spawn()) stop();
     }
 
-    document.addEventListener('pointerdown', attempt, true);
-    document.addEventListener('keydown', attempt, true);
-    document.addEventListener('touchend', attempt, true);
+    /* ouvimos mais de um evento do mesmo gesto: alguns navegadores só
+       liberam a aba no click, outros no keydown — o guarda de tempo em
+       spawn() evita tentativa duplicada */
+    EVENTS.forEach(function (type) {
+      document.addEventListener(type, attempt, true);
+    });
   }
 
   if (!spawn()) watchGesture();
