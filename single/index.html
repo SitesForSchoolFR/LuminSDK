@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=41 -->
+  <!-- assets/css/styles.css?v=42 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -4025,7 +4025,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=41 -->
+  <!-- assets/css/app.css?v=42 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -9768,6 +9768,10 @@ html[data-view="gn"] .tabrail__tab.is-active {
    · a aba about:blank nasce vazia (mesma origem do portal), recebe um
      documento mínimo com o iframe apontando para o endereço original e
      depois o título da aba passa a espelhar o do site (StudyHub)
+   · a aba ORIGINAL não fica no LuminSDK: ela vira https://www.google.com
+     (é o "openBackup()" do Utopia: about:blank com o site no iframe +
+     location.replace(google) na aba de trás), então nem o histórico nem a
+     barra de endereço mostram o endereço do portal
    · uma aba só gera outra uma vez por sessão (sessionStorage): recarregar
      não abre aba atrás de aba; fechou a aba about:blank, a próxima
      recarga volta a abrir
@@ -9783,6 +9787,10 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
   const KEY = 'luminsdk:v1:cloak:spawned';
   const NAME = 'luminsdk-cloak';
+  /* para onde a aba original vai depois que o portal nasce no about:blank
+     (mesmo destino do Utopia) */
+  const REDIRECT = 'https://www.google.com/';
+  const HERE = window.location.href;
   const BLANK = 'about:blank';
   const TITLE = document.title || 'LuminSDK';
 
@@ -9793,8 +9801,6 @@ html[data-view="gn"] .tabrail__tab.is-active {
   if (window.__LUMIN_SINGLE__) return;
 
   if (/(?:^|[?&])cloak=0(?:&|$)/.test(window.location.search || '')) return;
-
-  const here = window.location.href;
 
   function alreadySpawned() {
     try { return sessionStorage.getItem(KEY) === '1'; } catch (error) { return false; }
@@ -9854,7 +9860,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
     try {
       win.document.open();
-      win.document.write(shellHtml(here, TITLE));
+      win.document.write(shellHtml(HERE, TITLE));
       win.document.close();
     } catch (error) {
       /* não deu para escrever: não deixa uma aba em branco perdida */
@@ -9866,7 +9872,24 @@ html[data-view="gn"] .tabrail__tab.is-active {
     markSpawned(true);
     watchClosing();
     try { win.focus(); } catch (error) { /* aba já recebeu o foco */ }
+
+    /* a página de trás sai do LuminSDK na hora: quem voltar para ela (ou
+       olhar o histórico) encontra o Google, não o portal */
+    leaveToGoogle();
     return true;
+  }
+
+  /* vira o Google na aba original — sem deixar um endereço do LuminSDK
+     aparecendo depois das costas (mesma ideia do openBackup() do Utopia).
+     ?cloak=google desliga só esta troca, para quem quiser o portal na aba
+     de trás. */
+  function leaveToGoogle() {
+    if (/(?:^|[?&])cloak=google(?:&|$)/.test(window.location.search || '')) return;
+    try {
+      window.location.replace(REDIRECT);
+    } catch (error) {
+      try { window.location.href = REDIRECT; } catch (error2) { /* sem saída */ }
+    }
   }
 
   /* fechou a aba about:blank: libera a trava para a próxima recarga abrir
@@ -9912,7 +9935,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
   window.LuminCloak = {
     open: function () { return spawn(); },
     state: function () {
-      return { cloaked: !!child, spawned: alreadySpawned() };
+      return { cloaked: !!child, spawned: alreadySpawned(), redirect: REDIRECT };
     }
   };
 })();
@@ -11623,18 +11646,18 @@ html[data-view="gn"] .tabrail__tab.is-active {
       css: [],
       scripts: [
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=41',
-        'assets/js/settings.js?v=41',
-        'assets/js/site.js?v=41',
-        'assets/js/atmosphere.js?v=41',
-        'assets/js/progress.js?v=41',
-        'assets/js/bonus.js?v=41'
+        'assets/js/library.js?v=42',
+        'assets/js/settings.js?v=42',
+        'assets/js/site.js?v=42',
+        'assets/js/atmosphere.js?v=42',
+        'assets/js/progress.js?v=42',
+        'assets/js/bonus.js?v=42'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=41'],
-      scripts: ['assets/js/gnmath.js?v=41'],
+      css: ['assets/css/gnmath.css?v=42'],
+      scripts: ['assets/js/gnmath.js?v=42'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -11646,60 +11669,60 @@ html[data-view="gn"] .tabrail__tab.is-active {
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=41'],
-      scripts: ['assets/js/provider.js?v=41', 'assets/js/atmosphere.js?v=41']
+      css: ['assets/css/provider.css?v=42'],
+      scripts: ['assets/js/provider.js?v=42', 'assets/js/atmosphere.js?v=42']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=41'],
-      scripts: ['assets/js/sites.js?v=41', 'assets/js/atmosphere.js?v=41']
+      css: ['assets/css/sites.css?v=42'],
+      scripts: ['assets/js/sites.js?v=42', 'assets/js/atmosphere.js?v=42']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=41'],
-      scripts: ['assets/js/browser.js?v=41', 'assets/js/atmosphere.js?v=41']
+      css: ['assets/css/browser.css?v=42'],
+      scripts: ['assets/js/browser.js?v=42', 'assets/js/atmosphere.js?v=42']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=41',
-        'assets/js/os.js?v=41',
-        'assets/js/profile.js?v=41',
-        'assets/js/lab.js?v=41',
-        'assets/js/studio.js?v=41',
-        'assets/js/arcade.js?v=41',
-        'assets/js/vault.js?v=41',
-        'assets/js/community.js?v=41',
-        'assets/js/central.js?v=41',
-        'assets/js/atmosphere.js?v=41'
+        'assets/js/player.js?v=42',
+        'assets/js/os.js?v=42',
+        'assets/js/profile.js?v=42',
+        'assets/js/lab.js?v=42',
+        'assets/js/studio.js?v=42',
+        'assets/js/arcade.js?v=42',
+        'assets/js/vault.js?v=42',
+        'assets/js/community.js?v=42',
+        'assets/js/central.js?v=42',
+        'assets/js/atmosphere.js?v=42'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=41', 'assets/css/hub.css?v=41'],
+      css: ['assets/css/os.css?v=42', 'assets/css/hub.css?v=42'],
       scripts: [
-        'assets/js/player.js?v=41',
-        'assets/js/os.js?v=41',
-        'assets/js/profile.js?v=41',
-        'assets/js/lab.js?v=41',
-        'assets/js/studio.js?v=41',
-        'assets/js/arcade.js?v=41',
-        'assets/js/vault.js?v=41',
-        'assets/js/community.js?v=41',
-        'assets/js/central.js?v=41',
-        'assets/js/hub.js?v=41'
+        'assets/js/player.js?v=42',
+        'assets/js/os.js?v=42',
+        'assets/js/profile.js?v=42',
+        'assets/js/lab.js?v=42',
+        'assets/js/studio.js?v=42',
+        'assets/js/arcade.js?v=42',
+        'assets/js/vault.js?v=42',
+        'assets/js/community.js?v=42',
+        'assets/js/central.js?v=42',
+        'assets/js/hub.js?v=42'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=41']
+      scripts: ['assets/js/atmosphere.js?v=42']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=41'],
-      scripts: ['assets/js/study-questions.js?v=41', 'assets/js/study.js?v=41']
+      css: ['assets/css/study.css?v=42'],
+      scripts: ['assets/js/study-questions.js?v=42', 'assets/js/study.js?v=42']
     }
   };
 

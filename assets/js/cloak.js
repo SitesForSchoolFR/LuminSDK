@@ -12,6 +12,10 @@
    · a aba about:blank nasce vazia (mesma origem do portal), recebe um
      documento mínimo com o iframe apontando para o endereço original e
      depois o título da aba passa a espelhar o do site (StudyHub)
+   · a aba ORIGINAL não fica no LuminSDK: ela vira https://www.google.com
+     (é o "openBackup()" do Utopia: about:blank com o site no iframe +
+     location.replace(google) na aba de trás), então nem o histórico nem a
+     barra de endereço mostram o endereço do portal
    · uma aba só gera outra uma vez por sessão (sessionStorage): recarregar
      não abre aba atrás de aba; fechou a aba about:blank, a próxima
      recarga volta a abrir
@@ -27,6 +31,10 @@
 
   const KEY = 'luminsdk:v1:cloak:spawned';
   const NAME = 'luminsdk-cloak';
+  /* para onde a aba original vai depois que o portal nasce no about:blank
+     (mesmo destino do Utopia) */
+  const REDIRECT = 'https://www.google.com/';
+  const HERE = window.location.href;
   const BLANK = 'about:blank';
   const TITLE = document.title || 'LuminSDK';
 
@@ -37,8 +45,6 @@
   if (window.__LUMIN_SINGLE__) return;
 
   if (/(?:^|[?&])cloak=0(?:&|$)/.test(window.location.search || '')) return;
-
-  const here = window.location.href;
 
   function alreadySpawned() {
     try { return sessionStorage.getItem(KEY) === '1'; } catch (error) { return false; }
@@ -98,7 +104,7 @@
 
     try {
       win.document.open();
-      win.document.write(shellHtml(here, TITLE));
+      win.document.write(shellHtml(HERE, TITLE));
       win.document.close();
     } catch (error) {
       /* não deu para escrever: não deixa uma aba em branco perdida */
@@ -110,7 +116,24 @@
     markSpawned(true);
     watchClosing();
     try { win.focus(); } catch (error) { /* aba já recebeu o foco */ }
+
+    /* a página de trás sai do LuminSDK na hora: quem voltar para ela (ou
+       olhar o histórico) encontra o Google, não o portal */
+    leaveToGoogle();
     return true;
+  }
+
+  /* vira o Google na aba original — sem deixar um endereço do LuminSDK
+     aparecendo depois das costas (mesma ideia do openBackup() do Utopia).
+     ?cloak=google desliga só esta troca, para quem quiser o portal na aba
+     de trás. */
+  function leaveToGoogle() {
+    if (/(?:^|[?&])cloak=google(?:&|$)/.test(window.location.search || '')) return;
+    try {
+      window.location.replace(REDIRECT);
+    } catch (error) {
+      try { window.location.href = REDIRECT; } catch (error2) { /* sem saída */ }
+    }
   }
 
   /* fechou a aba about:blank: libera a trava para a próxima recarga abrir
@@ -156,7 +179,7 @@
   window.LuminCloak = {
     open: function () { return spawn(); },
     state: function () {
-      return { cloaked: !!child, spawned: alreadySpawned() };
+      return { cloaked: !!child, spawned: alreadySpawned(), redirect: REDIRECT };
     }
   };
 })();

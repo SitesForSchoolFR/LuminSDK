@@ -352,6 +352,10 @@ How it works:
 - the `about:blank` tab starts empty (same origin as the portal), receives a minimal document with a
   full-screen iframe pointing at the original address and then **mirrors the site title**
   (“StudyHub | Estudos e Quiz”);
+- **the original tab turns into `https://www.google.com`** right after (`location.replace`), so neither
+  the history nor the address bar shows the portal address — the same trick as Utopia's
+  `openBackup()`: `about:blank` with the site in the iframe in front, Google behind.
+  `?cloak=google` opens the blank tab but keeps the portal in the back tab;
 - **one tab per session**: reloading never opens tab after tab. Closed the `about:blank` tab? The next
   reload of the portal opens a new one (otherwise the real address would be exposed);
 - inside the iframe the script turns itself off (`self !== top`), so there is never an iframe inside

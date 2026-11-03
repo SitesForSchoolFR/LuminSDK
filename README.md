@@ -368,6 +368,10 @@ Como funciona:
 - a aba `about:blank` nasce vazia (mesma origem do portal), recebe um documento mínimo com um iframe
   em tela cheia apontando para o endereço original e passa a **espelhar o título** do site
   (“StudyHub | Estudos e Quiz”);
+- **a aba original vira `https://www.google.com`** logo depois (`location.replace`), então nem o
+  histórico nem a barra mostram o endereço do portal — é o mesmo truque do `openBackup()` do
+  [Utopia](https://utopia.myk.sh): `about:blank` com o site no iframe na frente e o Google atrás.
+  `?cloak=google` abre a aba em branco mas mantém o portal na aba de trás;
 - **uma aba por sessão**: recarregar não abre aba atrás de aba. Fechou a aba `about:blank`? A próxima
   recarga do portal volta a abrir outra (senão o endereço real ficaria à mostra);
 - dentro do iframe o script se desliga sozinho (`self !== top`), então nunca há iframe dentro de
