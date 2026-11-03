@@ -104,8 +104,73 @@
 
   function avatarMarkup(name, art, size) {
     const index = ((Number(art) || 0) % 8 + 8) % 8;
+    const photo = (P.summary && P.summary().photo) || '';
+    const contents = photo
+      ? '<img class="pf__avatar-img" src="' + esc(photo) + '" alt="" decoding="async">'
+      : '<span class="pf__avatar-ini">' + esc(initials(name)) + '</span>';
     return '<span class="pf__avatar" data-art="' + index + '" data-size="' + (size || 'lg') + '">' +
-      '<span class="pf__avatar-ini">' + esc(initials(name)) + '</span></span>';
+      contents + '</span>';
+  }
+
+  /* foto escolhida pela pessoa: reduz para 256 px antes de guardar, para o
+     localStorage não estourar (cota de ~5 MB por site) */
+  function pickPhoto(onDone) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.hidden = true;
+    document.body.append(input);
+
+    const clean = function () { if (input.parentNode) input.parentNode.removeChild(input); };
+
+    input.addEventListener('cancel', clean);
+
+    input.addEventListener('change', function () {
+      const file = input.files && input.files[0];
+      if (!file) { clean(); return; }
+      if (!/^image\//.test(file.type)) {
+        toast('Escolha um arquivo de imagem.');
+        clean();
+        return;
+      }
+      if (file.size > 8 * 1024 * 1024) {
+        toast('Essa imagem é grande demais (máximo 8 MB).');
+        clean();
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onerror = function () { toast('Não consegui ler esse arquivo.'); clean(); };
+      reader.onload = function () {
+        const img = new Image();
+        img.onerror = function () { toast('Esse arquivo não é uma imagem válida.'); clean(); };
+        img.onload = function () {
+          try {
+            const side = 256;
+            const canvas = document.createElement('canvas');
+            canvas.width = side;
+            canvas.height = side;
+            const ctx = canvas.getContext('2d');
+            /* recorte quadrado central */
+            const min = Math.min(img.width, img.height);
+            ctx.drawImage(img, (img.width - min) / 2, (img.height - min) / 2, min, min, 0, 0, side, side);
+            const data = canvas.toDataURL('image/jpeg', 0.86);
+            if (P.setPhoto) P.setPhoto(data);
+            clean();
+            paint();
+            toast('Foto de perfil atualizada.');
+            if (onDone) onDone();
+          } catch (error) {
+            toast('Não consegui preparar a imagem (talvez seja grande demais).');
+            clean();
+          }
+        };
+        img.src = String(reader.result || '');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    input.click();
   }
 
   /* ---------- linhas de jogo ---------- */
@@ -198,11 +263,16 @@
   function headerMarkup(info) {
     return [
       '<div class="pf__top">',
-      '  <button class="pf__art" type="button" data-avatar title="Trocar o avatar">' + avatarMarkup(info.name, info.art) + '</button>',
+      '  <button class="pf__art" type="button" data-avatar title="' + (info.photo ? 'Trocar a foto de perfil' : 'Trocar o avatar') + '" aria-label="' + (info.photo ? 'Trocar a foto de perfil' : 'Trocar o avatar') + '">' + avatarMarkup(info.name, info.art) + '</button>',
       '  <div class="pf__id">',
       '    <p class="pf__name"><span data-name>' + esc(info.name) + '</span>',
       '      <button class="pf__edit" type="button" data-rename aria-label="Mudar o nome" title="Mudar o nome">✎</button>',
       '    </p>',
+      '    <div class="pf__actions">',
+      '      <button class="pf__action" type="button" data-pick-name>✎ Mudar nome</button>',
+      '      <button class="pf__action" type="button" data-pick-photo>📷 Mudar foto</button>',
+      '      <button class="pf__action" type="button" data-pick-color title="Voltar para o avatar de cor">🎨 Avatar de cor</button>',
+      '    </div>',
       '    <div class="pf__xp"><span class="pf__xp-fill" style="width:' + info.pct + '%"></span></div>',
       '    <p class="pf__xp-text">Nível <b>' + info.level + '</b> · ' + info.into + '/' + info.need + ' XP <span>' + info.xp + ' XP no total</span></p>',
       '  </div>',
@@ -681,10 +751,18 @@
     const info = P.summary();
     shell.querySelector('[data-head]').innerHTML = headerMarkup(info);
     shell.querySelector('[data-avatar]').addEventListener('click', function () {
+      if ((P.summary && P.summary().photo)) { pickPhoto(); return; }
       P.cycleArt();
       paint();
     });
     shell.querySelector('[data-rename]').addEventListener('click', rename);
+    shell.querySelector('[data-pick-name]').addEventListener('click', rename);
+    shell.querySelector('[data-pick-photo]').addEventListener('click', function () { pickPhoto(); });
+    shell.querySelector('[data-pick-color]').addEventListener('click', function () {
+      if (P.setPhoto) P.setPhoto('');
+      paint();
+      toast('Avatar de cor de volta.');
+    });
     paintHeader(bodyRef);
 
     shell.querySelectorAll('[data-tab]').forEach(function (button) {

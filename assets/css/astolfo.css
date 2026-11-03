@@ -220,7 +220,7 @@ html[data-skin="astolfo"] body::before {
     /* o "opacity" da arte: tudo por baixo fica mais apagado */
     linear-gradient(rgba(11, 8, 16, .55), rgba(11, 8, 16, .55)),
     /* a arte do Astolfo (humana, MIT — ver CREDITS.md) */
-    url("../img/astolfo/astolfo-bg.jpg");
+    url("../img/astolfo/astolfo-wall-1920.jpg");
   background-position: 0 0, 0 0, 0 0, 68% 42%;
   background-size: auto, auto, auto, cover;
   background-repeat: no-repeat;
@@ -233,7 +233,7 @@ html[data-skin="astolfo"][data-theme="light"] body::before {
     linear-gradient(100deg, rgba(255, 247, 251, .98) 0%, rgba(255, 247, 251, .88) 38%, rgba(255, 247, 251, .35) 72%, rgba(255, 247, 251, 0) 100%),
     linear-gradient(0deg, rgba(255, 247, 251, .96) 0%, rgba(255, 247, 251, .4) 34%, rgba(255, 247, 251, 0) 62%),
     linear-gradient(rgba(255, 247, 251, .62), rgba(255, 247, 251, .62)),
-    url("../img/astolfo/astolfo-bg.jpg");
+    url("../img/astolfo/astolfo-wall-1920.jpg");
 }
 
 /* estrelinhas (por cima, mas quase invisíveis e sem capturar clique) */
@@ -259,7 +259,7 @@ html[data-skin="astolfo"] body::after {
     background-image:
       linear-gradient(0deg, rgba(11, 8, 16, .97) 0%, rgba(11, 8, 16, .55) 44%, rgba(11, 8, 16, .2) 78%, rgba(11, 8, 16, .1) 100%),
       linear-gradient(rgba(11, 8, 16, .58), rgba(11, 8, 16, .58)),
-      url("../img/astolfo/astolfo-bg-1280.jpg");
+      url("../img/astolfo/astolfo-wall-1280.jpg");
     background-position: 0 0, 0 0, 70% 22%;
   }
   html[data-skin="astolfo"] body::after { opacity: .4; }

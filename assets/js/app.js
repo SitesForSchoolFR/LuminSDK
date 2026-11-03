@@ -30,20 +30,20 @@
          desligado quando a rota muda */
       css: [],
       scripts: [
-        'assets/js/anim.js?v=54',
+        'assets/js/anim.js?v=55',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=54',
-        'assets/js/settings.js?v=54',
-        'assets/js/site.js?v=54',
-        'assets/js/atmosphere.js?v=54',
-        'assets/js/progress.js?v=54',
-        'assets/js/bonus.js?v=54'
+        'assets/js/library.js?v=55',
+        'assets/js/settings.js?v=55',
+        'assets/js/site.js?v=55',
+        'assets/js/atmosphere.js?v=55',
+        'assets/js/progress.js?v=55',
+        'assets/js/bonus.js?v=55'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=54'],
-      scripts: ['assets/js/gnmath.js?v=54'],
+      css: ['assets/css/gnmath.css?v=55'],
+      scripts: ['assets/js/gnmath.js?v=55'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -55,60 +55,60 @@
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=54'],
-      scripts: ['assets/js/provider.js?v=54', 'assets/js/atmosphere.js?v=54']
+      css: ['assets/css/provider.css?v=55'],
+      scripts: ['assets/js/provider.js?v=55', 'assets/js/atmosphere.js?v=55']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=54'],
-      scripts: ['assets/js/sites.js?v=54', 'assets/js/atmosphere.js?v=54']
+      css: ['assets/css/sites.css?v=55'],
+      scripts: ['assets/js/sites.js?v=55', 'assets/js/atmosphere.js?v=55']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=54'],
-      scripts: ['assets/js/browser.js?v=54', 'assets/js/atmosphere.js?v=54']
+      css: ['assets/css/browser.css?v=55'],
+      scripts: ['assets/js/browser.js?v=55', 'assets/js/atmosphere.js?v=55']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=54',
-        'assets/js/os.js?v=54',
-        'assets/js/profile.js?v=54',
-        'assets/js/lab.js?v=54',
-        'assets/js/studio.js?v=54',
-        'assets/js/arcade.js?v=54',
-        'assets/js/vault.js?v=54',
-        'assets/js/community.js?v=54',
-        'assets/js/central.js?v=54',
-        'assets/js/atmosphere.js?v=54'
+        'assets/js/player.js?v=55',
+        'assets/js/os.js?v=55',
+        'assets/js/profile.js?v=55',
+        'assets/js/lab.js?v=55',
+        'assets/js/studio.js?v=55',
+        'assets/js/arcade.js?v=55',
+        'assets/js/vault.js?v=55',
+        'assets/js/community.js?v=55',
+        'assets/js/central.js?v=55',
+        'assets/js/atmosphere.js?v=55'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=54', 'assets/css/hub.css?v=54'],
+      css: ['assets/css/os.css?v=55', 'assets/css/hub.css?v=55'],
       scripts: [
-        'assets/js/player.js?v=54',
-        'assets/js/os.js?v=54',
-        'assets/js/profile.js?v=54',
-        'assets/js/lab.js?v=54',
-        'assets/js/studio.js?v=54',
-        'assets/js/arcade.js?v=54',
-        'assets/js/vault.js?v=54',
-        'assets/js/community.js?v=54',
-        'assets/js/central.js?v=54',
-        'assets/js/hub.js?v=54'
+        'assets/js/player.js?v=55',
+        'assets/js/os.js?v=55',
+        'assets/js/profile.js?v=55',
+        'assets/js/lab.js?v=55',
+        'assets/js/studio.js?v=55',
+        'assets/js/arcade.js?v=55',
+        'assets/js/vault.js?v=55',
+        'assets/js/community.js?v=55',
+        'assets/js/central.js?v=55',
+        'assets/js/hub.js?v=55'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=54']
+      scripts: ['assets/js/atmosphere.js?v=55']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=54'],
-      scripts: ['assets/js/study-questions.js?v=54', 'assets/js/anim.js?v=54', 'assets/js/study.js?v=54']
+      css: ['assets/css/study.css?v=55'],
+      scripts: ['assets/js/study-questions.js?v=55', 'assets/js/anim.js?v=55', 'assets/js/study.js?v=55']
     }
   };
 

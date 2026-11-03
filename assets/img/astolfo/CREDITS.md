@@ -35,8 +35,12 @@ Abra uma issue em <https://github.com/SuckingUpToesSry/LuminSDK/issues> que a ar
 
 ## Papel de parede do tema
 
-`astolfo-bg.jpg` (1920×1080) e `astolfo-bg-1280.jpg` (1280×720) são **composições feitas aqui** sobre a
+`astolfo-wall-1920.jpg` (1920×1080) e `astolfo-wall-1280.jpg` (1280×720) são **composições feitas aqui** sobre a
 ilustração de [Kouromo/astolfo-vscode-theme](https://github.com/Kouromo/astolfo-vscode-theme) (MIT):
 fundo ameixa com brilhos rosa/lilás, o desenho ampliado à direita e os degradês de leitura por cima.
 No site a arte ainda por cima entra com véu de opacidade (CSS), então ela aparece discreta, sem
 dominar o conteúdo. Nenhum gerador de imagem foi usado — só recorte, escala e degradê.
+
+Onde ela é usada: `assets/css/astolfo.css`, no seletor `html[data-skin="astolfo"] body::before`
+(a 1920 no computador; a 1280 abaixo de 860 px de largura). No painel **Estilo especial** do site há uma
+miniatura da imagem: tocar nela abre a arte inteira e mostra esse caminho.

@@ -58,6 +58,10 @@
   };
 
   const CHANGELOG = [
+    { v: 'v51', items: [
+      'Perfil com botões de verdade: "Mudar nome", "Mudar foto" e "Avatar de cor" no cabeçalho — a foto é recortada e reduzida antes de salvar no navegador.',
+      'A imagem de fundo do tema agora está identificada no painel Estilo especial: miniatura, caminho do arquivo (assets/img/astolfo/astolfo-wall-1920.jpg) e a regra do CSS que a aplica.'
+    ] },
     { v: 'v50', items: [
       'Tema Astolfo com papel de parede: a arte do personagem entra atrás do site inteiro num véu de opacidade baixa, para o rosto aparecer sem atrapalhar a leitura.',
       'A aba de estudos acompanha de verdade: busca, campos, hovers, painel da semana, barras de progresso, CTA e o cronômetro (que saiu do azul para ameixa com barras rosa).',
