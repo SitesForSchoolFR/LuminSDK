@@ -342,6 +342,29 @@ troca de aba); a saída por clique fica em `assets/js/study.js` e o menu Normal/
 tem estudos — é sempre o catálogo de jogos. Cada arquivo é independente: nada do StudyDesk vaza para
 o visual escuro do LuminSDK.
 
+### Animação de abertura (estilo Sols RNG)
+
+Quando o **`Shift` + `D`** (ou o crédito **Ryan Smith** do rodapé) abre o catálogo, entra uma
+**animação de abertura** por cima de tudo: aurora respirando, raios girando, portal de anéis, faíscas
+subindo, varredura de luz, flash e o título com gradiente animado — e uma **“raridade” sorteada** a
+cada abertura (de `1 / 1.100` a `1 / 10.000.000.000`), porque convenhamos que abrir 1.100 jogos merece
+um pouco de drama.
+
+Como funciona:
+
+- dura **~2,4 s** e some sozinha; **clique, qualquer tecla, `Esc` ou rolar** pula na hora;
+- `Shift` + `D` indo e voltando anima nos dois sentidos (catálogo = “LuminSDK”, estudos = “StudyHub”);
+- **troca de aba comum não anima** (clicar no rail, abrir um jogo, etc.) e existe um intervalo de
+  **10 s** entre animações, então nada fica em loop atrapalhando;
+- **`?anim=0`** desliga a animação; quem usa “menos movimento” no sistema recebe só o fade e o título;
+- a primeira entrada do site (o portal de estudos) **não** anima por padrão — para animar também nela,
+  rode `LuminApp.revealOnFirst(true)` no console (ou `LuminReveal.blast('lumin')` para testar);
+- tudo é CSS + um punhado de nós criados em `assets/js/reveal.js` (nenhuma biblioteca, nenhuma imagem).
+
+Arquivos: `assets/js/reveal.js` (montagem, sorteio, pular e cooldown), `assets/css/reveal.css`
+(aurora, raios, anéis, faíscas, gradientes e keyframes). A chamada sai de `assets/js/app.js`, no mesmo
+lugar que troca de aba — a animação entra antes de a view do catálogo aparecer.
+
 ### Abertura em about:blank (o site dentro de um iframe)
 
 Ao abrir o portal, o **LuminSDK se muda para uma aba `about:blank`** e continua rodando dentro de um
@@ -519,6 +542,7 @@ LuminSDK/
 │   │   ├── progress.js         # Estatísticas do jogador e conquistas
 │   │   ├── site.js             # Tema, animações, PWA e cópia do snippet
 │   │   ├── cloak.js            # Abre o portal em about:blank (site dentro de um iframe)
+│   │   ├── reveal.js           # Animação de abertura do catálogo (estilo Sols RNG)
 │   │   ├── atmosphere.js       # Paleta, partículas, parallax e cursor
 │   │   ├── bonus.js            # Central de bônus: controle, rede, cache, estatísticas e conquistas
 │   │   ├── app.js              # Aba única: rotas por sessionStorage, carrega cada aba sob demanda
@@ -539,6 +563,7 @@ LuminSDK/
 │   │   ├── sites.js            # Aba Sites (coleções + visualizador + aba limpa)
 │   │   └── study.js            # Aba Estudos (busca, planejador, cronômetro, teste rápido)
 │   ├── css/app.css             # Casca do app de aba única (mostra/esconde a view)
+│   ├── css/reveal.css          # Aurora, raios, anéis e faíscas da animação de abertura
 │   ├── css/hub.css             # Aba Hub: moldura, chips e palco dos apps do OS
 │   ├── css/provider.css        # Catálogos DuckMath/Astra: chips, grade, lista minimal e player
 │   ├── data/

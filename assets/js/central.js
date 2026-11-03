@@ -58,6 +58,11 @@
   };
 
   const CHANGELOG = [
+    { v: 'v42', items: [
+      'Animação de abertura no estilo Sols RNG quando Shift+D (ou o crédito do rodapé) abre o catálogo: aurora, raios, anéis, faíscas, flash e raridade sorteada.',
+      'A animação dura ~2,4 s, pula com clique/tecla/Esc, espera 10 s entre uma e outra e ?anim=0 desliga.',
+      'Quem usa “menos movimento” vê só o fade e o título.'
+    ] },
     { v: 'v41', items: [
       'Abertura em about:blank: o portal passa a viver numa aba em branco (aba original vira google.com) — ?cloak=0 desliga.',
       'Trava de troca de janela removida: Alt+Tab, troca de aba ou sair do app não mexem mais na tela nem no crédito “Ryan Smith”.',

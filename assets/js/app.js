@@ -24,21 +24,22 @@
   const ROUTES = {
     lumin: {
       title: 'LuminSDK — mais de 1.100 jogos no seu navegador',
-      css: [],
+      css: ['assets/css/reveal.css?v=44'],
       scripts: [
+        'assets/js/reveal.js?v=44',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=43',
-        'assets/js/settings.js?v=43',
-        'assets/js/site.js?v=43',
-        'assets/js/atmosphere.js?v=43',
-        'assets/js/progress.js?v=43',
-        'assets/js/bonus.js?v=43'
+        'assets/js/library.js?v=44',
+        'assets/js/settings.js?v=44',
+        'assets/js/site.js?v=44',
+        'assets/js/atmosphere.js?v=44',
+        'assets/js/progress.js?v=44',
+        'assets/js/bonus.js?v=44'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=43'],
-      scripts: ['assets/js/gnmath.js?v=43'],
+      css: ['assets/css/gnmath.css?v=44'],
+      scripts: ['assets/js/gnmath.js?v=44'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -50,60 +51,60 @@
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=43'],
-      scripts: ['assets/js/provider.js?v=43', 'assets/js/atmosphere.js?v=43']
+      css: ['assets/css/provider.css?v=44'],
+      scripts: ['assets/js/provider.js?v=44', 'assets/js/atmosphere.js?v=44']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=43'],
-      scripts: ['assets/js/sites.js?v=43', 'assets/js/atmosphere.js?v=43']
+      css: ['assets/css/sites.css?v=44'],
+      scripts: ['assets/js/sites.js?v=44', 'assets/js/atmosphere.js?v=44']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=43'],
-      scripts: ['assets/js/browser.js?v=43', 'assets/js/atmosphere.js?v=43']
+      css: ['assets/css/browser.css?v=44'],
+      scripts: ['assets/js/browser.js?v=44', 'assets/js/atmosphere.js?v=44']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=43',
-        'assets/js/os.js?v=43',
-        'assets/js/profile.js?v=43',
-        'assets/js/lab.js?v=43',
-        'assets/js/studio.js?v=43',
-        'assets/js/arcade.js?v=43',
-        'assets/js/vault.js?v=43',
-        'assets/js/community.js?v=43',
-        'assets/js/central.js?v=43',
-        'assets/js/atmosphere.js?v=43'
+        'assets/js/player.js?v=44',
+        'assets/js/os.js?v=44',
+        'assets/js/profile.js?v=44',
+        'assets/js/lab.js?v=44',
+        'assets/js/studio.js?v=44',
+        'assets/js/arcade.js?v=44',
+        'assets/js/vault.js?v=44',
+        'assets/js/community.js?v=44',
+        'assets/js/central.js?v=44',
+        'assets/js/atmosphere.js?v=44'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=43', 'assets/css/hub.css?v=43'],
+      css: ['assets/css/os.css?v=44', 'assets/css/hub.css?v=44'],
       scripts: [
-        'assets/js/player.js?v=43',
-        'assets/js/os.js?v=43',
-        'assets/js/profile.js?v=43',
-        'assets/js/lab.js?v=43',
-        'assets/js/studio.js?v=43',
-        'assets/js/arcade.js?v=43',
-        'assets/js/vault.js?v=43',
-        'assets/js/community.js?v=43',
-        'assets/js/central.js?v=43',
-        'assets/js/hub.js?v=43'
+        'assets/js/player.js?v=44',
+        'assets/js/os.js?v=44',
+        'assets/js/profile.js?v=44',
+        'assets/js/lab.js?v=44',
+        'assets/js/studio.js?v=44',
+        'assets/js/arcade.js?v=44',
+        'assets/js/vault.js?v=44',
+        'assets/js/community.js?v=44',
+        'assets/js/central.js?v=44',
+        'assets/js/hub.js?v=44'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=43']
+      scripts: ['assets/js/atmosphere.js?v=44']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=43'],
-      scripts: ['assets/js/study-questions.js?v=43', 'assets/js/study.js?v=43']
+      css: ['assets/css/study.css?v=44'],
+      scripts: ['assets/js/study-questions.js?v=44', 'assets/js/reveal.js?v=44', 'assets/js/study.js?v=44']
     }
   };
 
@@ -304,6 +305,28 @@
     });
   }
 
+  /* ---------- animação de abertura ----------
+     A rolagem estilo Sols RNG toca quando o catálogo é aberto pelo atalho
+     Shift+D ou pelo crédito do rodapé ('roll') e, se ligada, na primeira
+     entrada do dia ('first'). Os scripts da aba carregam sob demanda, então
+     esperamos o reveal.js aparecer (no máximo ~2 s) para não perder a
+     primeira animação; depois disso ele já está na memória. */
+  function roll(route, reason) {
+    if (!reason) return;
+    const open = function () {
+      if (!window.LuminReveal) return false;
+      return window.LuminReveal.show(route, reason);
+    };
+    if (open()) return;
+
+    let tries = 16;
+    const wait = function () {
+      if (open() || tries-- <= 0) return;
+      window.setTimeout(wait, 120);
+    };
+    window.setTimeout(wait, 60);
+  }
+
   function show(route) {
     if (!ROUTES[route]) route = 'lumin';
     if (route === current) return;
@@ -335,6 +358,8 @@
       else view.setAttribute('hidden', '');
     });
 
+    if (first) document.documentElement.classList.add('is-revealing');
+
     document.title = config.title;
     syncIcon(route);
     paintShield();
@@ -348,6 +373,8 @@
 
     if (first) {
       document.documentElement.classList.add('is-ready');
+      /* a primeira entrada também pode ter a sua rolagem (se ligada) */
+      if (route !== 'boot' && route !== 'os') roll(route, 'first');
     }
     if (route !== 'boot' && route !== 'os') window.scrollTo(0, 0);
 
@@ -372,6 +399,8 @@
     if (route === 'lumin' && opts.reveal) {
       try { sessionStorage.setItem(REVEAL, '1'); } catch (error) {}
     }
+    /* atalho e crédito pedem a rolagem; troca de aba comum não */
+    roll(route, opts.roll ? 'roll' : '');
     show(route);
   }
 
@@ -398,7 +427,7 @@
       go('estudo');
       return;
     }
-    go(current === 'estudo' ? 'lumin' : 'estudo', { reveal: current === 'estudo' });
+    go(current === 'estudo' ? 'lumin' : 'estudo', { reveal: current === 'estudo', roll: true });
   });
 
   /* ---------- cliques ---------- */
@@ -418,7 +447,7 @@
       event.preventDefault();
       const route = routeEl.dataset.route;
       const provider = routeEl.dataset.provider || '';
-      go(route, { reveal: route === 'lumin' });
+      go(route, { reveal: route === 'lumin', roll: !provider });
       if (provider) openProvider(provider);
       return;
     }
@@ -448,7 +477,7 @@
     if (legacy) {
       event.preventDefault();
       const map = { gn: 'gn', sites: 'sites', study: 'estudo', single: 'lumin' };
-      go(map[legacy[1]], { reveal: map[legacy[1]] === 'lumin' });
+      go(map[legacy[1]], { reveal: map[legacy[1]] === 'lumin', roll: true });
       return;
     }
     if (!/^https?:/i.test(href) && /(^|\/)index\.html$/.test(href)) {
@@ -511,6 +540,13 @@
     openInBrowser: openInBrowser,
     openProvider: openProvider,
     setTitle: function (text) { document.title = shield.disguise ? SHIELD_TITLE : text; },
+    /* a rolagem também pode tocar na primeira entrada do dia */
+    revealOnFirst: function (on) {
+      try {
+        if (on) sessionStorage.setItem('luminsdk:v1:reveal:first', '1');
+        else sessionStorage.setItem('luminsdk:v1:reveal:first', '0');
+      } catch (error) { /* modo privado sem storage */ }
+    },
     /* leitura do disfarce (útil para diagnóstico) */
     shieldState: function () { return { disguised: shield.disguise }; }
   };
