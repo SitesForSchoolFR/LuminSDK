@@ -371,7 +371,7 @@ How it works:
   the history nor the address bar shows the portal address — the same trick as Utopia's
   `openBackup()`: `about:blank` with the site in the iframe in front, Google behind.
   `?cloak=google` opens the blank tab but keeps the portal in the back tab;
-- **stale JS never gets stuck**: `app.js` stores the bundle version (`?v=52`) in the session and, when
+- **stale JS never gets stuck**: `app.js` stores the bundle version (`?v=53`) in the session and, when
   it changes, **reloads the page once** — that is what stops the blank tab from running old code after
   a deploy (the service worker also stopped caching 404s/errors);
 - **it always opens**: there is no session lock anymore — every page load tries to open the tab (the
@@ -628,10 +628,15 @@ without changing anything for people who never turn it on:
   `html[data-skin="astolfo"]`) and the engine in `assets/js/astolfo.js`
   (`window.LuminAstolfo.{on,off,toggle,state}`).
 - **SFW only:** colours, type, ribbon, star, plaid and stripes. No adult content.
-- **Human-made art only** (no AI-generated images): the illustration comes from
-  [Doki Theme](https://github.com/doki-theme/doki-theme-web) (MIT, cropped here) and everything else
-  (ribbon, star, heart, plaid, stripes) is hand-drawn SVG inside the project. Credits, licence and the
-  removal request path live in `assets/img/astolfo/CREDITS.md`.
+- **Human-made art only, zero AI images:** four illustrations cropped from **MIT** GitHub projects —
+  [Doki Theme](https://github.com/doki-theme/doki-theme-web),
+  [astolfo-dex](https://github.com/DarkCh4osss/astolfo-dex) and
+  [Hyprland-dotfiles-astolfo](https://github.com/jujuffm/Hyprland-dotfiles-astolfo) — plus ribbon,
+  star, heart, plaid and stripes hand-drawn in SVG inside the project. Credits, licence and the removal
+  request path live in `assets/img/astolfo/CREDITS.md`.
+- **Gallery:** the **See how it looks** button shows a large artwork plus four thumbnails (close-up,
+  everyday, purple, knight); you can switch the large one there, and **tapping the card avatar** cycles
+  to the next. The last choice is remembered.
 
 There are **no keyboard shortcuts** in the site besides that optional theme toggle — no `F` (fullscreen), `R` (random), `/` or
 `Ctrl`+`K` (search), `?` (settings). Everything lives in the UI buttons so no key is stolen from

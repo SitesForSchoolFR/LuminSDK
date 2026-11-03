@@ -104,17 +104,17 @@
   }
   </script>
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=52">
+  <link rel="stylesheet" href="assets/css/styles.css?v=53">
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <link rel="stylesheet" href="assets/css/app.css?v=52">
-  <link rel="stylesheet" href="assets/css/social.css?v=52">
-  <link rel="stylesheet" href="assets/css/os.css?v=52">
-  <link rel="stylesheet" href="assets/css/lcore.css?v=52">
+  <link rel="stylesheet" href="assets/css/app.css?v=53">
+  <link rel="stylesheet" href="assets/css/social.css?v=53">
+  <link rel="stylesheet" href="assets/css/os.css?v=53">
+  <link rel="stylesheet" href="assets/css/lcore.css?v=53">
   <!-- animação de troca de aba (tempo/relógio), coreografada por assets/js/anim.js -->
-  <link rel="stylesheet" href="assets/css/anim.css?v=52">
+  <link rel="stylesheet" href="assets/css/anim.css?v=53">
   <!-- personalização Astolfo (opcional): só age com html[data-skin="astolfo"] -->
-  <link rel="stylesheet" href="assets/css/astolfo.css?v=52" id="astolfo-css">
+  <link rel="stylesheet" href="assets/css/astolfo.css?v=53" id="astolfo-css">
 </head>
 <body>
 
@@ -1039,9 +1039,9 @@
 
           <div class="ast-card" id="astolfo-card">
             <div class="ast-card__head">
-              <span class="ast-card__avatar" aria-hidden="true">
-                <img src="assets/img/astolfo/art-avatar.png" alt="" width="46" height="46" decoding="async">
-              </span>
+              <button class="ast-card__avatar" type="button" data-astolfo="art" title="Trocar a arte do cartão" aria-label="Trocar a arte do cartão entre as quatro ilustrações">
+                <img src="assets/img/astolfo/kouromo-avatar.png" alt="" width="46" height="46" decoding="async">
+              </button>
               <span class="ast-card__title">
                 Astolfo
                 <small>femboy knight · rosa, preto e estrela</small>
@@ -1076,7 +1076,22 @@
       </header>
 
       <div class="sheet__body">
-        <img class="ast-sheet__art" src="assets/img/astolfo/art-full.jpg" alt="Ilustração do Astolfo em traje de cavaleiro, com capa branca e cabelo rosa" width="1280" height="720" decoding="async">
+        <img class="ast-sheet__art" id="astolfo-stage" src="assets/img/astolfo/kouromo-full.jpg" alt="Close-up do Astolfo em rosa e preto" width="1280" height="720" decoding="async">
+
+        <div class="ast-gallery" id="astolfo-gallery" role="group" aria-label="Ilustrações do tema">
+          <button class="ast-gallery__item is-active" type="button" data-astolfo-art="kouromo-full.jpg" data-alt="Close-up do Astolfo em rosa e preto" aria-pressed="true">
+            <img src="assets/img/astolfo/kouromo-avatar.png" alt="" width="76" height="76" loading="lazy" decoding="async"><span>Close-up</span>
+          </button>
+          <button class="ast-gallery__item" type="button" data-astolfo-art="dex-casual.jpg" data-alt="Astolfo sentada, de moletom e mochila" aria-pressed="false">
+            <img src="assets/img/astolfo/dex-avatar.png" alt="" width="76" height="76" loading="lazy" decoding="async"><span>Dia a dia</span>
+          </button>
+          <button class="ast-gallery__item" type="button" data-astolfo-art="hypr-banner.jpg" data-alt="Astolfo em fundo roxo, com a mão esticada" aria-pressed="false">
+            <img src="assets/img/astolfo/hypr-avatar.png" alt="" width="76" height="76" loading="lazy" decoding="async"><span>Roxo</span>
+          </button>
+          <button class="ast-gallery__item" type="button" data-astolfo-art="doki-banner.jpg" data-alt="Astolfo em traje de cavaleiro com capa branca" aria-pressed="false">
+            <img src="assets/img/astolfo/doki-avatar.png" alt="" width="76" height="76" loading="lazy" decoding="async"><span>Cavaleiro</span>
+          </button>
+        </div>
 
         <div class="ast-sheet__swatches" aria-label="Cores do tema">
           <span class="ast-sheet__swatch"><i style="background:#ff9ecb"></i>rosa</span>
@@ -1087,7 +1102,7 @@
           <span class="ast-sheet__swatch"><i style="background:#fff6fb"></i>creme</span>
         </div>
 
-        <p class="ast-card__note">Arte: <b>Doki Theme</b> (github.com/doki-theme/doki-theme-web, licença MIT) · Astolfo é personagem de <i>Fate/Apocrypha</i> (© Type-Moon). Créditos completos em <code>assets/img/astolfo/CREDITS.md</code>.</p>
+        <p class="ast-card__note">Arte 100% humana (sem IA), recortada de três projetos <b>MIT</b> do GitHub: <b>Doki Theme</b>, <b>astolfo-dex</b> e <b>Hyprland-dotfiles-astolfo</b>. Astolfo é personagem de <i>Fate/Apocrypha</i> (© Type-Moon). Créditos completos em <code>assets/img/astolfo/CREDITS.md</code>.</p>
 
         <ul class="ast-sheet__list">
           <li>Cabeçalho com faixa de bandeirinhas, marca com laço e barra lateral preta de borda rosa.</li>
@@ -2364,14 +2379,14 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="assets/js/social.js?v=52" defer></script>
+  <script src="assets/js/social.js?v=53" defer></script>
   <!-- abertura em about:blank: o site continua no iframe da aba em branco
        (o app.js recarrega a página uma vez quando o bundle muda, então o JS
        antigo nunca fica preso nessa aba) -->
-  <script src="assets/js/cloak.js?v=52" defer></script>
-  <script src="assets/js/anim.js?v=52" defer></script>
-  <script src="assets/js/astolfo.js?v=52" defer></script>
-  <script src="assets/js/lcore.js?v=52" defer></script>
-    <script src="assets/js/app.js?v=52" defer></script>
+  <script src="assets/js/cloak.js?v=53" defer></script>
+  <script src="assets/js/anim.js?v=53" defer></script>
+  <script src="assets/js/astolfo.js?v=53" defer></script>
+  <script src="assets/js/lcore.js?v=53" defer></script>
+    <script src="assets/js/app.js?v=53" defer></script>
 </body>
 </html>
