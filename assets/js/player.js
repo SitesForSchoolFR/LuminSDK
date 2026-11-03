@@ -54,7 +54,7 @@
       v: 1,
       created: Date.now(),
       xp: 0,
-      profile: { name: 'Jogador', art: 0 },
+      profile: { name: 'Jogador', art: 0, photo: '' },
       games: {},
       favorites: [],
       wishlist: [],
@@ -518,6 +518,17 @@
     return s.profile.name;
   }
 
+  /* foto de perfil escolhida pela pessoa (data URL já reduzida a 256 px).
+     String vazia = volta para o avatar de cor. */
+  function setPhoto(data) {
+    const s = read();
+    const value = String(data || '');
+    /* ~700 KB de base64: acima disso o localStorage costuma recusar */
+    s.profile.photo = value.length > 700000 ? '' : value;
+    write();
+    return s.profile.photo;
+  }
+
   function cycleArt() {
     const s = read();
     s.profile.art = (Number(s.profile.art) || 0) + 1;
@@ -560,6 +571,7 @@
     return {
       name: s.profile.name,
       art: s.profile.art,
+      photo: s.profile.photo || '',
       xp: s.xp,
       level: info.level,
       into: info.into,
@@ -656,6 +668,7 @@
     topGames: topGames,
     recent: recent,
     setName: setName,
+    setPhoto: setPhoto,
     cycleArt: cycleArt,
     markOpen: markOpen,
     markTab: markTab,

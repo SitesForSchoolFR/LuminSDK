@@ -61,7 +61,7 @@
     const link = document.createElement('link');
     link.id = 'astolfo-css';
     link.rel = 'stylesheet';
-    link.href = 'assets/css/astolfo.css?v=54';
+    link.href = 'assets/css/astolfo.css?v=55';
     link.addEventListener('error', function () { link.remove(); });
     document.head.appendChild(link);
   }
@@ -160,6 +160,26 @@
     if (typeof dialog.close === 'function' && dialog.open) dialog.close();
     else dialog.removeAttribute('open');
     if (previousFocus && previousFocus.focus) { try { previousFocus.focus(); } catch (error) { /* nada */ } }
+  }
+
+  /* mostra o papel de parede inteiro, do jeito que ele é no arquivo */
+  function openWallpaper() {
+    const dialog = document.getElementById('astolfo-wallpaper');
+    if (dialog) {
+      try {
+        if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); }
+        else dialog.setAttribute('open', '');
+        return;
+      } catch (error) { /* cai no window.open */ }
+    }
+    try { window.open('assets/img/astolfo/astolfo-wall-1920.jpg', '_blank', 'noopener'); } catch (error) { /* nada */ }
+  }
+
+  function closeWallpaper() {
+    const dialog = document.getElementById('astolfo-wallpaper');
+    if (!dialog) return;
+    if (typeof dialog.close === 'function' && dialog.open) dialog.close();
+    else dialog.removeAttribute('open');
   }
 
   function toast(text) {
@@ -263,6 +283,8 @@
       else if (what === 'preview') openPreview();
       else if (what === 'art') nextArt();
       else if (what === 'close') closePreview();
+      else if (what === 'wallpaper') openWallpaper();
+      else if (what === 'close-wall') closeWallpaper();
       else if (what === 'css') {
         /* abre a folha do tema numa aba nova: útil para copiar as cores */
         window.open('assets/css/astolfo.css', '_blank', 'noopener');
@@ -280,6 +302,20 @@
       stageArt(index);
       try { localStorage.setItem(ART_KEY, String(index)); } catch (error) { /* sem storage */ }
     });
+
+    const wall = document.getElementById('astolfo-wallpaper');
+    if (wall) {
+      wall.addEventListener('click', function (event) {
+        if (event.target !== wall) return;
+        if (typeof wall.close === 'function' && wall.open) wall.close();
+        else wall.removeAttribute('open');
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key !== 'Escape' || !wall.open) return;
+        if (typeof wall.close === 'function') wall.close();
+        else wall.removeAttribute('open');
+      });
+    }
 
     const preview = document.getElementById('astolfo-preview');
     if (preview) {
@@ -344,6 +380,8 @@
     state: function () { return { on: enabled, saved: stored(), css: !!document.getElementById('astolfo-css') }; },
     preview: openPreview,
     close: closePreview,
+    wallpaper: openWallpaper,
+    closeWallpaper: closeWallpaper,
     art: function (index) {
       if (typeof index === 'number') { artIndex = ((index % ARTS.length) + ARTS.length) % ARTS.length; stageArt(artIndex); return ARTS[artIndex]; }
       return { index: artIndex, name: ARTS[artIndex].name, total: ARTS.length };

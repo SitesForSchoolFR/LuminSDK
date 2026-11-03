@@ -371,7 +371,7 @@ How it works:
   the history nor the address bar shows the portal address — the same trick as Utopia's
   `openBackup()`: `about:blank` with the site in the iframe in front, Google behind.
   `?cloak=google` opens the blank tab but keeps the portal in the back tab;
-- **stale JS never gets stuck**: `app.js` stores the bundle version (`?v=54`) in the session and, when
+- **stale JS never gets stuck**: `app.js` stores the bundle version (`?v=55`) in the session and, when
   it changes, **reloads the page once** — that is what stops the blank tab from running old code after
   a deploy (the service worker also stopped caching 404s/errors);
 - **it always opens**: there is no session lock anymore — every page load tries to open the tab (the
@@ -637,9 +637,11 @@ without changing anything for people who never turn it on:
 - **Gallery:** the **See how it looks** button shows a large artwork plus four thumbnails (close-up,
   everyday, purple, knight); you can switch the large one there, and **tapping the card avatar** cycles
   to the next. The last choice is remembered.
-- **Wallpaper:** the artwork sits behind the whole site in a fixed layer with a gradient veil (low
-  opacity, heavier on the left where the text lives) — the face shows through, the content stays
-  readable. On phones it uses the lighter 1280 px version.
+- **Wallpaper (where it lives):** `assets/img/astolfo/astolfo-wall-1920.jpg` — plus the lighter
+  `astolfo-wall-1280.jpg` for phones. The rule is in `assets/css/astolfo.css`, under
+  `html[data-skin="astolfo"] body::before` (fixed layer behind everything, with a gradient veil; heavier
+  on the left where the text lives). The **Special style** panel shows a thumbnail of it: tapping opens
+  the full artwork and the file path.
 - **Tab-switch animation in theme colours:** with Astolfo on, the 2.5 s layer turns pink and lilac, the
   rings get a double glow, the clock uses the theme font and a giant `♡` pulses behind it. The per-tab
   time stamp stays.
@@ -657,6 +659,14 @@ a few times), restores focus when the tab/window becomes active again and never 
 run inside another iframe and block focus on click can be opened with **Open in a new tab**.
 
 ---
+
+### Profile: name and photo
+
+The **Profile** app (inside LuminOS) now has three header buttons: **Change name**, **Change photo** and
+**Colour avatar**. The chosen photo is centre-cropped, resized to 256 px and kept in `localStorage` with
+the rest of the profile (nothing leaves the browser); files over 8 MB are refused before cropping and the
+result is capped at ~700 KB so it fits the quota. **Colour avatar** goes back to the initials mosaic
+(8 variations).
 
 ### Bonus tools
 

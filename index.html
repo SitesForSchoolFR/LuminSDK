@@ -104,17 +104,17 @@
   }
   </script>
 
-  <link rel="stylesheet" href="assets/css/styles.css?v=54">
+  <link rel="stylesheet" href="assets/css/styles.css?v=55">
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <link rel="stylesheet" href="assets/css/app.css?v=54">
-  <link rel="stylesheet" href="assets/css/social.css?v=54">
-  <link rel="stylesheet" href="assets/css/os.css?v=54">
-  <link rel="stylesheet" href="assets/css/lcore.css?v=54">
+  <link rel="stylesheet" href="assets/css/app.css?v=55">
+  <link rel="stylesheet" href="assets/css/social.css?v=55">
+  <link rel="stylesheet" href="assets/css/os.css?v=55">
+  <link rel="stylesheet" href="assets/css/lcore.css?v=55">
   <!-- animação de troca de aba (tempo/relógio), coreografada por assets/js/anim.js -->
-  <link rel="stylesheet" href="assets/css/anim.css?v=54">
+  <link rel="stylesheet" href="assets/css/anim.css?v=55">
   <!-- personalização Astolfo (opcional): só age com html[data-skin="astolfo"] -->
-  <link rel="stylesheet" href="assets/css/astolfo.css?v=54" id="astolfo-css">
+  <link rel="stylesheet" href="assets/css/astolfo.css?v=55" id="astolfo-css">
 </head>
 <body>
 
@@ -1054,10 +1054,50 @@
               <button class="btn btn--soft btn--sm" type="button" data-astolfo="preview">Ver como fica</button>
             </div>
 
+            <div class="ast-card__bg">
+              <button class="ast-card__thumb" type="button" data-astolfo="wallpaper" title="Abrir a imagem de fundo em tamanho grande" aria-label="Ver a imagem de fundo do tema">
+                <img src="assets/img/astolfo/astolfo-wall-1920.jpg" alt="Papel de parede do tema: retrato do Astolfo sobre fundo ameixa" width="96" height="54" loading="lazy" decoding="async">
+              </button>
+              <span class="ast-card__bg-text">
+                <b>Imagem de fundo</b>
+                <code>assets/img/astolfo/astolfo-wall-1920.jpg</code>
+                <small>Entra atrás do site inteiro com véu de opacidade — toque na miniatura para ver inteira.</small>
+              </span>
+            </div>
+
             <p class="ast-card__keys">Atalho: <kbd>Ctrl</kbd> + <kbd>AltGr</kbd> + <kbd>Y</kbd> (no Mac, <kbd>Ctrl</kbd> + <kbd>⌥</kbd> + <kbd>Y</kbd>) — a mesma combinação desliga.</p>
             <p class="ast-card__note">SFW: só cores, letras, laço, estrela e listras. Nada de conteúdo adulto.</p>
           </div>
         </section>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ================= ASTOLFO: imagem de fundo ================= -->
+  <dialog class="sheet sheet--wide" id="astolfo-wallpaper" aria-labelledby="astolfo-wallpaper-title">
+    <div class="sheet__shell">
+      <header class="sheet__head">
+        <div>
+          <h2 class="sheet__title" id="astolfo-wallpaper-title">Imagem de fundo do tema</h2>
+          <p class="sheet__sub">É esta arte que aparece atrás do site inteiro quando o Astolfo está ligado.</p>
+        </div>
+        <button class="icon-btn" type="button" data-astolfo="close-wall" aria-label="Fechar imagem de fundo">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+        </button>
+      </header>
+
+      <div class="sheet__body">
+        <img class="ast-sheet__art ast-sheet__art--full" src="assets/img/astolfo/astolfo-wall-1920.jpg" alt="Papel de parede do tema: retrato do Astolfo sobre fundo ameixa com brilhos rosa" width="1920" height="1080" decoding="async">
+        <p class="ast-card__keys">
+          Arquivo: <code>assets/img/astolfo/astolfo-wall-1920.jpg</code> ·
+          celular: <code>astolfo-wall-1280.jpg</code> ·
+          regra no CSS: <code>html[data-skin="astolfo"] body::before</code> (<code>assets/css/astolfo.css</code>)
+        </p>
+        <p class="ast-card__note">Arte de Kouromo/astolfo-vscode-theme (MIT), composta aqui — ver <code>assets/img/astolfo/CREDITS.md</code>. No site ela entra com véu de degradê, por isso parece mais apagada.</p>
+        <div class="settings-row settings-row--wrap" style="margin-top:14px">
+          <a class="btn btn--soft btn--sm" href="assets/img/astolfo/astolfo-wall-1920.jpg" target="_blank" rel="noopener">Abrir o arquivo</a>
+          <button class="btn btn--soft btn--sm" type="button" data-astolfo="close-wall">Fechar</button>
+        </div>
       </div>
     </div>
   </dialog>
@@ -1114,6 +1154,7 @@
 
         <div class="settings-row settings-row--wrap" style="margin-top:16px">
           <button class="btn btn--primary btn--sm" type="button" data-astolfo="toggle">Ligar / desligar agora</button>
+          <button class="btn btn--soft btn--sm" type="button" data-astolfo="wallpaper">Ver imagem de fundo</button>
           <button class="btn btn--soft btn--sm" type="button" data-astolfo="close">Fechar</button>
         </div>
       </div>
@@ -2379,14 +2420,14 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="assets/js/social.js?v=54" defer></script>
+  <script src="assets/js/social.js?v=55" defer></script>
   <!-- abertura em about:blank: o site continua no iframe da aba em branco
        (o app.js recarrega a página uma vez quando o bundle muda, então o JS
        antigo nunca fica preso nessa aba) -->
-  <script src="assets/js/cloak.js?v=54" defer></script>
-  <script src="assets/js/anim.js?v=54" defer></script>
-  <script src="assets/js/astolfo.js?v=54" defer></script>
-  <script src="assets/js/lcore.js?v=54" defer></script>
-    <script src="assets/js/app.js?v=54" defer></script>
+  <script src="assets/js/cloak.js?v=55" defer></script>
+  <script src="assets/js/anim.js?v=55" defer></script>
+  <script src="assets/js/astolfo.js?v=55" defer></script>
+  <script src="assets/js/lcore.js?v=55" defer></script>
+    <script src="assets/js/app.js?v=55" defer></script>
 </body>
 </html>

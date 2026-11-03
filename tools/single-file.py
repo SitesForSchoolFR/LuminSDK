@@ -55,7 +55,7 @@ DROP_TAGS = [
 # imagens referenciadas por url() no CSS entram como data URI no arquivo único
 # (só a versão leve: o arquivo único é o catálogo de jogos e não pode pesar 1 MB)
 INLINE_IMAGES = [
-    ("../img/astolfo/astolfo-bg-1280.jpg", "assets/img/astolfo/astolfo-bg-1280.jpg"),
+    ("../img/astolfo/astolfo-wall-1280.jpg", "assets/img/astolfo/astolfo-wall-1280.jpg"),
 ]
 
 SW_GUARD_FROM = "    if (!('serviceWorker' in navigator)) return;"
@@ -67,17 +67,32 @@ def read_text(path: Path) -> str:
 
 
 def data_uris(css: str, root: Path) -> str:
-    """Troca url(../img/...) por data URI: o arquivo único não tem pasta ao lado."""
-    for rel, real in INLINE_IMAGES:
+    """Troca url(../img/...) por data URI: o arquivo único não tem pasta ao lado.
+
+    A imagem pode aparecer em várias regras (tema escuro, claro, celular). Para
+    não repetir o base64 a cada uma (eram ~200 KB de cópia), cada arquivo vira
+    uma variável CSS declarada uma única vez no topo."""
+    # a arte grande não entra: o fundo "-1280" é reutilizado no lugar dela
+    css = css.replace(
+        'url("../img/astolfo/astolfo-wall-1920.jpg")',
+        'url("../img/astolfo/astolfo-wall-1280.jpg")',
+    )
+    vars_: list[str] = []
+    for index, (rel, real) in enumerate(INLINE_IMAGES):
         path = root / real
         if not path.is_file():
             continue
         mime = "image/png" if path.suffix.lower() == ".png" else "image/jpeg"
         payload = base64.b64encode(path.read_bytes()).decode("ascii")
-        css = css.replace(f'url("{rel}")', f'url("data:{mime};base64,{payload}")')
-        css = css.replace(f"url({rel})", f"url(data:{mime};base64,{payload})")
-    # a arte grande não entra: o fundo "-1280" é reutilizado no lugar dela
-    css = css.replace('url("../img/astolfo/astolfo-bg.jpg")', 'url("../img/astolfo/astolfo-bg-1280.jpg")')
+        uri = f"data:{mime};base64,{payload}"
+        name = f"--lum-img-{index}"
+        if f'url("{rel}")' not in css and f"url({rel})" not in css:
+            continue
+        css = css.replace(f'url("{rel}")', f"var({name})")
+        css = css.replace(f"url({rel})", f"var({name})")
+        vars_.append(f':root {{ {name}: url("{uri}"); }}')
+    if vars_:
+        css = "\n".join(vars_) + "\n" + css
     return css
 
 
@@ -248,6 +263,14 @@ def build(root: Path) -> tuple[str, dict[str, object]]:
     html = re.sub(
         r'src="assets/img/([^"]+)"',
         r'src="https://suckinguptoessry.github.io/LuminSDK/assets/img/\1"',
+        html,
+    )
+
+    # links para imagens (o "Abrir o arquivo" do papel de parede) também precisam
+    # do endereço publicado: o arquivo único não tem a pasta assets/ ao lado
+    html = re.sub(
+        r'(<a [^>]*href=")assets/img/([^"]+)"',
+        r'\1https://suckinguptoessry.github.io/LuminSDK/assets/img/\2"',
         html,
     )
 

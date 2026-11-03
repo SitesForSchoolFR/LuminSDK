@@ -6,7 +6,7 @@
    ========================================================= */
 'use strict';
 
-const VERSION = 'v54';
+const VERSION = 'v55';
 const SHELL_CACHE = 'lumin-shell-' + VERSION;
 const RUNTIME_CACHE = 'lumin-runtime-' + VERSION;
 
@@ -19,47 +19,49 @@ const SHELL = [
   './',
   'index.html',
   'manifest.webmanifest',
-  'assets/css/styles.css?v=54',
-  'assets/css/app.css?v=54',
-  'assets/js/app.js?v=54',
-  'assets/js/cloak.js?v=54',
-  'assets/js/anim.js?v=54',
-  'assets/css/anim.css?v=54',
-  'assets/js/astolfo.js?v=54',
-  'assets/css/astolfo.css?v=54',
-  'assets/js/site.js?v=54',
-  'assets/js/settings.js?v=54',
-  'assets/js/progress.js?v=54',
-  'assets/js/atmosphere.js?v=54',
-  'assets/js/library.js?v=54',
-  'assets/js/bonus.js?v=54',
-  'assets/js/social.js?v=54',
-  'assets/js/player.js?v=54',
-  'assets/js/os.js?v=54',
-  'assets/js/profile.js?v=54',
-  'assets/js/lab.js?v=54',
-  'assets/js/studio.js?v=54',
-  'assets/js/arcade.js?v=54',
-  'assets/js/vault.js?v=54',
-  'assets/js/community.js?v=54',
-  'assets/css/social.css?v=54',
-  'assets/css/lcore.css?v=54',
-  'assets/js/lcore.js?v=54',
-  'assets/css/os.css?v=54',
-  'assets/css/hub.css?v=54',
-  'assets/js/hub.js?v=54',
-  'assets/js/central.js?v=54',
+  'assets/css/styles.css?v=55',
+  'assets/css/app.css?v=55',
+  'assets/js/app.js?v=55',
+  'assets/js/cloak.js?v=55',
+  'assets/js/anim.js?v=55',
+  'assets/css/anim.css?v=55',
+  'assets/js/astolfo.js?v=55',
+  'assets/css/astolfo.css?v=55',
+  'assets/js/site.js?v=55',
+  'assets/js/settings.js?v=55',
+  'assets/js/progress.js?v=55',
+  'assets/js/atmosphere.js?v=55',
+  'assets/js/library.js?v=55',
+  'assets/js/bonus.js?v=55',
+  'assets/js/social.js?v=55',
+  'assets/js/player.js?v=55',
+  'assets/js/os.js?v=55',
+  'assets/js/profile.js?v=55',
+  'assets/js/lab.js?v=55',
+  'assets/js/studio.js?v=55',
+  'assets/js/arcade.js?v=55',
+  'assets/js/vault.js?v=55',
+  'assets/js/community.js?v=55',
+  'assets/css/social.css?v=55',
+  'assets/css/lcore.css?v=55',
+  'assets/js/lcore.js?v=55',
+  'assets/css/os.css?v=55',
+  'assets/css/hub.css?v=55',
+  'assets/js/hub.js?v=55',
+  'assets/js/central.js?v=55',
   'assets/img/hub.svg',
-  'assets/css/study.css?v=54',
-  'assets/css/browser.css?v=54',
-  'assets/js/browser.js?v=54',
-  'assets/js/provider.js?v=54',
-  'assets/css/provider.css?v=54',
+  'assets/css/study.css?v=55',
+  'assets/css/browser.css?v=55',
+  'assets/js/browser.js?v=55',
+  'assets/js/provider.js?v=55',
+  'assets/css/provider.css?v=55',
   'assets/img/browser.jpg',
   'assets/img/duckmath.jpg',
   'assets/img/astra.jpg',
   'assets/img/favicon.svg',
-  'assets/img/os-icon.jpg'
+  'assets/img/os-icon.jpg',
+  /* papel de parede do tema Astolfo (73 KB): sem ele o tema abre sem fundo offline */
+  'assets/img/astolfo/astolfo-wall-1280.jpg'
 ];
 
 self.addEventListener('install', (event) => {
@@ -148,7 +150,7 @@ self.addEventListener('fetch', (event) => {
     fetch(request)
       .then((response) => {
         /* só guarda sucesso de verdade: 404 de arquivo recém-publicado
-           (ex.: assets/js/anim.js?v=54 antes do Pages terminar) não pode
+           (ex.: assets/js/anim.js?v=55 antes do Pages terminar) não pode
            virar cache permanente */
         if (response && response.ok && response.status === 200) {
           caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, response.clone())).catch(() => {});

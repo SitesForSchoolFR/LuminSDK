@@ -3132,6 +3132,39 @@ button.ast-card__avatar:active { transform: scale(.94); }
 }
 .ast-card__note { font-size: .72rem; color: var(--muted); }
 
+/* onde está a imagem de fundo do tema */
+.ast-card__bg {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid rgba(255, 158, 203, .26);
+  border-radius: 12px;
+  background: rgba(255, 158, 203, .07);
+}
+.ast-card__thumb {
+  flex: none;
+  width: 96px;
+  height: 54px;
+  padding: 0;
+  border: 1px solid rgba(255, 158, 203, .5);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #140e1b;
+  cursor: zoom-in;
+  transition: transform .18s var(--ease), box-shadow .18s var(--ease);
+}
+.ast-card__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ast-card__thumb:hover { transform: scale(1.03); box-shadow: 0 0 0 2px rgba(255, 95, 168, .35); }
+.ast-card__bg-text { display: grid; gap: 2px; min-width: 0; font-size: .74rem; color: var(--text-soft); }
+.ast-card__bg-text code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: .66rem;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.ast-card__bg-text small { color: var(--muted); font-size: .68rem; line-height: 1.35; }
+
 /* visualizador: o "antes de ligar" */
 .ast-sheet__art {
   width: 100%;
@@ -3141,6 +3174,17 @@ button.ast-card__avatar:active { transform: scale(.94); }
   border: 1px solid rgba(255, 158, 203, .35);
   background: #140e1b;
 }
+/* papel de parede: mostra a arte INTEIRA (sem recorte), do jeito que está no arquivo */
+.ast-sheet__art--full {
+  aspect-ratio: auto;
+  width: auto;
+  max-width: 100%;
+  max-height: min(58vh, 520px);
+  margin: 0 auto;
+  display: block;
+  object-fit: contain;
+}
+
 .ast-sheet__swatches { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
 .ast-sheet__swatch {
   display: grid;
