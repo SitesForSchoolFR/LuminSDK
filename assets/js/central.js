@@ -58,6 +58,11 @@
   };
 
   const CHANGELOG = [
+    { v: 'v50', items: [
+      'Tema Astolfo com papel de parede: a arte do personagem entra atrás do site inteiro num véu de opacidade baixa, para o rosto aparecer sem atrapalhar a leitura.',
+      'A aba de estudos acompanha de verdade: busca, campos, hovers, painel da semana, barras de progresso, CTA e o cronômetro (que saiu do azul para ameixa com barras rosa).',
+      'A animação de troca de aba também vira do tema: rosa e lilás, anéis com brilho duplo, mostrador com a fonte do tema e um coração girando no fundo.'
+    ] },
     { v: 'v49', items: [
       'Tema Astolfo (SFW) para o site inteiro: rosa, preto e branco quente em todas as abas — liga no fim do painel Personalizar ou com Ctrl + AltGr + Y, e a mesma combinação volta ao minimalista.',
       'Antes de ligar dá para espiar: botão "Ver como fica" mostra a arte, as cores e a lista do que muda.',

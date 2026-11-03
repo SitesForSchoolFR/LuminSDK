@@ -197,6 +197,80 @@ html[data-skin="astolfo"] .tabrail__tab img { border-radius: 9px; }
 html[data-skin="astolfo"] .tabrail__sep { background: rgba(255, 143, 196, .35); }
 
 /* =========================================================
+   2b. Papel de parede: a arte do Astolfo bem discreta
+   A imagem fica numa camada fixa ATRÁS do conteúdo (z-index negativo,
+   como o .bg-fx do site). A "opacidade" vem de duas camadas de degradê
+   por cima dela — assim o rosto aparece, mas o texto continua legível.
+   ========================================================= */
+html[data-skin="astolfo"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  /* a camada de estrelas (body::after, z-index 0) apontaria para esta
+     "capa" e ficaria escondida atrás do conteúdo: como aqui não há imagem
+     nas estrelas, o z-index 0 é seguro — está anotado no body::after */
+  opacity: 1;
+  background-image:
+    /* véu de leitura: escuro na esquerda (onde fica o conteúdo) */
+    linear-gradient(100deg, rgba(11, 8, 16, .97) 0%, rgba(11, 8, 16, .82) 38%, rgba(11, 8, 16, .3) 70%, rgba(11, 8, 16, 0) 100%),
+    /* véu de base */
+    linear-gradient(0deg, rgba(11, 8, 16, .95) 0%, rgba(11, 8, 16, .35) 34%, rgba(11, 8, 16, 0) 62%),
+    /* o "opacity" da arte: tudo por baixo fica mais apagado */
+    linear-gradient(rgba(11, 8, 16, .55), rgba(11, 8, 16, .55)),
+    /* a arte do Astolfo (humana, MIT — ver CREDITS.md) */
+    url("../img/astolfo/astolfo-bg.jpg");
+  background-position: 0 0, 0 0, 0 0, 68% 42%;
+  background-size: auto, auto, auto, cover;
+  background-repeat: no-repeat;
+  background-color: #0b0810;
+  animation: ast-breathe 26s ease-in-out infinite alternate;
+}
+
+html[data-skin="astolfo"][data-theme="light"] body::before {
+  background-image:
+    linear-gradient(100deg, rgba(255, 247, 251, .98) 0%, rgba(255, 247, 251, .88) 38%, rgba(255, 247, 251, .35) 72%, rgba(255, 247, 251, 0) 100%),
+    linear-gradient(0deg, rgba(255, 247, 251, .96) 0%, rgba(255, 247, 251, .4) 34%, rgba(255, 247, 251, 0) 62%),
+    linear-gradient(rgba(255, 247, 251, .62), rgba(255, 247, 251, .62)),
+    url("../img/astolfo/astolfo-bg.jpg");
+}
+
+/* estrelinhas (por cima, mas quase invisíveis e sem capturar clique) */
+html[data-skin="astolfo"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .55;
+  background-image:
+    radial-gradient(1.6px 1.6px at 12% 18%, rgba(255, 158, 203, .9), transparent),
+    radial-gradient(1.4px 1.4px at 78% 26%, rgba(255, 215, 234, .8), transparent),
+    radial-gradient(1.8px 1.8px at 42% 72%, rgba(215, 193, 255, .8), transparent),
+    radial-gradient(1.3px 1.3px at 88% 82%, rgba(255, 158, 203, .8), transparent),
+    radial-gradient(1.5px 1.5px at 26% 90%, rgba(255, 255, 255, .7), transparent);
+  background-size: 100% 100%;
+}
+
+/* em telas pequenas o retrato fica no canto e ainda mais apagado */
+@media (max-width: 860px) {
+  html[data-skin="astolfo"] body::before {
+    background-image:
+      linear-gradient(0deg, rgba(11, 8, 16, .97) 0%, rgba(11, 8, 16, .55) 44%, rgba(11, 8, 16, .2) 78%, rgba(11, 8, 16, .1) 100%),
+      linear-gradient(rgba(11, 8, 16, .58), rgba(11, 8, 16, .58)),
+      url("../img/astolfo/astolfo-bg-1280.jpg");
+    background-position: 0 0, 0 0, 70% 22%;
+  }
+  html[data-skin="astolfo"] body::after { opacity: .4; }
+}
+
+@keyframes ast-breathe {
+  from { transform: scale(1) translate3d(0, 0, 0); }
+  to   { transform: scale(1.05) translate3d(-1.2%, -.8%, 0); }
+}
+
+/* =========================================================
    3. Botões, chips, cartões e detalhes
    ========================================================= */
 html[data-skin="astolfo"] .btn--primary {
@@ -284,6 +358,74 @@ html[data-skin="astolfo"] #view-estudo .hero {
     linear-gradient(150deg, #fff, #ffeaf4);
   border: 1px solid #f7cfe2;
   border-radius: 22px;
+}
+
+/* ---- estudos: os componentes do StudyDesk (classes sd-*) ---- */
+/* foco da busca e do campo de tarefa */
+html[data-skin="astolfo"] #view-estudo .sd-search:focus-within,
+html[data-skin="astolfo"] #view-estudo .sd-add input:focus {
+  border-color: #ef9dc0;
+  box-shadow: 0 0 0 3px rgba(255, 143, 196, .18);
+}
+/* hover de matéria, tarefa, opção de quiz, resultado */
+html[data-skin="astolfo"] #view-estudo .sd-subject:hover,
+html[data-skin="astolfo"] #view-estudo .task:hover,
+html[data-skin="astolfo"] #view-estudo .opt:hover:not(:disabled),
+html[data-skin="astolfo"] #view-estudo .sd-res__item:hover,
+html[data-skin="astolfo"] #view-estudo .sd-res__item[open],
+html[data-skin="astolfo"] #view-estudo .sd-faq details:hover,
+html[data-skin="astolfo"] #view-estudo .sd-faq details[open] {
+  border-color: #efb9d2;
+  background: #ffeef6;
+}
+/* painel "nesta semana" */
+html[data-skin="astolfo"] #view-estudo .sd-panel {
+  background:
+    radial-gradient(320px 180px at 100% 0%, #ffe4f0 0%, rgba(255, 228, 240, 0) 70%),
+    #fff;
+  border-color: #f7d8e6;
+}
+/* barras de progresso */
+html[data-skin="astolfo"] #view-estudo .sd-bar span,
+html[data-skin="astolfo"] #view-estudo .sd-timer .sd-bar span {
+  background: linear-gradient(90deg, #ff8fc4, #d7c1ff);
+}
+html[data-skin="astolfo"] #view-estudo .sd-bar { background: #ffe1ee; }
+/* botão do CTA */
+html[data-skin="astolfo"] #view-estudo .sd-cta .sd-btn:hover { background: #ffe4f0; }
+/* selo/eyebrow e faísca da seção */
+html[data-skin="astolfo"] #view-estudo .sd-chip.is-on,
+html[data-skin="astolfo"] #view-estudo .sd-pill {
+  background: #ff8fc4;
+  border-color: #ff8fc4;
+  color: #2a0b1b;
+}
+html[data-skin="astolfo"] #view-estudo .sd-eyebrow span { background: #ff8fc4; }
+
+/* cronômetro: bloco ameixa com barras rosa (era azul-marinho) */
+html[data-skin="astolfo"] #view-estudo .sd-timer {
+  background:
+    radial-gradient(260px 160px at 100% 0%, rgba(255, 143, 196, .3), transparent 70%),
+    linear-gradient(165deg, #22102a, #140b18);
+  color: #ffe7f3;
+  border: 1px solid rgba(255, 158, 203, .28);
+}
+html[data-skin="astolfo"] #view-estudo .sd-timer .sd-bar { background: rgba(255, 255, 255, .14); }
+html[data-skin="astolfo"] #view-estudo .sd-timer .sd-chip { color: #ffd7ea; }
+html[data-skin="astolfo"] #view-estudo .sd-timer .sd-chip:hover { background: rgba(255, 158, 203, .2); color: #fff; }
+html[data-skin="astolfo"] #view-estudo .sd-timer .sd-chip.is-on {
+  background: #ff8fc4;
+  color: #2a0b1b;
+}
+
+/* o que é informação continua verde/vermelho: acerto e erro do quiz */
+html[data-skin="astolfo"] #view-estudo .opt.is-right { border-color: #7fdcb4; background: #eafaf1; }
+html[data-skin="astolfo"] #view-estudo .opt.is-wrong { border-color: #f0a9b4; background: #fdeef1; }
+
+/* a faixa de novidades do topo (se existir) acompanha o rosa */
+html[data-skin="astolfo"] #view-estudo .sd-top,
+html[data-skin="astolfo"] #view-estudo .sd-nav {
+  border-color: #f7d8e6;
 }
 
 /* ---- sites / catálogo ---- */
@@ -393,6 +535,64 @@ html[data-skin="astolfo"] .segmented__btn.is-active {
 }
 
 /* =========================================================
+   5b. Animação de troca de aba no clima do Astolfo
+   O anim.js já manda as cores do tema (--la-1 rosa, --la-2 lilás); aqui
+   entram o brilho, o laço girando e o texto com a fonte do tema.
+   ========================================================= */
+html[data-skin="astolfo"] #lum-anim {
+  background:
+    radial-gradient(60% 60% at 50% 50%, rgba(255, 95, 168, .32), transparent 68%),
+    radial-gradient(70% 70% at 82% 18%, rgba(215, 193, 255, .26), transparent 66%),
+    radial-gradient(circle at 50% 50%, rgba(26, 12, 24, .78) 0%, rgba(11, 7, 14, .95) 68%);
+}
+html[data-skin="astolfo"] #lum-anim .la-ring {
+  border-width: 2px;
+  border-color: color-mix(in srgb, var(--la-1, #ff8fc4) 85%, transparent);
+  box-shadow: 0 0 28px color-mix(in srgb, var(--la-2, #d7c1ff) 55%, transparent) inset,
+    0 0 34px color-mix(in srgb, var(--la-1, #ff8fc4) 45%, transparent);
+}
+html[data-skin="astolfo"] #lum-anim .la-warp {
+  filter: blur(9px) saturate(1.2);
+}
+html[data-skin="astolfo"] #lum-anim .la-grid {
+  opacity: .7;
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--la-1, #ff8fc4) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--la-2, #d7c1ff) 45%, transparent) 1px, transparent 1px);
+}
+html[data-skin="astolfo"] #lum-anim .la-time {
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  color: #fff6fb;
+  text-shadow: 0 0 22px rgba(255, 143, 196, .95), 0 0 48px rgba(215, 193, 255, .7);
+}
+html[data-skin="astolfo"] #lum-anim .la-label {
+  color: #ffd7ea;
+  letter-spacing: .34em;
+}
+/* um laço girando no lugar do flash seco */
+html[data-skin="astolfo"] #lum-anim .la-flash {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 246, 251, .9) 0%, rgba(255, 143, 196, .35) 34%, transparent 62%);
+}
+html[data-skin="astolfo"] #lum-anim::after {
+  content: "♡";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: min(40vmin, 260px);
+  line-height: 1;
+  color: rgba(255, 158, 203, .16);
+  pointer-events: none;
+  animation: ast-heart 2.4s ease-out both;
+}
+@keyframes ast-heart {
+  0% { opacity: 0; transform: scale(.6) rotate(-12deg); }
+  30% { opacity: 1; transform: scale(1.06) rotate(4deg); }
+  100% { opacity: 0; transform: scale(1.22) rotate(0); }
+}
+
+/* =========================================================
    6. Detalhes animados (respeitando "menos movimento")
    ========================================================= */
 @keyframes ast-swish {
@@ -402,29 +602,9 @@ html[data-skin="astolfo"] .segmented__btn.is-active {
 }
 html[data-skin="astolfo"] .brand__mark { animation: ast-swish 4.5s ease-in-out infinite; }
 
-/* estrelinhas no fundo (leves, sem custo de JS) */
-html[data-skin="astolfo"] body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: .55;
-  background-image:
-    radial-gradient(1.6px 1.6px at 12% 18%, rgba(255, 158, 203, .9), transparent),
-    radial-gradient(1.4px 1.4px at 78% 26%, rgba(255, 215, 234, .8), transparent),
-    radial-gradient(1.8px 1.8px at 42% 72%, rgba(215, 193, 255, .8), transparent),
-    radial-gradient(1.3px 1.3px at 88% 82%, rgba(255, 158, 203, .8), transparent),
-    radial-gradient(1.5px 1.5px at 26% 90%, rgba(255, 255, 255, .7), transparent);
-  background-size: 100% 100%;
-}
-html[data-skin="astolfo"][data-theme="light"] body::after { opacity: .35; }
-html[data-skin="astolfo"] .no-motion body::after,
-html.no-motion[data-skin="astolfo"] body::after { animation: none; }
-
-@media (prefers-reduced-motion: reduce) {
-  html[data-skin="astolfo"] .brand__mark { animation: none; }
-}
+/* "menos movimento" também desliga a respiração do papel de parede */
+html.no-motion[data-skin="astolfo"] body::before,
+html[data-skin="astolfo"] .no-motion body::before { animation: none; }
 
 /* =========================================================
    7. No celular: enxuto, sem perder a cara do tema

@@ -32,3 +32,11 @@ mesma licença MIT do LuminSDK.
 ## Se você é o artista ou o detentor dos direitos
 
 Abra uma issue em <https://github.com/SuckingUpToesSry/LuminSDK/issues> que a arte é removida na hora.
+
+## Papel de parede do tema
+
+`astolfo-bg.jpg` (1920×1080) e `astolfo-bg-1280.jpg` (1280×720) são **composições feitas aqui** sobre a
+ilustração de [Kouromo/astolfo-vscode-theme](https://github.com/Kouromo/astolfo-vscode-theme) (MIT):
+fundo ameixa com brilhos rosa/lilás, o desenho ampliado à direita e os degradês de leitura por cima.
+No site a arte ainda por cima entra com véu de opacidade (CSS), então ela aparece discreta, sem
+dominar o conteúdo. Nenhum gerador de imagem foi usado — só recorte, escala e degradê.

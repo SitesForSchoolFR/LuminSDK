@@ -61,7 +61,7 @@
     const link = document.createElement('link');
     link.id = 'astolfo-css';
     link.rel = 'stylesheet';
-    link.href = 'assets/css/astolfo.css?v=53';
+    link.href = 'assets/css/astolfo.css?v=54';
     link.addEventListener('error', function () { link.remove(); });
     document.head.appendChild(link);
   }
@@ -215,6 +215,11 @@
         link.disabled = was;
       } catch (error) { /* folha sem suporte a disabled: já está aplicada */ }
     });
+
+    /* a camada da animação de troca de aba passa a usar as cores do tema */
+    try {
+      if (window.LuminAnim && typeof window.LuminAnim.refresh === 'function') window.LuminAnim.refresh();
+    } catch (error) { /* animação indisponível: segue */ }
 
     /* quem quiser reagir (o app.js reaplica a rota atual) */
     try {

@@ -22,6 +22,9 @@
   place-items: center;
   background: radial-gradient(circle at 50% 50%,
     rgba(12, 8, 25, .55) 0%, rgba(5, 4, 9, .85) 62%, rgba(5, 4, 9, .95) 100%);
+  /* as cores vêm do anim.js (--la-1 / --la-2). Sem tema, o padrão é o
+     violeta/ciano de sempre; com o tema Astolfo, o anim.js manda rosa e
+     lilás — por isso o fallback existe aqui. */
   /* todos os tempos usam --la-scale: o CSS foi coreografado para 200 ms e
      o anim.js multiplica pelo fator da duração escolhida (2,5 s = 12,5) */
   animation: la-fade calc(200ms * var(--la-scale, 1)) ease-out both;

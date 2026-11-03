@@ -386,7 +386,7 @@ Como funciona:
   histórico nem a barra mostram o endereço do portal — é o mesmo truque do `openBackup()` do
   [Utopia](https://utopia.myk.sh): `about:blank` com o site no iframe na frente e o Google atrás.
   `?cloak=google` abre a aba em branco mas mantém o portal na aba de trás;
-- **nunca fica JS velho preso**: o `app.js` grava a versão do bundle (`?v=53`) na sessão e, quando ela
+- **nunca fica JS velho preso**: o `app.js` grava a versão do bundle (`?v=54`) na sessão e, quando ela
   muda, **recarrega a página uma vez** — é o que impede a aba em branco de continuar rodando o código
   antigo depois de uma atualização (o service worker também parou de guardar 404/erro em cache);
 - **abre SEMPRE**: não existe mais trava de sessão nenhuma — cada carga da página tenta abrir a aba
@@ -837,6 +837,15 @@ branco quente — sem mudar o padrão de quem não liga:
 - **Galeria:** o botão **Ver como fica** mostra a arte grande e quatro miniaturas (close-up, dia a dia,
   roxo e cavaleiro); dá para trocar a arte grande por ali, e **tocar no avatar do cartão** passa para a
   próxima. A última escolhida fica salva.
+- **Papel de parede:** a arte do Astolfo entra atrás de todo o site numa camada fixa, com véu de
+  degradê (opacidade baixa, mais forte à esquerda, onde fica o texto) — o rosto aparece, o conteúdo
+  continua legível. No celular usa a versão de 1280 px, mais leve.
+- **Animação de troca de aba no clima do tema:** com o Astolfo ligado, a camada de 2,5 s troca para
+  rosa e lilás, os anéis ganham brilho duplo, o mostrador usa a fonte do tema e um `♡` gigante pulsa no
+  fundo. O carimbo do relógio continua diferente por aba.
+- **Aba de estudos:** o tema cobre os componentes do StudyDesk (busca, campos, hover de matéria/tarefa,
+  opções do quiz, painel "nesta semana", barras de progresso, botão do CTA e o cronômetro, que sai do
+  azul-marinho para ameixa com barras rosa). Verde de acerto e vermelho de erro ficam intactos.
 
 ### Atalhos de teclado
 

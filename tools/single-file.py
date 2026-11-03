@@ -52,12 +52,33 @@ DROP_TAGS = [
     r'[ \t]*<link rel="apple-touch-icon"[^>]*>\r?\n',
 ]
 
+# imagens referenciadas por url() no CSS entram como data URI no arquivo único
+# (só a versão leve: o arquivo único é o catálogo de jogos e não pode pesar 1 MB)
+INLINE_IMAGES = [
+    ("../img/astolfo/astolfo-bg-1280.jpg", "assets/img/astolfo/astolfo-bg-1280.jpg"),
+]
+
 SW_GUARD_FROM = "    if (!('serviceWorker' in navigator)) return;"
 SW_GUARD_TO = "    if (window.__LUMIN_SINGLE__ || !('serviceWorker' in navigator)) return;"
 
 
 def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+def data_uris(css: str, root: Path) -> str:
+    """Troca url(../img/...) por data URI: o arquivo único não tem pasta ao lado."""
+    for rel, real in INLINE_IMAGES:
+        path = root / real
+        if not path.is_file():
+            continue
+        mime = "image/png" if path.suffix.lower() == ".png" else "image/jpeg"
+        payload = base64.b64encode(path.read_bytes()).decode("ascii")
+        css = css.replace(f'url("{rel}")', f'url("data:{mime};base64,{payload}")')
+        css = css.replace(f"url({rel})", f"url(data:{mime};base64,{payload})")
+    # a arte grande não entra: o fundo "-1280" é reutilizado no lugar dela
+    css = css.replace('url("../img/astolfo/astolfo-bg.jpg")', 'url("../img/astolfo/astolfo-bg-1280.jpg")')
+    return css
 
 
 def inline_css(html: str, root: Path) -> tuple[str, list[str]]:
@@ -69,11 +90,13 @@ def inline_css(html: str, root: Path) -> tuple[str, list[str]]:
         if not href.startswith("assets/") or not path.is_file():
             return match.group(0)
         css = read_text(path).strip("\n")
+        css = data_uris(css, root)
         inlined.append(href)
         return f"  <!-- {href} -->\n  <style>\n{css}\n  </style>"
 
+    # aceita atributos extras (id, media…): o <link> do tema Astolfo tem id
     html = re.sub(
-        r'[ \t]*<link rel="stylesheet" href="([^"]+)">',
+        r'[ \t]*<link rel="stylesheet" href="([^"]+)"[^>]*>',
         repl,
         html,
     )
@@ -172,7 +195,7 @@ def build(root: Path) -> tuple[str, dict[str, object]]:
         (r"[ \t]*<link rel=\"stylesheet\" href=\"assets/css/lcore\.css[^\"]*\"[^>]*>\r?\n", "lcore.css"),
         (r"[ \t]*<script src=\"assets/js/lcore\.js[^\"]*\"[^>]*></script>\r?\n", "lcore.js"),
         (r"[ \t]*<!-- abertura em about:blank[\s\S]*?-->\r?\n[ \t]*<script src=\"assets/js/cloak\.js[^\"]*\"[^>]*></script>\r?\n", "cloak.js"),
-        (r"[ \t]*<!-- anima[^\n]*assets/js/anim\.js -->\n[ \t]*<link rel=\"stylesheet\" href=\"assets/css/anim\.css[^\"]*\">\r?\n", "anim.css"),
+        (r"[ \t]*<!-- anima[^\n]*assets/js/anim\.js -->\n[ \t]*<link rel=\"stylesheet\" href=\"assets/css/anim\.css[^\"]*\"[^>]*>\r?\n", "anim.css"),
         (r"[ \t]*<script src=\"assets/js/anim\.js[^\"]*\"[^>]*></script>\r?\n", "anim.js"),
     ]
     for pattern, label in strip:
