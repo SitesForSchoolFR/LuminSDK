@@ -3021,6 +3021,108 @@ html[data-speed] .site-nav a {
 }
 
 /* =========================================================
+   14b. Tema Astolfo — cartão do painel e visualizador
+   (sempre presente: o cartão aparece mesmo com o tema desligado)
+   ========================================================= */
+.ast-card {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 158, 203, .34);
+  border-radius: 16px;
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(255, 95, 168, .22), transparent 62%),
+    linear-gradient(150deg, rgba(255, 158, 203, .16), rgba(215, 193, 255, .08));
+  overflow: hidden;
+}
+.ast-card__head { display: flex; align-items: center; gap: 12px; }
+.ast-card__avatar {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 158, 203, .75);
+  background: #140e1b;
+  overflow: hidden;
+}
+.ast-card__avatar img { width: 100%; height: 100%; display: block; }
+.ast-card__title { font-weight: 700; line-height: 1.25; }
+.ast-card__title small {
+  display: block;
+  font-weight: 500;
+  font-size: .72rem;
+  color: var(--muted);
+  letter-spacing: .02em;
+}
+.ast-card__row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ast-card__state {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 158, 203, .45);
+  color: #ffd7ea;
+  background: rgba(255, 95, 168, .16);
+}
+.ast-card__state.is-on {
+  background: linear-gradient(120deg, #ff9ecb, #ff5fa8);
+  color: #2a0b1b;
+  border-color: transparent;
+}
+.ast-card__keys { font-size: .72rem; color: var(--muted); }
+.ast-card__keys kbd {
+  font: inherit;
+  font-size: .7rem;
+  padding: 1px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, .07);
+  color: var(--text);
+}
+.ast-card__note { font-size: .72rem; color: var(--muted); }
+
+/* visualizador: o "antes de ligar" */
+.ast-sheet__art {
+  width: 100%;
+  aspect-ratio: 8 / 3;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 158, 203, .35);
+  background: #140e1b;
+}
+.ast-sheet__swatches { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+.ast-sheet__swatch {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  font-size: .64rem;
+  letter-spacing: .04em;
+  color: var(--muted);
+  min-width: 56px;
+}
+.ast-sheet__swatch i {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  display: block;
+}
+.ast-sheet__list {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 7px;
+  font-size: .78rem;
+  color: var(--text-soft);
+}
+.ast-sheet__list li { display: flex; gap: 8px; align-items: flex-start; }
+.ast-sheet__list li::before { content: "♡"; color: #ff8fc4; flex: none; }
+
+/* =========================================================
    15. Estatísticas, conquistas e sugestão personalizada
    ========================================================= */
 

@@ -30,20 +30,20 @@
          desligado quando a rota muda */
       css: [],
       scripts: [
-        'assets/js/anim.js?v=50',
+        'assets/js/anim.js?v=51',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=50',
-        'assets/js/settings.js?v=50',
-        'assets/js/site.js?v=50',
-        'assets/js/atmosphere.js?v=50',
-        'assets/js/progress.js?v=50',
-        'assets/js/bonus.js?v=50'
+        'assets/js/library.js?v=51',
+        'assets/js/settings.js?v=51',
+        'assets/js/site.js?v=51',
+        'assets/js/atmosphere.js?v=51',
+        'assets/js/progress.js?v=51',
+        'assets/js/bonus.js?v=51'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=50'],
-      scripts: ['assets/js/gnmath.js?v=50'],
+      css: ['assets/css/gnmath.css?v=51'],
+      scripts: ['assets/js/gnmath.js?v=51'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -55,60 +55,60 @@
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=50'],
-      scripts: ['assets/js/provider.js?v=50', 'assets/js/atmosphere.js?v=50']
+      css: ['assets/css/provider.css?v=51'],
+      scripts: ['assets/js/provider.js?v=51', 'assets/js/atmosphere.js?v=51']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=50'],
-      scripts: ['assets/js/sites.js?v=50', 'assets/js/atmosphere.js?v=50']
+      css: ['assets/css/sites.css?v=51'],
+      scripts: ['assets/js/sites.js?v=51', 'assets/js/atmosphere.js?v=51']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=50'],
-      scripts: ['assets/js/browser.js?v=50', 'assets/js/atmosphere.js?v=50']
+      css: ['assets/css/browser.css?v=51'],
+      scripts: ['assets/js/browser.js?v=51', 'assets/js/atmosphere.js?v=51']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=50',
-        'assets/js/os.js?v=50',
-        'assets/js/profile.js?v=50',
-        'assets/js/lab.js?v=50',
-        'assets/js/studio.js?v=50',
-        'assets/js/arcade.js?v=50',
-        'assets/js/vault.js?v=50',
-        'assets/js/community.js?v=50',
-        'assets/js/central.js?v=50',
-        'assets/js/atmosphere.js?v=50'
+        'assets/js/player.js?v=51',
+        'assets/js/os.js?v=51',
+        'assets/js/profile.js?v=51',
+        'assets/js/lab.js?v=51',
+        'assets/js/studio.js?v=51',
+        'assets/js/arcade.js?v=51',
+        'assets/js/vault.js?v=51',
+        'assets/js/community.js?v=51',
+        'assets/js/central.js?v=51',
+        'assets/js/atmosphere.js?v=51'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=50', 'assets/css/hub.css?v=50'],
+      css: ['assets/css/os.css?v=51', 'assets/css/hub.css?v=51'],
       scripts: [
-        'assets/js/player.js?v=50',
-        'assets/js/os.js?v=50',
-        'assets/js/profile.js?v=50',
-        'assets/js/lab.js?v=50',
-        'assets/js/studio.js?v=50',
-        'assets/js/arcade.js?v=50',
-        'assets/js/vault.js?v=50',
-        'assets/js/community.js?v=50',
-        'assets/js/central.js?v=50',
-        'assets/js/hub.js?v=50'
+        'assets/js/player.js?v=51',
+        'assets/js/os.js?v=51',
+        'assets/js/profile.js?v=51',
+        'assets/js/lab.js?v=51',
+        'assets/js/studio.js?v=51',
+        'assets/js/arcade.js?v=51',
+        'assets/js/vault.js?v=51',
+        'assets/js/community.js?v=51',
+        'assets/js/central.js?v=51',
+        'assets/js/hub.js?v=51'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=50']
+      scripts: ['assets/js/atmosphere.js?v=51']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=50'],
-      scripts: ['assets/js/study-questions.js?v=50', 'assets/js/anim.js?v=50', 'assets/js/study.js?v=50']
+      css: ['assets/css/study.css?v=51'],
+      scripts: ['assets/js/study-questions.js?v=51', 'assets/js/anim.js?v=51', 'assets/js/study.js?v=51']
     }
   };
 
@@ -533,6 +533,15 @@
 
   /* quando o navegador troca de endereço, a barra lateral se ajusta */
   window.addEventListener('lumin:browser', function () { paintRail(current); });
+
+  /* tema Astolfo ligado/desligado: garante que o body e as folhas da aba
+     atual acompanhem (as folhas são carregadas por rota, então uma já
+     carregada precisa ser reavaliada) */
+  window.addEventListener('lumin:astolfo', function (event) {
+    const on = !!(event && event.detail && event.detail.on);
+    if (document.body) document.body.classList.toggle('is-astolfo', on);
+    document.documentElement.setAttribute('data-skin-toggle', on ? 'on' : 'off');
+  });
 
   window.LuminApp = {
     go: go,

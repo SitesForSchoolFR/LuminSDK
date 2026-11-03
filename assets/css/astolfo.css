@@ -1,0 +1,483 @@
+/* =========================================================
+   LuminSDK — tema Astolfo (femboy knight, SFW)
+   PERSONALIZAÇÃO COMPLETA E OPCIONAL: nada aqui aparece até o
+   atributo html[data-skin="astolfo"] existir (o botão das
+   configurações ou Ctrl + AltGr + Y). Ao desligar, tudo volta
+   ao minimalista — este arquivo não muda o padrão do site.
+
+   Paleta: rosa (cabelo, fita, meia arrastão), preto (jaqueta e
+   meia-calça) e um branco quente para respirar. Zero NSFW: só
+   cores, tipografia, roupas/estampas abstratas (listras, laço,
+   xadrez, poá) e desenhos de linha feitos aqui mesmo com SVG.
+   Autor: Ryan Smith · Licença MIT
+   ========================================================= */
+
+/* ---------- tokens do tema ---------- */
+html[data-skin="astolfo"] {
+  --ast-pink: #ff9ecb;
+  --ast-pink-hot: #ff5fa8;
+  --ast-pink-deep: #d63c86;
+  --ast-pink-soft: #ffd7ea;
+  --ast-lilac: #d7c1ff;
+  --ast-ink: #0d0a11;
+  --ast-ink-2: #17111f;
+  --ast-plum: #221528;
+  --ast-cream: #fff6fb;
+  --ast-skin: #ffe3d2;
+
+  /* destaque padrão do site vira rosa (o seletor de cores continua
+     funcionando por cima quando o tema está desligado) */
+  --accent: #ff8fc4;
+  --accent-rgb: 255, 143, 196;
+  --accent-soft: #f472b6;
+  --accent-soft-rgb: 244, 114, 182;
+  --accent-alt: #ffd7ea;
+  --accent-alt-rgb: 255, 215, 234;
+  --accent-pop: #e0459a;
+  --accent-pop-rgb: 224, 69, 154;
+  --accent-strong: #ffe7f3;
+  --accent-contrast: #1a0f16;
+  --violet: #ff9ecb;
+  --indigo: #f472b6;
+  --cyan: #ffd7ea;
+  --pink: #ff5fa8;
+  --glow: rgba(255, 158, 203, .22);
+
+  /* cantos mais redondos e uma fonte display própria */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --ast-hair: 1px solid rgba(255, 158, 203, .34);
+  --ast-shadow: 0 18px 44px -22px rgba(255, 95, 168, .55);
+  color-scheme: dark;
+}
+
+/* ---------- superfícies: preto de jaqueta + rosa ---------- */
+html[data-skin="astolfo"][data-theme="dark"],
+html[data-skin="astolfo"]:not([data-theme="light"]) {
+  --bg: #0b0810;
+  --bg-soft: #140e1b;
+  --surface: #17101f;
+  --surface-strong: #211530;
+  --surface-solid: #17101f;
+  --border: #34213f;
+  --border-strong: #55335f;
+  --text: #fff6fb;
+  --text-soft: #e6cfdd;
+  --muted: #b295a6;
+  --glow: rgba(255, 158, 203, .2);
+  --grid-line: rgba(255, 158, 203, .07);
+  --scrim: rgba(10, 6, 14, .84);
+  --skeleton: #1d1426;
+  --skeleton-hi: #2a1b36;
+}
+
+html[data-skin="astolfo"][data-theme="light"] {
+  --bg: #fff5fa;
+  --bg-soft: #fffafd;
+  --surface: #ffffff;
+  --surface-strong: #ffe9f3;
+  --surface-solid: #ffffff;
+  --border: #f6d3e4;
+  --border-strong: #efb2cd;
+  --text: #1c1018;
+  --text-soft: #4a3140;
+  --muted: #86677a;
+  --accent: #d6338a;
+  --accent-rgb: 214, 51, 138;
+  --accent-soft: #b02a72;
+  --accent-soft-rgb: 176, 42, 114;
+  --accent-alt: #f06aa9;
+  --accent-alt-rgb: 240, 106, 169;
+  --accent-pop: #8f1f5c;
+  --accent-pop-rgb: 143, 31, 92;
+  --accent-strong: #6d1445;
+  --accent-contrast: #ffffff;
+  --glow: rgba(214, 51, 138, .18);
+  color-scheme: light;
+}
+
+/* =========================================================
+   1. Estampas do personagem (só padrões e formas — SFW)
+   ========================================================= */
+
+/* meia arrastão (listras diagonais finas) */
+html[data-skin="astolfo"] .ast-fishnet,
+html[data-skin="astolfo"] .ast-sock {
+  background-image:
+    repeating-linear-gradient(45deg, rgba(13, 10, 17, .85) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(-45deg, rgba(13, 10, 17, .85) 0 1px, transparent 1px 7px);
+  background-color: var(--ast-pink-soft);
+}
+
+/* xadrez da saia/colete */
+html[data-skin="astolfo"] .ast-plaid,
+html[data-skin="astolfo"] .ast-skirt {
+  background-image:
+    repeating-linear-gradient(0deg, rgba(13, 10, 17, .32) 0 2px, transparent 2px 26px),
+    repeating-linear-gradient(90deg, rgba(13, 10, 17, .28) 0 2px, transparent 2px 26px),
+    linear-gradient(135deg, #ff9ecb, #f472b6 55%, #d63c86);
+  background-blend-mode: multiply, multiply, normal;
+}
+
+/* poá da fita */
+html[data-skin="astolfo"] .ast-polka {
+  background-image: radial-gradient(circle, rgba(255, 255, 255, .75) 0 2px, transparent 2.4px);
+  background-size: 14px 14px;
+}
+
+/* =========================================================
+   2. Cabeçalho, marca e barra lateral
+   ========================================================= */
+html[data-skin="astolfo"] .site-header {
+  background: linear-gradient(180deg, rgba(19, 12, 26, .92), rgba(11, 8, 16, .78));
+  border-bottom: 1px solid rgba(255, 143, 196, .22);
+}
+html[data-skin="astolfo"][data-theme="light"] .site-header {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .94), rgba(255, 245, 250, .82));
+}
+
+/* faixa de bandeirinhas no topo do cabeçalho (o detalhe "knight" de festa) */
+html[data-skin="astolfo"] .site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: repeating-linear-gradient(90deg,
+    var(--ast-pink) 0 22px, var(--ast-ink) 22px 44px, #ffffff 44px 66px);
+  opacity: .85;
+  pointer-events: none;
+}
+
+html[data-skin="astolfo"] .brand__name span { color: var(--ast-pink); }
+html[data-skin="astolfo"] .brand__mark {
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255, 158, 203, .55), 0 0 22px rgba(255, 95, 168, .45);
+  background: var(--ast-ink-2);
+}
+html[data-skin="astolfo"] .brand__tag {
+  color: var(--ast-pink);
+  border: 1px solid rgba(255, 158, 203, .4);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+
+/* fita no lugar da navegação: sublinhado ondulado no link ativo */
+html[data-skin="astolfo"] .site-nav a { position: relative; }
+html[data-skin="astolfo"] .site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -6px;
+  height: 4px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, transparent, var(--ast-pink), transparent);
+  transform: scaleX(0);
+  transition: transform .25s var(--ease, ease);
+}
+html[data-skin="astolfo"] .site-nav a:hover::after,
+html[data-skin="astolfo"] .site-nav a:focus-visible::after { transform: scaleX(1); }
+
+/* barra lateral: painel preto com borda rosa e cantos de fita */
+html[data-skin="astolfo"] .tabrail {
+  background:
+    linear-gradient(180deg, rgba(255, 158, 203, .12), transparent 34%),
+    var(--ast-ink);
+  border-right: 1px solid rgba(255, 143, 196, .3);
+}
+html[data-skin="astolfo"] .tabrail__tab {
+  border-radius: 12px;
+  transition: background .2s var(--ease, ease), transform .2s var(--ease, ease);
+}
+html[data-skin="astolfo"] .tabrail__tab:hover { background: rgba(255, 143, 196, .14); }
+html[data-skin="astolfo"] .tabrail__tab.is-active {
+  background: linear-gradient(160deg, rgba(255, 143, 196, .28), rgba(255, 95, 168, .12));
+  box-shadow: inset 0 0 0 1px rgba(255, 158, 203, .45);
+}
+html[data-skin="astolfo"] .tabrail__tab img { border-radius: 9px; }
+html[data-skin="astolfo"] .tabrail__sep { background: rgba(255, 143, 196, .35); }
+
+/* =========================================================
+   3. Botões, chips, cartões e detalhes
+   ========================================================= */
+html[data-skin="astolfo"] .btn--primary {
+  background: linear-gradient(120deg, var(--ast-pink), var(--ast-pink-deep) 78%);
+  color: #2a0b1b;
+  box-shadow: var(--ast-shadow);
+  border: 1px solid rgba(255, 255, 255, .35);
+  font-weight: 700;
+}
+html[data-skin="astolfo"] .btn--primary:hover {
+  background: linear-gradient(120deg, #ffb3d6, var(--ast-pink-hot) 80%);
+}
+html[data-skin="astolfo"] .btn--ghost,
+html[data-skin="astolfo"] .btn--soft {
+  border-color: rgba(255, 143, 196, .35);
+  color: var(--ast-pink-soft);
+}
+html[data-skin="astolfo"][data-theme="light"] .btn--ghost,
+html[data-skin="astolfo"][data-theme="light"] .btn--soft { color: var(--ast-pink-deep); }
+
+html[data-skin="astolfo"] .chip.is-active,
+html[data-skin="astolfo"] .chip[aria-pressed="true"] {
+  background: var(--ast-pink);
+  border-color: var(--ast-pink);
+  color: #2a0b1b;
+}
+
+html[data-skin="astolfo"] .card,
+html[data-skin="astolfo"] .info-card,
+html[data-skin="astolfo"] .game-card,
+html[data-skin="astolfo"] .settings-section {
+  border-color: rgba(255, 143, 196, .22);
+}
+html[data-skin="astolfo"] .card:hover,
+html[data-skin="astolfo"] .game-card:hover {
+  border-color: rgba(255, 158, 203, .55);
+  box-shadow: var(--ast-shadow);
+}
+
+/* títulos com um toque de fita */
+html[data-skin="astolfo"] .section-title::before,
+html[data-skin="astolfo"] .eyebrow::before {
+  content: "♡ ";
+  color: var(--ast-pink);
+}
+html[data-skin="astolfo"] ::selection { background: var(--ast-pink); color: #2a0b1b; }
+html[data-skin="astolfo"] :focus-visible { outline: 2px solid var(--ast-pink); outline-offset: 2px; }
+
+/* rolagem com trilho rosa */
+html[data-skin="astolfo"] * { scrollbar-color: var(--ast-pink-hot) rgba(255, 255, 255, .06); }
+html[data-skin="astolfo"] ::-webkit-scrollbar { width: 10px; height: 10px; }
+html[data-skin="astolfo"] ::-webkit-scrollbar-track { background: rgba(255, 255, 255, .05); }
+html[data-skin="astolfo"] ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--ast-pink), var(--ast-pink-deep));
+  border-radius: 999px;
+}
+
+/* =========================================================
+   4. Cada aba com a sua roupa do Astolfo
+   ========================================================= */
+
+/* ---- estudos: claro, rosa e caderno ---- */
+html[data-skin="astolfo"] #view-estudo {
+  --ink: #1c1018;
+  --ink-soft: #4a3140;
+  --ink-mute: #86677a;
+  --line: #f7d8e6;
+  --line-strong: #efb9d2;
+  --bg: #fff7fb;
+  --bg-soft: #fff0f7;
+  --card: #ffffff;
+  --accent: #d6338a;
+  --accent-ink: #a32568;
+  --accent-soft: #ffe4f0;
+  background:
+    radial-gradient(820px 400px at 22% -160px, #ffe4f0 0%, rgba(255, 228, 240, 0) 70%),
+    radial-gradient(700px 360px at 96% -80px, #fff0f7 0%, rgba(255, 240, 247, 0) 62%),
+    repeating-linear-gradient(0deg, rgba(214, 51, 138, .05) 0 1px, transparent 1px 28px),
+    #fffafd;
+}
+html[data-skin="astolfo"] #view-estudo .study-hero,
+html[data-skin="astolfo"] #view-estudo .hero {
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(255, 158, 203, .35), transparent 60%),
+    linear-gradient(150deg, #fff, #ffeaf4);
+  border: 1px solid #f7cfe2;
+  border-radius: 22px;
+}
+
+/* ---- sites / catálogo ---- */
+html[data-skin="astolfo"] #view-sites {
+  --bg: #0b0810;
+  --bg-2: #130d1a;
+  --surface: #17101f;
+  --surface-2: #1f1529;
+  --border: rgba(255, 158, 203, .18);
+  --border-strong: rgba(255, 158, 203, .38);
+  --text: #fff6fb;
+  --text-soft: #e7cfdd;
+  --muted: #b295a6;
+  --accent: #ff8fc4;
+  --accent-rgb: 255, 143, 196;
+  --accent-alt: #d7c1ff;
+  --accent-alt-rgb: 215, 193, 255;
+  background:
+    radial-gradient(1100px 520px at 12% -220px, rgba(255, 95, 168, .2), transparent 62%),
+    radial-gradient(900px 460px at 100% 0%, rgba(215, 193, 255, .14), transparent 60%),
+    #0b0810;
+}
+
+/* ---- gn-math: a paleta "rosa" do próprio seletor ---- */
+html[data-skin="astolfo"] #view-gn {
+  --gn-accent: #ff8fc4;
+  --gn-accent-rgb: 255, 143, 196;
+  --gn-accent-2: #d7c1ff;
+  --gn-accent-2-rgb: 215, 193, 255;
+  --gn-bg: #0b0810;
+  --gn-panel: #17101f;
+  --gn-surface: #1d1426;
+  --gn-line: #38243f;
+  --gn-line-strong: #5a3763;
+  --gn-text: #fff6fb;
+  --gn-muted: #b295a6;
+}
+
+/* ---- provedores (duckmath / astra) ---- */
+html[data-skin="astolfo"] #view-provider {
+  --accent: #ff8fc4;
+  --accent-rgb: 255, 143, 196;
+  background:
+    radial-gradient(900px 460px at 100% -10%, rgba(255, 95, 168, .18), transparent 62%),
+    #0b0810;
+}
+
+/* ---- navegador interno (borda de listra, tipo meia) ---- */
+html[data-skin="astolfo"] #view-browser {
+  --accent: #ff8fc4;
+  --accent-rgb: 255, 143, 196;
+}
+html[data-skin="astolfo"] #view-browser .browser-bar,
+html[data-skin="astolfo"] #view-browser .browser__bar {
+  border-bottom: 3px solid transparent;
+  border-image: repeating-linear-gradient(90deg, var(--ast-pink) 0 10px, var(--ast-ink) 10px 20px) 1;
+}
+
+/* ---- OS / hub: papel de parede rosa-noite ---- */
+html[data-skin="astolfo"] #view-os .os,
+html[data-skin="astolfo"] .os {
+  --os-accent: #ff8fc4;
+  --os-accent-2: #d7c1ff;
+  --accent-rgb: 255, 143, 196;
+  background:
+    radial-gradient(120% 90% at 50% -20%, rgba(255, 95, 168, .22), transparent 60%),
+    radial-gradient(90% 80% at 90% 120%, rgba(215, 193, 255, .16), transparent 62%),
+    #0b0810;
+}
+html[data-skin="astolfo"] .hub__stage {
+  --os-accent: #ff8fc4;
+  --os-accent-2: #d7c1ff;
+  --accent-rgb: 255, 143, 196;
+  border-color: rgba(255, 158, 203, .3);
+}
+
+/* ---- chat / social ---- */
+html[data-skin="astolfo"] #view-social {
+  --accent: #ff8fc4;
+  --accent-rgb: 255, 143, 196;
+}
+
+/* =========================================================
+   5. Personalização (o painel também é do Astolfo)
+   ========================================================= */
+html[data-skin="astolfo"] .sheet__shell {
+  border: 1px solid rgba(255, 158, 203, .3);
+  background:
+    radial-gradient(120% 100% at 100% 0%, rgba(255, 95, 168, .14), transparent 60%),
+    var(--ast-ink-2);
+}
+html[data-skin="astolfo"][data-theme="light"] .sheet__shell {
+  background:
+    radial-gradient(120% 100% at 100% 0%, rgba(255, 95, 168, .12), transparent 60%),
+    #fffafd;
+}
+html[data-skin="astolfo"] .settings-section h3::before {
+  content: "♡ ";
+  color: var(--ast-pink);
+}
+html[data-skin="astolfo"] .segmented {
+  border-color: rgba(255, 158, 203, .35);
+}
+html[data-skin="astolfo"] .segmented__btn.is-active {
+  background: linear-gradient(120deg, var(--ast-pink), var(--ast-pink-deep));
+  color: #2a0b1b;
+}
+
+/* =========================================================
+   6. Detalhes animados (respeitando "menos movimento")
+   ========================================================= */
+@keyframes ast-swish {
+  0% { transform: rotate(-6deg) scale(.96); }
+  50% { transform: rotate(4deg) scale(1.04); }
+  100% { transform: rotate(0) scale(1); }
+}
+html[data-skin="astolfo"] .brand__mark { animation: ast-swish 4.5s ease-in-out infinite; }
+
+/* estrelinhas no fundo (leves, sem custo de JS) */
+html[data-skin="astolfo"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: .55;
+  background-image:
+    radial-gradient(1.6px 1.6px at 12% 18%, rgba(255, 158, 203, .9), transparent),
+    radial-gradient(1.4px 1.4px at 78% 26%, rgba(255, 215, 234, .8), transparent),
+    radial-gradient(1.8px 1.8px at 42% 72%, rgba(215, 193, 255, .8), transparent),
+    radial-gradient(1.3px 1.3px at 88% 82%, rgba(255, 158, 203, .8), transparent),
+    radial-gradient(1.5px 1.5px at 26% 90%, rgba(255, 255, 255, .7), transparent);
+  background-size: 100% 100%;
+}
+html[data-skin="astolfo"][data-theme="light"] body::after { opacity: .35; }
+html[data-skin="astolfo"] .no-motion body::after,
+html.no-motion[data-skin="astolfo"] body::after { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-skin="astolfo"] .brand__mark { animation: none; }
+}
+
+/* =========================================================
+   7. No celular: enxuto, sem perder a cara do tema
+   ========================================================= */
+@media (max-width: 860px) {
+  html[data-skin="astolfo"] .tabrail {
+    border: 1px solid rgba(255, 143, 196, .35);
+    border-radius: 999px;
+    background: rgba(13, 10, 17, .94);
+    box-shadow: 0 10px 30px -12px rgba(255, 95, 168, .6);
+  }
+  html[data-skin="astolfo"] body::after { opacity: .4; }
+}
+@media (max-width: 460px) {
+  html[data-skin="astolfo"] .tabrail__tab.is-active { box-shadow: inset 0 0 0 1px rgba(255, 158, 203, .5); }
+}
+
+/* =========================================================
+   8. Modo "presente": a transição de ligar/desligar o tema
+   (classe temporária posta pelo astolfo.js)
+   ========================================================= */
+.ast-fx {
+  position: fixed;
+  inset: 0;
+  z-index: 9400;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 95, 168, .28), transparent 65%);
+  animation: ast-fx-out 900ms ease-out both;
+}
+.ast-fx__ribbon {
+  width: min(58vmin, 320px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 3px dashed rgba(255, 158, 203, .9);
+  box-shadow: 0 0 40px rgba(255, 95, 168, .65), inset 0 0 40px rgba(215, 193, 255, .35);
+  animation: ast-swish 900ms ease-out both;
+}
+.ast-fx__label {
+  position: absolute;
+  bottom: 18%;
+  font: 700 13px/1.3 system-ui, sans-serif;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: #ffe7f3;
+  text-shadow: 0 0 18px rgba(255, 95, 168, .9);
+}
+@keyframes ast-fx-out {
+  0% { opacity: 0; }
+  18% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ast-fx__ribbon { animation: none; }
+}

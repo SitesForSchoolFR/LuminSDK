@@ -40,6 +40,7 @@ SCRIPTS = [
     "assets/js/site.js",
     "assets/js/cloak.js",
     "assets/js/anim.js",
+    "assets/js/astolfo.js",
     "assets/js/atmosphere.js",
     "assets/js/bonus.js",
     "assets/js/app.js",

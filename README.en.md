@@ -371,7 +371,7 @@ How it works:
   the history nor the address bar shows the portal address — the same trick as Utopia's
   `openBackup()`: `about:blank` with the site in the iframe in front, Google behind.
   `?cloak=google` opens the blank tab but keeps the portal in the back tab;
-- **stale JS never gets stuck**: `app.js` stores the bundle version (`?v=50`) in the session and, when
+- **stale JS never gets stuck**: `app.js` stores the bundle version (`?v=51`) in the session and, when
   it changes, **reloads the page once** — that is what stops the blank tab from running old code after
   a deploy (the service worker also stopped caching 404s/errors);
 - **it always opens**: there is no session lock anymore — every page load tries to open the tab (the
@@ -601,13 +601,36 @@ html[data-theme="dark"] {
 | Daily challenges | `dailyChallenges()` in `assets/js/progress.js` |
 | Recommendations | `preferredCategories()` in `assets/js/library.js` |
 | Default accent color | `--accent` in `:root` (`assets/css/styles.css`) |
+| Astolfo theme (colours, patterns, each tab) | `assets/css/astolfo.css` |
+| Astolfo shortcut and state | `assets/js/astolfo.js` (`LuminAstolfo`) |
 | Quick palette presets | `PRESETS` in `assets/js/atmosphere.js` |
 | Max categories shown | `CONFIG.maxCategories` in `assets/js/library.js` |
 | Default theme | `applyTheme()` in `assets/js/site.js` |
 
 Add `?demo` to the URL to preview the interface with placeholder cards while offline.
 
-There are **no keyboard shortcuts** in the site — no `F` (fullscreen), `R` (random), `/` or
+### Astolfo theme (optional, SFW)
+
+A personality layer that dresses **every tab** in the Astolfo palette — pink, black and a warm white —
+without changing anything for people who never turn it on:
+
+- **Turn it on** at the end of the **Customize** panel (Settings → *Special style*) or with
+  **`Ctrl` + `AltGr` + `Y`** (on Windows/Linux AltGr arrives as Ctrl+Alt; on a Mac use
+  `Control` + `Option` + `Y`). The same combo turns it off and restores the minimal look.
+- **Persisted** in `luminsdk:astolfo` (`on`/`off`), so the choice survives reloads.
+- **What changes:** bunting strip in the header, ribbon on the logo, black side rail with pink border,
+  pink buttons/chips/focus/selection, pink-framed cards, the study tab in paper pink, catalog and
+  GN-Math in pink-night, striped border on the browser tab, pink scrollbar, starfield and a quick
+  celebration when toggling. The palette picker still saves your colour and takes over again when the
+  theme is off.
+- **Preview without turning it on:** the **See how it looks** button opens a viewer with the artwork,
+  the swatches and the full list. Styles live in `assets/css/astolfo.css` (scoped to
+  `html[data-skin="astolfo"]`) and the engine in `assets/js/astolfo.js`
+  (`window.LuminAstolfo.{on,off,toggle,state}`).
+- **SFW only:** colours, type, ribbon, star, plaid and stripes, all artwork drawn inside the project.
+  No adult content.
+
+There are **no keyboard shortcuts** in the site besides that optional theme toggle — no `F` (fullscreen), `R` (random), `/` or
 `Ctrl`+`K` (search), `?` (settings). Everything lives in the UI buttons so no key is stolen from
 the game. With the player open, every key (WASD, arrows, space, Enter, F, numbers…) goes to the game.
 

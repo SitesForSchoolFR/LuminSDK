@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=50 -->
+  <!-- assets/css/styles.css?v=51 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -3137,6 +3137,108 @@ html[data-speed] .site-nav a {
 }
 
 /* =========================================================
+   14b. Tema Astolfo — cartão do painel e visualizador
+   (sempre presente: o cartão aparece mesmo com o tema desligado)
+   ========================================================= */
+.ast-card {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 158, 203, .34);
+  border-radius: 16px;
+  background:
+    radial-gradient(120% 140% at 100% 0%, rgba(255, 95, 168, .22), transparent 62%),
+    linear-gradient(150deg, rgba(255, 158, 203, .16), rgba(215, 193, 255, .08));
+  overflow: hidden;
+}
+.ast-card__head { display: flex; align-items: center; gap: 12px; }
+.ast-card__avatar {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 158, 203, .75);
+  background: #140e1b;
+  overflow: hidden;
+}
+.ast-card__avatar img { width: 100%; height: 100%; display: block; }
+.ast-card__title { font-weight: 700; line-height: 1.25; }
+.ast-card__title small {
+  display: block;
+  font-weight: 500;
+  font-size: .72rem;
+  color: var(--muted);
+  letter-spacing: .02em;
+}
+.ast-card__row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ast-card__state {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 158, 203, .45);
+  color: #ffd7ea;
+  background: rgba(255, 95, 168, .16);
+}
+.ast-card__state.is-on {
+  background: linear-gradient(120deg, #ff9ecb, #ff5fa8);
+  color: #2a0b1b;
+  border-color: transparent;
+}
+.ast-card__keys { font-size: .72rem; color: var(--muted); }
+.ast-card__keys kbd {
+  font: inherit;
+  font-size: .7rem;
+  padding: 1px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, .07);
+  color: var(--text);
+}
+.ast-card__note { font-size: .72rem; color: var(--muted); }
+
+/* visualizador: o "antes de ligar" */
+.ast-sheet__art {
+  width: 100%;
+  aspect-ratio: 8 / 3;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 158, 203, .35);
+  background: #140e1b;
+}
+.ast-sheet__swatches { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 4px; }
+.ast-sheet__swatch {
+  display: grid;
+  gap: 4px;
+  justify-items: center;
+  font-size: .64rem;
+  letter-spacing: .04em;
+  color: var(--muted);
+  min-width: 56px;
+}
+.ast-sheet__swatch i {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, .22);
+  display: block;
+}
+.ast-sheet__list {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 7px;
+  font-size: .78rem;
+  color: var(--text-soft);
+}
+.ast-sheet__list li { display: flex; gap: 8px; align-items: flex-start; }
+.ast-sheet__list li::before { content: "♡"; color: #ff8fc4; flex: none; }
+
+/* =========================================================
    15. Estatísticas, conquistas e sugestão personalizada
    ========================================================= */
 
@@ -4025,7 +4127,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=50 -->
+  <!-- assets/css/app.css?v=51 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -4175,6 +4277,8 @@ html[data-view="gn"] .tabrail__tab.is-active {
   }
 }
   </style>
+  <!-- personalização Astolfo (opcional): só age com html[data-skin="astolfo"] -->
+  <link rel="stylesheet" href="assets/css/astolfo.css?v=51" id="astolfo-css">
 </head>
 <body>
 
@@ -4921,6 +5025,73 @@ html[data-view="gn"] .tabrail__tab.is-active {
           </div>
           <p class="settings-note" id="data-stats">—</p>
         </section>
+
+        <section class="settings-section" id="settings-astolfo">
+          <h3>Estilo especial</h3>
+          <p class="settings-section__hint">Uma camada de personalidade por cima de todo o site — dá para desligar quando quiser.</p>
+
+          <div class="ast-card" id="astolfo-card">
+            <div class="ast-card__head">
+              <span class="ast-card__avatar" aria-hidden="true">
+                <img src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/avatar.svg" alt="" width="46" height="46" decoding="async">
+              </span>
+              <span class="ast-card__title">
+                Astolfo
+                <small>femboy knight · rosa, preto e estrela</small>
+              </span>
+            </div>
+
+            <div class="ast-card__row">
+              <span class="ast-card__state" id="astolfo-state">Desligado</span>
+              <button class="btn btn--primary btn--sm" type="button" data-astolfo="toggle" id="astolfo-toggle" aria-pressed="false" aria-label="Ligar ou desligar o tema Astolfo">Alternar tema</button>
+              <button class="btn btn--soft btn--sm" type="button" data-astolfo="preview">Ver como fica</button>
+            </div>
+
+            <p class="ast-card__keys">Atalho: <kbd>Ctrl</kbd> + <kbd>AltGr</kbd> + <kbd>Y</kbd> (no Mac, <kbd>Ctrl</kbd> + <kbd>⌥</kbd> + <kbd>Y</kbd>) — a mesma combinação desliga.</p>
+            <p class="ast-card__note">SFW: só cores, letras, laço, estrela e listras. Nada de conteúdo adulto.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ================= ASTOLFO: visualizador ================= -->
+  <dialog class="sheet" id="astolfo-preview" aria-labelledby="astolfo-preview-title">
+    <div class="sheet__shell">
+      <header class="sheet__head">
+        <div>
+          <h2 class="sheet__title" id="astolfo-preview-title">Tema Astolfo</h2>
+          <p class="sheet__sub">Como o site fica antes de você ligar — cores, molduras e detalhes.</p>
+        </div>
+        <button class="icon-btn" type="button" data-astolfo="close" aria-label="Fechar visualização">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+        </button>
+      </header>
+
+      <div class="sheet__body">
+        <img class="ast-sheet__art" src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/banner.jpg" alt="Ilustração do tema: laço rosa, estrela e xadrez sobre fundo preto arroxeado" width="960" height="360" decoding="async">
+
+        <div class="ast-sheet__swatches" aria-label="Cores do tema">
+          <span class="ast-sheet__swatch"><i style="background:#ff9ecb"></i>rosa</span>
+          <span class="ast-sheet__swatch"><i style="background:#ff5fa8"></i>rosa forte</span>
+          <span class="ast-sheet__swatch"><i style="background:#d7c1ff"></i>lilás</span>
+          <span class="ast-sheet__swatch"><i style="background:#17101f"></i>preto</span>
+          <span class="ast-sheet__swatch"><i style="background:#0d0a11"></i>tinta</span>
+          <span class="ast-sheet__swatch"><i style="background:#fff6fb"></i>creme</span>
+        </div>
+
+        <ul class="ast-sheet__list">
+          <li>Cabeçalho com faixa de bandeirinhas, marca com laço e barra lateral preta de borda rosa.</li>
+          <li>Botões, chips, foco e seleção em rosa; cartões com moldura rosa e brilho suave.</li>
+          <li>Estudos em rosa-papel, catálogo e GN-Math em rosa-noite, navegador com borda listrada.</li>
+          <li>Rolagem rosa, estrelinhas no fundo e uma comemoração rápida ao ligar ou desligar.</li>
+          <li>Desligado, o site volta exatamente ao minimalista de antes — nada é sobrescrito.</li>
+        </ul>
+
+        <div class="settings-row settings-row--wrap" style="margin-top:16px">
+          <button class="btn btn--primary btn--sm" type="button" data-astolfo="toggle">Ligar / desligar agora</button>
+          <button class="btn btn--soft btn--sm" type="button" data-astolfo="close">Fechar</button>
+        </div>
       </div>
     </div>
   </dialog>
@@ -5266,6 +5437,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
+  <script src="assets/js/astolfo.js?v=51" defer></script>
   <!-- CSS e JS do site embutidos por tools/single-file.py -->
   <script>
   window.__LUMIN_SINGLE__ = true;
@@ -10170,6 +10342,292 @@ html[data-view="gn"] .tabrail__tab.is-active {
   };
 })();
 
+/* ==================== assets/js/astolfo.js ==================== */
+/* =========================================================
+   LuminSDK — tema Astolfo (femboy knight) · SFW
+   PERSONALIZAÇÃO COMPLETA OPCIONAL do site inteiro.
+
+   · liga/desliga com Ctrl + AltGr + Y (AltGr = Ctrl + Alt no Windows;
+     no Mac, Control + Option + Y) e também pelo botão no fim do
+     painel Personalizar
+   · a escolha fica salva neste navegador; nada muda até o tema existir
+   · quando liga, o body recebe a classe is-astolfo: as folhas das abas
+     carregadas por rota continuam aplicando os tokens rosa/preto (o CSS
+     do tema mora em assets/css/astolfo.css)
+   · tudo SFW: cores, tipografia, laço, estrela e listras — zero NSFW
+   · API: window.LuminAstolfo.{toggle,on,off,state}
+
+   Autor: Ryan Smith · Licença MIT
+   ========================================================= */
+(function () {
+  'use strict';
+
+  const KEY = 'luminsdk:astolfo';          /* 'on' | 'off' */
+  const root = document.documentElement;
+  const THEME_COLOR = { dark: '#ff5fa8', light: '#f7b6d6' };
+  let enabled = false;
+
+  /* ---------- leitura/gravação ---------- */
+  function stored() {
+    try {
+      const value = localStorage.getItem(KEY);
+      if (value === 'on') return true;
+      if (value === 'off') return false;
+    } catch (error) { /* navegador sem armazenamento */ }
+    return null;
+  }
+
+  function persist(on) {
+    try { localStorage.setItem(KEY, on ? 'on' : 'off'); } catch (error) { /* só nesta sessão */ }
+  }
+
+  /* ---------- efeitos no documento ---------- */
+  function applyDocument(on) {
+    if (on) root.setAttribute('data-skin', 'astolfo');
+    else root.removeAttribute('data-skin');
+    /* só controla a própria classe: se outra coisa mexeu, não apagamos */
+    if (document.body) document.body.classList.toggle('is-astolfo', on);
+
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', on ? (root.getAttribute('data-theme') === 'light' ? THEME_COLOR.light : THEME_COLOR.dark) : '#07070c');
+
+    /* título da aba: só o prefixo, sem atropelar o título de cada aba */
+    const title = document.title || '';
+    const decorated = /^♡\s/.test(title);
+    if (on && !decorated) document.title = '♡ ' + title;
+    else if (!on && decorated) document.title = title.replace(/^♡\s/, '');
+  }
+
+  /* garante a folha do tema mesmo quando o <link> do index.html não existe
+     (arquivo único, página antiga em cache, teste) */
+  function ensureCss() {
+    if (document.getElementById('astolfo-css')) return;
+    const link = document.createElement('link');
+    link.id = 'astolfo-css';
+    link.rel = 'stylesheet';
+    link.href = 'assets/css/astolfo.css?v=51';
+    link.addEventListener('error', function () { link.remove(); });
+    document.head.appendChild(link);
+  }
+
+  /* ---------- aviso rápido de ligar/desligar ---------- */
+  function sparkle(on) {
+    if (!document.body) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    /* efeito é enfeite: se falhar, a troca de tema continua */
+    try {
+      sparkleNow(on);
+    } catch (error) { /* segue sem comemoração */ }
+  }
+
+  function sparkleNow(on) {
+    const fx = document.createElement('div');
+    fx.className = 'ast-fx';
+    fx.setAttribute('aria-hidden', 'true');
+    const ring = document.createElement('div');
+    ring.className = 'ast-fx__ribbon';
+    const label = document.createElement('span');
+    label.className = 'ast-fx__label';
+    label.textContent = on ? 'Astolfo on' : 'minimalista';
+    fx.append(ring, label);
+    document.body.append(fx);
+    window.setTimeout(function () { if (fx.parentNode) fx.parentNode.removeChild(fx); }, 1000);
+  }
+
+  /* ---------- painel: botão, estado e atalho de teclado ---------- */
+  function renderCard() {
+    const card = document.getElementById('astolfo-card');
+    if (!card) return;
+    const state = document.getElementById('astolfo-state');
+    const knob = document.getElementById('astolfo-toggle');
+    if (state) {
+      state.textContent = enabled ? 'Ligado' : 'Desligado';
+      state.classList.toggle('is-on', enabled);
+    }
+    if (knob) knob.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+    const art = card.querySelector('.ast-card__avatar img');
+    if (art) art.src = enabled ? 'assets/img/astolfo/knight-256.png' : 'assets/img/astolfo/avatar.svg';
+  }
+
+  let previousFocus = null;
+  function openPreview() {
+    const dialog = document.getElementById('astolfo-preview');
+    if (!dialog) return;
+    previousFocus = document.activeElement;
+    try {
+      if (typeof dialog.showModal === 'function') { if (!dialog.open) dialog.showModal(); }
+      else dialog.setAttribute('open', '');
+    } catch (error) {
+      dialog.setAttribute('open', '');
+    }
+  }
+  function closePreview() {
+    const dialog = document.getElementById('astolfo-preview');
+    if (!dialog) return;
+    if (typeof dialog.close === 'function' && dialog.open) dialog.close();
+    else dialog.removeAttribute('open');
+    if (previousFocus && previousFocus.focus) { try { previousFocus.focus(); } catch (error) { /* nada */ } }
+  }
+
+  function toast(text) {
+    if (window.LuminLibrary && typeof window.LuminLibrary.toast === 'function') {
+      window.LuminLibrary.toast(text);
+      return;
+    }
+    /* sem o toast da biblioteca (aba ainda carregando): um aviso nosso */
+    let tip = document.getElementById('astolfo-tip');
+    if (!tip) {
+      tip = document.createElement('div');
+      tip.id = 'astolfo-tip';
+      tip.style.cssText = 'position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9998;' +
+        'padding:9px 14px;border-radius:999px;font:600 12px/1.3 system-ui,sans-serif;color:#2a0b1b;' +
+        'background:linear-gradient(120deg,#ff9ecb,#ff5fa8);pointer-events:none;white-space:nowrap';
+      document.body.append(tip);
+    }
+    tip.textContent = text;
+    window.clearTimeout(tip.__timer);
+    tip.__timer = window.setTimeout(function () { if (tip.parentNode) tip.parentNode.removeChild(tip); }, 2600);
+  }
+
+  /* ---------- ligar/desligar ---------- */
+  function set(on, options) {
+    const opts = options || {};
+    const next = !!on;
+    if (next === enabled && !opts.force) {
+      if (!opts.silent) toast(enabled ? 'Astolfo já está ligado ♡' : 'O estilo minimalista já está ativo');
+      renderCard();
+      return enabled;
+    }
+    enabled = next;
+    ensureCss();
+    applyDocument(enabled);
+    persist(enabled);
+    renderCard();
+    if (!opts.silent) sparkle(enabled);
+    if (!opts.silent) {
+      toast(enabled ? 'Tema Astolfo ligado ♡ (Ctrl + AltGr + Y volta ao minimalista)' : 'De volta ao minimalista');
+    }
+
+    /* as folhas das abas são carregadas por rota: as já carregadas precisam
+       ser reavaliadas para os tokens do tema entrarem na hora */
+    Array.prototype.forEach.call(document.querySelectorAll('link[rel="stylesheet"]'), function (link) {
+      if (!link.href || link.href.indexOf('astolfo.css') >= 0) return;
+      const href = link.href.split('?')[0];
+      if (href.indexOf('/assets/css/') < 0) return;
+      try {
+        const was = link.disabled;      /* regra do app.js: só a aba atual fica ligada */
+        link.disabled = true;
+        /* reflow força o navegador a recalcular com o tema já aplicado */
+        void link.offsetHeight;
+        link.disabled = was;
+      } catch (error) { /* folha sem suporte a disabled: já está aplicada */ }
+    });
+
+    /* quem quiser reagir (o app.js reaplica a rota atual) */
+    try {
+      window.dispatchEvent(new CustomEvent('lumin:astolfo', { detail: { on: enabled } }));
+    } catch (error) { /* navegador antigo sem CustomEvent */ }
+    return enabled;
+  }
+
+  function toggle() { return set(!enabled); }
+
+  /* ---------- atalho: Ctrl + AltGr + Y ----------
+     AltGr chega como Ctrl+Alt (Windows/Linux). No Mac o equivalente é
+     Control+Option+Y, então cobrimos as duas formas. Shift não entra
+     (Ctrl+Shift+Alt+Y é outro atalho, o de trocar de aba). */
+  function isShortcut(event) {
+    if (!event) return false;
+    const key = String(event.key || '').toLowerCase();
+    const code = event.code || '';
+    if (key !== 'y' && code !== 'KeyY') return false;
+    if (!event.ctrlKey || !event.altKey || event.shiftKey || event.metaKey) return false;
+    return true;
+  }
+
+  function press(event) {
+    if (!isShortcut(event)) return;
+    if (event.repeat) return;
+    event.preventDefault();
+    event.stopPropagation();
+    toggle();
+  }
+
+  function initUI() {
+    const card = document.getElementById('astolfo-card');
+    if (card) {
+      card.addEventListener('click', function (event) {
+        const action = event.target && event.target.closest ? event.target.closest('[data-astolfo]') : null;
+        if (!action) return;
+        const what = action.getAttribute('data-astolfo');
+        if (what === 'toggle') toggle();
+        else if (what === 'preview') openPreview();
+        else if (what === 'css') {
+          /* abre a folha do tema numa aba nova: útil para copiar as cores */
+          window.open('assets/css/astolfo.css', '_blank', 'noopener');
+        }
+      });
+    }
+
+    document.querySelectorAll('[data-astolfo="toggle"]').forEach(function (button) {
+      if (card && card.contains(button)) return;
+      button.addEventListener('click', function () { toggle(); });
+    });
+
+    const preview = document.getElementById('astolfo-preview');
+    if (preview) {
+      preview.addEventListener('click', function (event) {
+        if (event.target === preview) closePreview();
+        const closer = event.target.closest ? event.target.closest('[data-astolfo="close"]') : null;
+        if (closer) closePreview();
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && preview.open) closePreview();
+      });
+    }
+
+    renderCard();
+  }
+
+  /* ---------- inicialização ---------- */
+  document.addEventListener('keydown', press, true);
+  window.addEventListener('keydown', press, true);   /* reforço: algumas telas só ouvem window */
+
+  /* o tema do site pode mudar de claro/escuro: a barra do navegador acompanha */
+  window.addEventListener('lumin:theme', function () {
+    if (!enabled) return;
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute('content', root.getAttribute('data-theme') === 'light' ? THEME_COLOR.light : THEME_COLOR.dark);
+  });
+
+  /* outra aba do site trocou o tema */
+  window.addEventListener('storage', function (event) {
+    if (event.key !== KEY) return;
+    set(event.newValue === 'on', { silent: true, force: true });
+  });
+
+  const saved = stored();
+  if (saved) {
+    ensureCss();
+    enabled = saved;
+    applyDocument(enabled);
+    if (document.body) document.body.classList.toggle('is-astolfo', enabled);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initUI);
+  else initUI();
+
+  window.LuminAstolfo = {
+    on: function () { return set(true); },
+    off: function () { return set(false); },
+    toggle: toggle,
+    state: function () { return { on: enabled, saved: stored(), css: !!document.getElementById('astolfo-css') }; },
+    preview: openPreview,
+    close: closePreview,
+    key: 'Ctrl + AltGr + Y'
+  };
+})();
+
 /* ==================== assets/js/atmosphere.js ==================== */
 /* =========================================================
    LuminSDK — atmosfera e aparência
@@ -10294,7 +10752,15 @@ html[data-view="gn"] .tabrail__tab.is-active {
     root.style.setProperty(name, value);
   }
 
+  /* Tema Astolfo ligado: a paleta é do personagem. O seletor de cores
+     continua salvo e volta a valer quando o tema é desligado. */
+  const ASTOLFO_HEX = '#ff8fc4';
+
   function applyPalette(hex, options) {
+    if (root.getAttribute('data-skin') === 'astolfo') {
+      hex = ASTOLFO_HEX;
+      options = { persist: false };     /* não sobrescreve a cor escolhida */
+    }
     const isLight = root.getAttribute('data-theme') === 'light';
     const base = hexToRgb(hex);
     const hsl = rgbToHsl(base.r, base.g, base.b);
@@ -11147,6 +11613,11 @@ html[data-view="gn"] .tabrail__tab.is-active {
     }
     window.addEventListener('lumin:settings', applySettings);
 
+    /* ligar/desligar o tema Astolfo reaplica a paleta na hora */
+    window.addEventListener('lumin:astolfo', function () {
+      applyPalette(loadSavedColor() || NEUTRAL, { persist: false });
+    });
+
     /* o botão de tema do site.js pede a reaplicação da paleta */
     document.getElementById('theme-toggle')?.addEventListener('click', () => {
       window.setTimeout(() => applyPalette(palette.hex, { persist: false }), 0);
@@ -11882,20 +12353,20 @@ html[data-view="gn"] .tabrail__tab.is-active {
          desligado quando a rota muda */
       css: [],
       scripts: [
-        'assets/js/anim.js?v=50',
+        'assets/js/anim.js?v=51',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=50',
-        'assets/js/settings.js?v=50',
-        'assets/js/site.js?v=50',
-        'assets/js/atmosphere.js?v=50',
-        'assets/js/progress.js?v=50',
-        'assets/js/bonus.js?v=50'
+        'assets/js/library.js?v=51',
+        'assets/js/settings.js?v=51',
+        'assets/js/site.js?v=51',
+        'assets/js/atmosphere.js?v=51',
+        'assets/js/progress.js?v=51',
+        'assets/js/bonus.js?v=51'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=50'],
-      scripts: ['assets/js/gnmath.js?v=50'],
+      css: ['assets/css/gnmath.css?v=51'],
+      scripts: ['assets/js/gnmath.js?v=51'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -11907,60 +12378,60 @@ html[data-view="gn"] .tabrail__tab.is-active {
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=50'],
-      scripts: ['assets/js/provider.js?v=50', 'assets/js/atmosphere.js?v=50']
+      css: ['assets/css/provider.css?v=51'],
+      scripts: ['assets/js/provider.js?v=51', 'assets/js/atmosphere.js?v=51']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=50'],
-      scripts: ['assets/js/sites.js?v=50', 'assets/js/atmosphere.js?v=50']
+      css: ['assets/css/sites.css?v=51'],
+      scripts: ['assets/js/sites.js?v=51', 'assets/js/atmosphere.js?v=51']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=50'],
-      scripts: ['assets/js/browser.js?v=50', 'assets/js/atmosphere.js?v=50']
+      css: ['assets/css/browser.css?v=51'],
+      scripts: ['assets/js/browser.js?v=51', 'assets/js/atmosphere.js?v=51']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=50',
-        'assets/js/os.js?v=50',
-        'assets/js/profile.js?v=50',
-        'assets/js/lab.js?v=50',
-        'assets/js/studio.js?v=50',
-        'assets/js/arcade.js?v=50',
-        'assets/js/vault.js?v=50',
-        'assets/js/community.js?v=50',
-        'assets/js/central.js?v=50',
-        'assets/js/atmosphere.js?v=50'
+        'assets/js/player.js?v=51',
+        'assets/js/os.js?v=51',
+        'assets/js/profile.js?v=51',
+        'assets/js/lab.js?v=51',
+        'assets/js/studio.js?v=51',
+        'assets/js/arcade.js?v=51',
+        'assets/js/vault.js?v=51',
+        'assets/js/community.js?v=51',
+        'assets/js/central.js?v=51',
+        'assets/js/atmosphere.js?v=51'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=50', 'assets/css/hub.css?v=50'],
+      css: ['assets/css/os.css?v=51', 'assets/css/hub.css?v=51'],
       scripts: [
-        'assets/js/player.js?v=50',
-        'assets/js/os.js?v=50',
-        'assets/js/profile.js?v=50',
-        'assets/js/lab.js?v=50',
-        'assets/js/studio.js?v=50',
-        'assets/js/arcade.js?v=50',
-        'assets/js/vault.js?v=50',
-        'assets/js/community.js?v=50',
-        'assets/js/central.js?v=50',
-        'assets/js/hub.js?v=50'
+        'assets/js/player.js?v=51',
+        'assets/js/os.js?v=51',
+        'assets/js/profile.js?v=51',
+        'assets/js/lab.js?v=51',
+        'assets/js/studio.js?v=51',
+        'assets/js/arcade.js?v=51',
+        'assets/js/vault.js?v=51',
+        'assets/js/community.js?v=51',
+        'assets/js/central.js?v=51',
+        'assets/js/hub.js?v=51'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=50']
+      scripts: ['assets/js/atmosphere.js?v=51']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=50'],
-      scripts: ['assets/js/study-questions.js?v=50', 'assets/js/anim.js?v=50', 'assets/js/study.js?v=50']
+      css: ['assets/css/study.css?v=51'],
+      scripts: ['assets/js/study-questions.js?v=51', 'assets/js/anim.js?v=51', 'assets/js/study.js?v=51']
     }
   };
 
@@ -12385,6 +12856,15 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
   /* quando o navegador troca de endereço, a barra lateral se ajusta */
   window.addEventListener('lumin:browser', function () { paintRail(current); });
+
+  /* tema Astolfo ligado/desligado: garante que o body e as folhas da aba
+     atual acompanhem (as folhas são carregadas por rota, então uma já
+     carregada precisa ser reavaliada) */
+  window.addEventListener('lumin:astolfo', function (event) {
+    const on = !!(event && event.detail && event.detail.on);
+    if (document.body) document.body.classList.toggle('is-astolfo', on);
+    document.documentElement.setAttribute('data-skin-toggle', on ? 'on' : 'off');
+  });
 
   window.LuminApp = {
     go: go,

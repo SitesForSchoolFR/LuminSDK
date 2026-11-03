@@ -386,7 +386,7 @@ Como funciona:
   histórico nem a barra mostram o endereço do portal — é o mesmo truque do `openBackup()` do
   [Utopia](https://utopia.myk.sh): `about:blank` com o site no iframe na frente e o Google atrás.
   `?cloak=google` abre a aba em branco mas mantém o portal na aba de trás;
-- **nunca fica JS velho preso**: o `app.js` grava a versão do bundle (`?v=50`) na sessão e, quando ela
+- **nunca fica JS velho preso**: o `app.js` grava a versão do bundle (`?v=51`) na sessão e, quando ela
   muda, **recarrega a página uma vez** — é o que impede a aba em branco de continuar rodando o código
   antigo depois de uma atualização (o service worker também parou de guardar 404/erro em cache);
 - **abre SEMPRE**: não existe mais trava de sessão nenhuma — cada carga da página tenta abrir a aba
@@ -693,6 +693,8 @@ Ajustes rápidos:
 | Desafios diários | `dailyChallenges()` em `assets/js/progress.js` |
 | Recomendações | `preferredCategories()` em `assets/js/library.js` |
 | Cor padrão do site | `--accent` em `:root` (`assets/css/styles.css`) |
+| Tema Astolfo (cores, estampas, cada aba) | `assets/css/astolfo.css` |
+| Atalho e estado do tema Astolfo | `assets/js/astolfo.js` (`LuminAstolfo`) |
 | Cores da paleta rápida | `PRESETS` em `assets/js/atmosphere.js` |
 | Quantidade de partículas | `resize()` em `assets/js/atmosphere.js` |
 | Velocidade do fundo | `parallax()` em `assets/js/atmosphere.js` |
@@ -783,6 +785,8 @@ O botão de engrenagem abre o painel **Personalizar**, com **21 opções**:
 - **Desempenho** — partículas, parallax, cursor, animações, desfoques, hover, grade e ruído;
   **Detectar automático**, **Modo leve** e **Tudo ligado** em um clique.
 - **Meus dados** — exportar backup, importar e apagar tudo, com o resumo do que está guardado.
+- **Estilo especial — Astolfo** — tema completo (SFW) para o site inteiro, ligado no fim do painel ou
+  com **Ctrl + AltGr + Y**; a mesma combinação devolve o estilo minimalista.
 
 As escolhas são aplicadas antes da página pintar (sem piscar) e ficam em `luminsdk-settings`.
 
@@ -805,9 +809,30 @@ porta de entrada (os estudos) e pode jogar pelo catálogo.
 Adicione `?demo` à URL (`.../LuminSDK/?demo`) para ver a interface com cards de exemplo, sem
 depender do catálogo. Útil para desenvolver o layout offline.
 
+### Tema Astolfo (opcional, SFW)
+
+Uma camada de personalidade que veste **todas as abas** com a paleta do Astolfo — rosa, preto e um
+branco quente — sem mudar o padrão de quem não liga:
+
+- **Como ligar:** fim do painel **Personalizar** (Configurações → *Estilo especial*) ou o atalho
+  **`Ctrl` + `AltGr` + `Y`** (no Windows/Linux o AltGr chega como Ctrl+Alt; no Mac use
+  `Control` + `Option` + `Y`). A mesma combinação desliga e devolve o minimalista.
+- **Fica salvo** em `luminsdk:astolfo` (`on`/`off`), então a escolha sobrevive a recarregar a página.
+- **O que muda:** faixa de bandeirinhas no cabeçalho, marca com laço, barra lateral preta de borda rosa,
+  botões/chips/foco/seleção em rosa, cartões com moldura rosa, estudos em rosa-papel, catálogo e GN-Math
+  em rosa-noite, navegador com borda listrada, rolagem rosa, estrelinhas no fundo e uma comemoração
+  rápida ao ligar/desligar. O seletor de cores da paleta continua salvo e volta a valer quando o tema é
+  desligado.
+- **Preview sem ligar:** botão **Ver como fica** no cartão do tema abre um visualizador com a arte, as
+  cores e a lista do que muda. O CSS inteiro está em `assets/css/astolfo.css` (só age com
+  `html[data-skin="astolfo"]`) e o motor em `assets/js/astolfo.js`
+  (`window.LuminAstolfo.{on,off,toggle,state}`).
+- **SFW:** só cores, tipografia, laço, estrela, xadrez e listras — desenhos feitos no próprio projeto.
+  Nada de conteúdo adulto.
+
 ### Atalhos de teclado
 
-O site **não tem atalhos de teclado**. Nem `F` (tela cheia), nem `R` (jogo aleatório), nem `/` ou
+O site **não tem atalhos de teclado** (a única exceção é o tema Astolfo acima, que é opcional). Nem `F` (tela cheia), nem `R` (jogo aleatório), nem `/` ou
 `Ctrl`+`K` (busca), nem `?` (configurações). Tudo isso é feito pelos botões da interface, para que
 nenhuma tecla seja roubada do jogo: com o player aberto, todas as teclas (WASD, setas, espaço,
 Enter, F, números…) vão para o jogo.
