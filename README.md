@@ -361,9 +361,20 @@ Como funciona:
   rode `LuminApp.revealOnFirst(true)` no console (ou `LuminReveal.blast('lumin')` para testar);
 - tudo é CSS + um punhado de nós criados em `assets/js/reveal.js` (nenhuma biblioteca, nenhuma imagem).
 
-Arquivos: `assets/js/reveal.js` (montagem, sorteio, pular e cooldown), `assets/css/reveal.css`
-(aurora, raios, anéis, faíscas, gradientes e keyframes). A chamada sai de `assets/js/app.js`, no mesmo
-lugar que troca de aba — a animação entra antes de a view do catálogo aparecer.
+Arquivos: `assets/js/reveal.js` (montagem, sorteio, pular e cooldown; carregado globalmente pelo
+`index.html`, com uma cópia por rota só para furar cache), `assets/css/reveal.css` (aurora, raios,
+anéis, faíscas, gradientes e keyframes, também global). A chamada sai de `assets/js/app.js`, no mesmo
+lugar que troca de aba — a animação entra antes de a view do catálogo aparecer. Se algo der errado ao
+montar, o módulo limpa tudo na hora: **a animação nunca deixa a página travada**.
+
+**Para editar a animação**, abra `assets/js/reveal.js`: o bloco `CONFIG`, no topo, concentra tudo —
+`DURATION` (duração em ms), `COOLDOWN` (intervalo entre animações), `SPARKS` (máximo de faíscas),
+`PALETTE` (cores das auroras, raios e anéis), `TEXTS` (tag e dica de pular), `TIERS` (nome, chance,
+cor e faíscas de cada raridade), `ON_FIRST` (animar na primeira entrada?) e `LABEL` (título por
+destino). Nada de caçar valor no meio do arquivo. O visual em si (formas, tempos dos keyframes) fica
+em `assets/css/reveal.css`, que usa as variáveis `--rv-*` preenchidas pelo próprio CONFIG. Em tempo
+real dá para mexer em `LuminReveal.config` no console ou no preview
+(`tools/reveal-preview/index.html`, que tem um botão “Ver/config”).
 
 ### Abertura em about:blank (o site dentro de um iframe)
 

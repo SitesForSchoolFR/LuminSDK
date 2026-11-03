@@ -24,22 +24,24 @@
   const ROUTES = {
     lumin: {
       title: 'LuminSDK — mais de 1.100 jogos no seu navegador',
-      css: ['assets/css/reveal.css?v=44'],
+      /* só o script; o CSS da animação é global (index.html) para não ser
+         desligado quando a rota muda */
+      css: [],
       scripts: [
-        'assets/js/reveal.js?v=44',
+        'assets/js/reveal.js?v=45',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=44',
-        'assets/js/settings.js?v=44',
-        'assets/js/site.js?v=44',
-        'assets/js/atmosphere.js?v=44',
-        'assets/js/progress.js?v=44',
-        'assets/js/bonus.js?v=44'
+        'assets/js/library.js?v=45',
+        'assets/js/settings.js?v=45',
+        'assets/js/site.js?v=45',
+        'assets/js/atmosphere.js?v=45',
+        'assets/js/progress.js?v=45',
+        'assets/js/bonus.js?v=45'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=44'],
-      scripts: ['assets/js/gnmath.js?v=44'],
+      css: ['assets/css/gnmath.css?v=45'],
+      scripts: ['assets/js/gnmath.js?v=45'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -51,60 +53,60 @@
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=44'],
-      scripts: ['assets/js/provider.js?v=44', 'assets/js/atmosphere.js?v=44']
+      css: ['assets/css/provider.css?v=45'],
+      scripts: ['assets/js/provider.js?v=45', 'assets/js/atmosphere.js?v=45']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=44'],
-      scripts: ['assets/js/sites.js?v=44', 'assets/js/atmosphere.js?v=44']
+      css: ['assets/css/sites.css?v=45'],
+      scripts: ['assets/js/sites.js?v=45', 'assets/js/atmosphere.js?v=45']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=44'],
-      scripts: ['assets/js/browser.js?v=44', 'assets/js/atmosphere.js?v=44']
+      css: ['assets/css/browser.css?v=45'],
+      scripts: ['assets/js/browser.js?v=45', 'assets/js/atmosphere.js?v=45']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=44',
-        'assets/js/os.js?v=44',
-        'assets/js/profile.js?v=44',
-        'assets/js/lab.js?v=44',
-        'assets/js/studio.js?v=44',
-        'assets/js/arcade.js?v=44',
-        'assets/js/vault.js?v=44',
-        'assets/js/community.js?v=44',
-        'assets/js/central.js?v=44',
-        'assets/js/atmosphere.js?v=44'
+        'assets/js/player.js?v=45',
+        'assets/js/os.js?v=45',
+        'assets/js/profile.js?v=45',
+        'assets/js/lab.js?v=45',
+        'assets/js/studio.js?v=45',
+        'assets/js/arcade.js?v=45',
+        'assets/js/vault.js?v=45',
+        'assets/js/community.js?v=45',
+        'assets/js/central.js?v=45',
+        'assets/js/atmosphere.js?v=45'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=44', 'assets/css/hub.css?v=44'],
+      css: ['assets/css/os.css?v=45', 'assets/css/hub.css?v=45'],
       scripts: [
-        'assets/js/player.js?v=44',
-        'assets/js/os.js?v=44',
-        'assets/js/profile.js?v=44',
-        'assets/js/lab.js?v=44',
-        'assets/js/studio.js?v=44',
-        'assets/js/arcade.js?v=44',
-        'assets/js/vault.js?v=44',
-        'assets/js/community.js?v=44',
-        'assets/js/central.js?v=44',
-        'assets/js/hub.js?v=44'
+        'assets/js/player.js?v=45',
+        'assets/js/os.js?v=45',
+        'assets/js/profile.js?v=45',
+        'assets/js/lab.js?v=45',
+        'assets/js/studio.js?v=45',
+        'assets/js/arcade.js?v=45',
+        'assets/js/vault.js?v=45',
+        'assets/js/community.js?v=45',
+        'assets/js/central.js?v=45',
+        'assets/js/hub.js?v=45'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=44']
+      scripts: ['assets/js/atmosphere.js?v=45']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=44'],
-      scripts: ['assets/js/study-questions.js?v=44', 'assets/js/reveal.js?v=44', 'assets/js/study.js?v=44']
+      css: ['assets/css/study.css?v=45'],
+      scripts: ['assets/js/study-questions.js?v=45', 'assets/js/reveal.js?v=45', 'assets/js/study.js?v=45']
     }
   };
 
@@ -319,12 +321,14 @@
     };
     if (open()) return;
 
-    let tries = 16;
+    /* o reveal.js normalmente já está na página (defer no index.html); isto
+       é só a rede de segurança para script bloqueado/lento (~2 s) */
+    let tries = 20;
     const wait = function () {
       if (open() || tries-- <= 0) return;
-      window.setTimeout(wait, 120);
+      window.setTimeout(wait, 100);
     };
-    window.setTimeout(wait, 60);
+    window.setTimeout(wait, 50);
   }
 
   function show(route) {
@@ -357,8 +361,6 @@
       if (active) view.removeAttribute('hidden');
       else view.setAttribute('hidden', '');
     });
-
-    if (first) document.documentElement.classList.add('is-revealing');
 
     document.title = config.title;
     syncIcon(route);
@@ -555,6 +557,10 @@
     /* chave da antiga trava de troca de janela: não existe mais, não deve
        ficar sobrando na sessão de quem já usou o site */
     try { sessionStorage.removeItem('luminsdk:v1:shield'); } catch (error) { /* sem storage */ }
+
+    /* rede de segurança: a classe da animação (versão antiga) travava o
+       body com overflow:hidden; se sobrou de uma sessão velha, sai agora */
+    document.documentElement.classList.remove('is-revealing');
 
     const legacy = routeFromUrl();
     show(initialRoute());
