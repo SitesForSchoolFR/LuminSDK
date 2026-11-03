@@ -371,7 +371,7 @@ How it works:
   the history nor the address bar shows the portal address — the same trick as Utopia's
   `openBackup()`: `about:blank` with the site in the iframe in front, Google behind.
   `?cloak=google` opens the blank tab but keeps the portal in the back tab;
-- **stale JS never gets stuck**: `app.js` stores the bundle version (`?v=53`) in the session and, when
+- **stale JS never gets stuck**: `app.js` stores the bundle version (`?v=54`) in the session and, when
   it changes, **reloads the page once** — that is what stops the blank tab from running old code after
   a deploy (the service worker also stopped caching 404s/errors);
 - **it always opens**: there is no session lock anymore — every page load tries to open the tab (the
@@ -637,6 +637,15 @@ without changing anything for people who never turn it on:
 - **Gallery:** the **See how it looks** button shows a large artwork plus four thumbnails (close-up,
   everyday, purple, knight); you can switch the large one there, and **tapping the card avatar** cycles
   to the next. The last choice is remembered.
+- **Wallpaper:** the artwork sits behind the whole site in a fixed layer with a gradient veil (low
+  opacity, heavier on the left where the text lives) — the face shows through, the content stays
+  readable. On phones it uses the lighter 1280 px version.
+- **Tab-switch animation in theme colours:** with Astolfo on, the 2.5 s layer turns pink and lilac, the
+  rings get a double glow, the clock uses the theme font and a giant `♡` pulses behind it. The per-tab
+  time stamp stays.
+- **Study tab:** the theme now covers the StudyDesk components (search, inputs, subject/task hover, quiz
+  options, "this week" panel, progress bars, CTA button and the timer, which goes from navy to plum with
+  pink bars). Green/correct and red/wrong stay untouched.
 
 There are **no keyboard shortcuts** in the site besides that optional theme toggle — no `F` (fullscreen), `R` (random), `/` or
 `Ctrl`+`K` (search), `?` (settings). Everything lives in the UI buttons so no key is stolen from

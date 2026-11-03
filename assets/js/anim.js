@@ -35,6 +35,14 @@
       browser:  { c1: '#22d3ee', c2: '#818cf8', label: 'navegador',      stamp: '16:20',    hint: 'endereço' },
       provider: { c1: '#fbbf24', c2: '#f472b6', label: 'catálogo',       stamp: '13:10',    hint: 'duckmath · astra' },
       boot:     { c1: '#a78bfa', c2: '#f9a8d4', label: 'entrada',        stamp: '23:59',    hint: 'escolha' }
+    },
+
+    /* Tema Astolfo ligado (html[data-skin="astolfo"]): rosa e lilás em
+       todas as abas, com o carimbo do relógio continuando por aba. O
+       astolfo.css completa o visual (brilho, laço e textura). */
+    ASTOLFO: {
+      c1: '#ff8fc4',
+      c2: '#d7c1ff'
     }
   };
 
@@ -57,8 +65,19 @@
   let tick = 0;
   let lastRoute = '';
 
+  function themed() {
+    return document.documentElement.getAttribute('data-skin') === 'astolfo';
+  }
+
   function theme(route) {
-    return CONFIG.THEMES[route] || FALLBACK;
+    const base = CONFIG.THEMES[route] || FALLBACK;
+    if (!themed()) return base;
+    return Object.assign({}, base, {
+      c1: CONFIG.ASTOLFO.c1,
+      c2: CONFIG.ASTOLFO.c2,
+      label: base.label,
+      hint: base.hint + ' · ♡'
+    });
   }
 
   function make(tag, className, parent) {
@@ -196,6 +215,12 @@
     config: CONFIG,
     play: play,
     hide: drop,
+    /* o tema Astolfo chama isto ao ligar/desligar para a próxima animação
+       já sair nas cores certas (as camadas em voo são recolhidas) */
+    refresh: function () {
+      drop();
+      return themed();
+    },
     state: function () {
       return { running: !!layer, duration: CONFIG.DURATION, reduced: REDUCED,
         last: lastRoute, themes: Object.keys(CONFIG.THEMES) };
