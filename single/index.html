@@ -112,7 +112,7 @@
   }
   </script>
 
-  <!-- assets/css/styles.css?v=51 -->
+  <!-- assets/css/styles.css?v=52 -->
   <style>
 /* =========================================================
    LuminSDK — folha de estilo
@@ -3163,6 +3163,10 @@ html[data-speed] .site-nav a {
   overflow: hidden;
 }
 .ast-card__avatar img { width: 100%; height: 100%; display: block; }
+.ast-card.is-on .ast-card__avatar {
+  border-color: #ff5fa8;
+  box-shadow: 0 0 0 3px rgba(255, 95, 168, .25), 0 0 18px rgba(255, 95, 168, .65);
+}
 .ast-card__title { font-weight: 700; line-height: 1.25; }
 .ast-card__title small {
   display: block;
@@ -4127,7 +4131,7 @@ html.cursor-pressed .cursor-ring {
   </style>
 
   <!-- folhas das abas: carregadas/ligadas pelo app.js conforme a rota -->
-  <!-- assets/css/app.css?v=51 -->
+  <!-- assets/css/app.css?v=52 -->
   <style>
 /* =========================================================
    LuminSDK — casca do aplicativo (uma URL, quatro abas)
@@ -4278,7 +4282,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
 }
   </style>
   <!-- personalização Astolfo (opcional): só age com html[data-skin="astolfo"] -->
-  <link rel="stylesheet" href="assets/css/astolfo.css?v=51" id="astolfo-css">
+  <link rel="stylesheet" href="assets/css/astolfo.css?v=52" id="astolfo-css">
 </head>
 <body>
 
@@ -5033,7 +5037,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
           <div class="ast-card" id="astolfo-card">
             <div class="ast-card__head">
               <span class="ast-card__avatar" aria-hidden="true">
-                <img src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/avatar.svg" alt="" width="46" height="46" decoding="async">
+                <img src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/art-avatar.png" alt="" width="46" height="46" decoding="async">
               </span>
               <span class="ast-card__title">
                 Astolfo
@@ -5069,7 +5073,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
       </header>
 
       <div class="sheet__body">
-        <img class="ast-sheet__art" src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/banner.jpg" alt="Ilustração do tema: laço rosa, estrela e xadrez sobre fundo preto arroxeado" width="960" height="360" decoding="async">
+        <img class="ast-sheet__art" src="https://suckinguptoessry.github.io/LuminSDK/assets/img/astolfo/art-full.jpg" alt="Ilustração do Astolfo em traje de cavaleiro, com capa branca e cabelo rosa" width="1280" height="720" decoding="async">
 
         <div class="ast-sheet__swatches" aria-label="Cores do tema">
           <span class="ast-sheet__swatch"><i style="background:#ff9ecb"></i>rosa</span>
@@ -5079,6 +5083,8 @@ html[data-view="gn"] .tabrail__tab.is-active {
           <span class="ast-sheet__swatch"><i style="background:#0d0a11"></i>tinta</span>
           <span class="ast-sheet__swatch"><i style="background:#fff6fb"></i>creme</span>
         </div>
+
+        <p class="ast-card__note">Arte: <b>Doki Theme</b> (github.com/doki-theme/doki-theme-web, licença MIT) · Astolfo é personagem de <i>Fate/Apocrypha</i> (© Type-Moon). Créditos completos em <code>assets/img/astolfo/CREDITS.md</code>.</p>
 
         <ul class="ast-sheet__list">
           <li>Cabeçalho com faixa de bandeirinhas, marca com laço e barra lateral preta de borda rosa.</li>
@@ -5437,7 +5443,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
 
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-  <script src="assets/js/astolfo.js?v=51" defer></script>
+  <script src="assets/js/astolfo.js?v=52" defer></script>
   <!-- CSS e JS do site embutidos por tools/single-file.py -->
   <script>
   window.__LUMIN_SINGLE__ = true;
@@ -10405,7 +10411,7 @@ html[data-view="gn"] .tabrail__tab.is-active {
     const link = document.createElement('link');
     link.id = 'astolfo-css';
     link.rel = 'stylesheet';
-    link.href = 'assets/css/astolfo.css?v=51';
+    link.href = 'assets/css/astolfo.css?v=52';
     link.addEventListener('error', function () { link.remove(); });
     document.head.appendChild(link);
   }
@@ -10445,8 +10451,8 @@ html[data-view="gn"] .tabrail__tab.is-active {
       state.classList.toggle('is-on', enabled);
     }
     if (knob) knob.setAttribute('aria-pressed', enabled ? 'true' : 'false');
-    const art = card.querySelector('.ast-card__avatar img');
-    if (art) art.src = enabled ? 'assets/img/astolfo/knight-256.png' : 'assets/img/astolfo/avatar.svg';
+    /* uma única arte (Doki Theme, MIT): o "ligado" aparece no brilho do avatar */
+    card.classList.toggle('is-on', enabled);
   }
 
   let previousFocus = null;
@@ -12353,20 +12359,20 @@ html[data-view="gn"] .tabrail__tab.is-active {
          desligado quando a rota muda */
       css: [],
       scripts: [
-        'assets/js/anim.js?v=51',
+        'assets/js/anim.js?v=52',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=51',
-        'assets/js/settings.js?v=51',
-        'assets/js/site.js?v=51',
-        'assets/js/atmosphere.js?v=51',
-        'assets/js/progress.js?v=51',
-        'assets/js/bonus.js?v=51'
+        'assets/js/library.js?v=52',
+        'assets/js/settings.js?v=52',
+        'assets/js/site.js?v=52',
+        'assets/js/atmosphere.js?v=52',
+        'assets/js/progress.js?v=52',
+        'assets/js/bonus.js?v=52'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=51'],
-      scripts: ['assets/js/gnmath.js?v=51'],
+      css: ['assets/css/gnmath.css?v=52'],
+      scripts: ['assets/js/gnmath.js?v=52'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -12378,60 +12384,60 @@ html[data-view="gn"] .tabrail__tab.is-active {
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=51'],
-      scripts: ['assets/js/provider.js?v=51', 'assets/js/atmosphere.js?v=51']
+      css: ['assets/css/provider.css?v=52'],
+      scripts: ['assets/js/provider.js?v=52', 'assets/js/atmosphere.js?v=52']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=51'],
-      scripts: ['assets/js/sites.js?v=51', 'assets/js/atmosphere.js?v=51']
+      css: ['assets/css/sites.css?v=52'],
+      scripts: ['assets/js/sites.js?v=52', 'assets/js/atmosphere.js?v=52']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=51'],
-      scripts: ['assets/js/browser.js?v=51', 'assets/js/atmosphere.js?v=51']
+      css: ['assets/css/browser.css?v=52'],
+      scripts: ['assets/js/browser.js?v=52', 'assets/js/atmosphere.js?v=52']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=51',
-        'assets/js/os.js?v=51',
-        'assets/js/profile.js?v=51',
-        'assets/js/lab.js?v=51',
-        'assets/js/studio.js?v=51',
-        'assets/js/arcade.js?v=51',
-        'assets/js/vault.js?v=51',
-        'assets/js/community.js?v=51',
-        'assets/js/central.js?v=51',
-        'assets/js/atmosphere.js?v=51'
+        'assets/js/player.js?v=52',
+        'assets/js/os.js?v=52',
+        'assets/js/profile.js?v=52',
+        'assets/js/lab.js?v=52',
+        'assets/js/studio.js?v=52',
+        'assets/js/arcade.js?v=52',
+        'assets/js/vault.js?v=52',
+        'assets/js/community.js?v=52',
+        'assets/js/central.js?v=52',
+        'assets/js/atmosphere.js?v=52'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=51', 'assets/css/hub.css?v=51'],
+      css: ['assets/css/os.css?v=52', 'assets/css/hub.css?v=52'],
       scripts: [
-        'assets/js/player.js?v=51',
-        'assets/js/os.js?v=51',
-        'assets/js/profile.js?v=51',
-        'assets/js/lab.js?v=51',
-        'assets/js/studio.js?v=51',
-        'assets/js/arcade.js?v=51',
-        'assets/js/vault.js?v=51',
-        'assets/js/community.js?v=51',
-        'assets/js/central.js?v=51',
-        'assets/js/hub.js?v=51'
+        'assets/js/player.js?v=52',
+        'assets/js/os.js?v=52',
+        'assets/js/profile.js?v=52',
+        'assets/js/lab.js?v=52',
+        'assets/js/studio.js?v=52',
+        'assets/js/arcade.js?v=52',
+        'assets/js/vault.js?v=52',
+        'assets/js/community.js?v=52',
+        'assets/js/central.js?v=52',
+        'assets/js/hub.js?v=52'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=51']
+      scripts: ['assets/js/atmosphere.js?v=52']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=51'],
-      scripts: ['assets/js/study-questions.js?v=51', 'assets/js/anim.js?v=51', 'assets/js/study.js?v=51']
+      css: ['assets/css/study.css?v=52'],
+      scripts: ['assets/js/study-questions.js?v=52', 'assets/js/anim.js?v=52', 'assets/js/study.js?v=52']
     }
   };
 

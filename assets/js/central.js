@@ -61,7 +61,8 @@
     { v: 'v49', items: [
       'Tema Astolfo (SFW) para o site inteiro: rosa, preto e branco quente em todas as abas — liga no fim do painel Personalizar ou com Ctrl + AltGr + Y, e a mesma combinação volta ao minimalista.',
       'Antes de ligar dá para espiar: botão "Ver como fica" mostra a arte, as cores e a lista do que muda.',
-      'A escolha fica salva no navegador, o seletor de cores continua guardado e volta a valer quando o tema é desligado.'
+      'A escolha fica salva no navegador, o seletor de cores continua guardado e volta a valer quando o tema é desligado.',
+      'Arte do tema 100% humana: ilustração do Doki Theme (MIT) e o resto desenhado em SVG no projeto — nada gerado por IA (créditos em assets/img/astolfo/CREDITS.md).'
     ] },
     { v: 'v48', items: [
       'Animação de troca de aba de volta, e agora à prova de falha: o mostrador usava "clock.dataset = …", que lança TypeError em vários navegadores — a camada morria antes de aparecer e a troca ficava muda.',

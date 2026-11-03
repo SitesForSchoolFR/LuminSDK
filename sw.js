@@ -6,7 +6,7 @@
    ========================================================= */
 'use strict';
 
-const VERSION = 'v51';
+const VERSION = 'v52';
 const SHELL_CACHE = 'lumin-shell-' + VERSION;
 const RUNTIME_CACHE = 'lumin-runtime-' + VERSION;
 
@@ -19,42 +19,42 @@ const SHELL = [
   './',
   'index.html',
   'manifest.webmanifest',
-  'assets/css/styles.css?v=51',
-  'assets/css/app.css?v=51',
-  'assets/js/app.js?v=51',
-  'assets/js/cloak.js?v=51',
-  'assets/js/anim.js?v=51',
-  'assets/css/anim.css?v=51',
-  'assets/js/astolfo.js?v=51',
-  'assets/css/astolfo.css?v=51',
-  'assets/js/site.js?v=51',
-  'assets/js/settings.js?v=51',
-  'assets/js/progress.js?v=51',
-  'assets/js/atmosphere.js?v=51',
-  'assets/js/library.js?v=51',
-  'assets/js/bonus.js?v=51',
-  'assets/js/social.js?v=51',
-  'assets/js/player.js?v=51',
-  'assets/js/os.js?v=51',
-  'assets/js/profile.js?v=51',
-  'assets/js/lab.js?v=51',
-  'assets/js/studio.js?v=51',
-  'assets/js/arcade.js?v=51',
-  'assets/js/vault.js?v=51',
-  'assets/js/community.js?v=51',
-  'assets/css/social.css?v=51',
-  'assets/css/lcore.css?v=51',
-  'assets/js/lcore.js?v=51',
-  'assets/css/os.css?v=51',
-  'assets/css/hub.css?v=51',
-  'assets/js/hub.js?v=51',
-  'assets/js/central.js?v=51',
+  'assets/css/styles.css?v=52',
+  'assets/css/app.css?v=52',
+  'assets/js/app.js?v=52',
+  'assets/js/cloak.js?v=52',
+  'assets/js/anim.js?v=52',
+  'assets/css/anim.css?v=52',
+  'assets/js/astolfo.js?v=52',
+  'assets/css/astolfo.css?v=52',
+  'assets/js/site.js?v=52',
+  'assets/js/settings.js?v=52',
+  'assets/js/progress.js?v=52',
+  'assets/js/atmosphere.js?v=52',
+  'assets/js/library.js?v=52',
+  'assets/js/bonus.js?v=52',
+  'assets/js/social.js?v=52',
+  'assets/js/player.js?v=52',
+  'assets/js/os.js?v=52',
+  'assets/js/profile.js?v=52',
+  'assets/js/lab.js?v=52',
+  'assets/js/studio.js?v=52',
+  'assets/js/arcade.js?v=52',
+  'assets/js/vault.js?v=52',
+  'assets/js/community.js?v=52',
+  'assets/css/social.css?v=52',
+  'assets/css/lcore.css?v=52',
+  'assets/js/lcore.js?v=52',
+  'assets/css/os.css?v=52',
+  'assets/css/hub.css?v=52',
+  'assets/js/hub.js?v=52',
+  'assets/js/central.js?v=52',
   'assets/img/hub.svg',
-  'assets/css/study.css?v=51',
-  'assets/css/browser.css?v=51',
-  'assets/js/browser.js?v=51',
-  'assets/js/provider.js?v=51',
-  'assets/css/provider.css?v=51',
+  'assets/css/study.css?v=52',
+  'assets/css/browser.css?v=52',
+  'assets/js/browser.js?v=52',
+  'assets/js/provider.js?v=52',
+  'assets/css/provider.css?v=52',
   'assets/img/browser.jpg',
   'assets/img/duckmath.jpg',
   'assets/img/astra.jpg',
@@ -148,7 +148,7 @@ self.addEventListener('fetch', (event) => {
     fetch(request)
       .then((response) => {
         /* só guarda sucesso de verdade: 404 de arquivo recém-publicado
-           (ex.: assets/js/anim.js?v=51 antes do Pages terminar) não pode
+           (ex.: assets/js/anim.js?v=52 antes do Pages terminar) não pode
            virar cache permanente */
         if (response && response.ok && response.status === 200) {
           caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, response.clone())).catch(() => {});

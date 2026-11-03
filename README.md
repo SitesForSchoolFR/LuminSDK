@@ -386,7 +386,7 @@ Como funciona:
   histórico nem a barra mostram o endereço do portal — é o mesmo truque do `openBackup()` do
   [Utopia](https://utopia.myk.sh): `about:blank` com o site no iframe na frente e o Google atrás.
   `?cloak=google` abre a aba em branco mas mantém o portal na aba de trás;
-- **nunca fica JS velho preso**: o `app.js` grava a versão do bundle (`?v=51`) na sessão e, quando ela
+- **nunca fica JS velho preso**: o `app.js` grava a versão do bundle (`?v=52`) na sessão e, quando ela
   muda, **recarrega a página uma vez** — é o que impede a aba em branco de continuar rodando o código
   antigo depois de uma atualização (o service worker também parou de guardar 404/erro em cache);
 - **abre SEMPRE**: não existe mais trava de sessão nenhuma — cada carga da página tenta abrir a aba
@@ -827,8 +827,11 @@ branco quente — sem mudar o padrão de quem não liga:
   cores e a lista do que muda. O CSS inteiro está em `assets/css/astolfo.css` (só age com
   `html[data-skin="astolfo"]`) e o motor em `assets/js/astolfo.js`
   (`window.LuminAstolfo.{on,off,toggle,state}`).
-- **SFW:** só cores, tipografia, laço, estrela, xadrez e listras — desenhos feitos no próprio projeto.
-  Nada de conteúdo adulto.
+- **SFW:** só cores, tipografia, laço, estrela, xadrez e listras. Nada de conteúdo adulto.
+- **Arte 100% humana** (nenhuma imagem gerada por IA): a ilustração vem do
+  [Doki Theme](https://github.com/doki-theme/doki-theme-web) (MIT, recortada aqui) e o restante
+  (laço, estrela, coração, xadrez, listras) foi desenhado no próprio projeto em SVG. Créditos,
+  licença e como pedir remoção estão em `assets/img/astolfo/CREDITS.md`.
 
 ### Atalhos de teclado
 
