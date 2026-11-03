@@ -6,7 +6,7 @@
    aba. A cor e os textos vêm de --la-1 / --la-2 e do CONFIG.
 
    Nada aqui bloqueia clique, rolagem ou foco: a camada é
-   pointer-events:none e sai do DOM em menos de 300 ms.
+   pointer-events:none e sai do DOM sozinha (2,5 s + 120 ms).
    Autor: Ryan Smith · Licença MIT
    ========================================================= */
 
@@ -131,6 +131,21 @@
   text-align: center;
   font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
 }
+
+/* plano B do anim.js: se a coreografia falhar, a camada vira só o carimbo
+   (nunca mais "troquei de aba e não aconteceu nada") */
+#lum-anim.la-simple {
+  display: grid;
+  place-items: center;
+  font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
+  font-size: clamp(1.4rem, 5vmin, 2.4rem);
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: #fff;
+  text-shadow: 0 0 22px color-mix(in srgb, var(--la-1) 85%, transparent);
+  animation: la-fade 1200ms ease-out both;
+}
+
 #lum-anim .la-time {
   font-size: clamp(2rem, 7vmin, 3.6rem);
   font-weight: 700;

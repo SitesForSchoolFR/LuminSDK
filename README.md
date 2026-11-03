@@ -353,6 +353,9 @@ relógio, ponteiro girando, grade em perspectiva e um mostrador digital com o �
 Como funciona:
 
 - a camada é `pointer-events: none` e desaparece sozinha — **nunca bloqueia clique, rolagem ou foco**;
+- **à prova de falha**: se a coreografia quebrar, a camada cai para um plano B (só o carimbo da aba) em
+  vez de sumir sem aviso — foi assim que um `clock.dataset = …` (só leitura em vários navegadores)
+  deixava a troca de aba muda;
 - o mostrador digital **corre durante a animação** (o “tempo” da aba avança alguns minutos);
 - o CSS é coreografado em 200 ms e o `anim.js` multiplica os tempos por `--la-scale`, então mudar
   `DURATION` mantém a coreografia (nada de corte seco no meio);
@@ -383,7 +386,7 @@ Como funciona:
   histórico nem a barra mostram o endereço do portal — é o mesmo truque do `openBackup()` do
   [Utopia](https://utopia.myk.sh): `about:blank` com o site no iframe na frente e o Google atrás.
   `?cloak=google` abre a aba em branco mas mantém o portal na aba de trás;
-- **nunca fica JS velho preso**: o `app.js` grava a versão do bundle (`?v=49`) na sessão e, quando ela
+- **nunca fica JS velho preso**: o `app.js` grava a versão do bundle (`?v=50`) na sessão e, quando ela
   muda, **recarrega a página uma vez** — é o que impede a aba em branco de continuar rodando o código
   antigo depois de uma atualização (o service worker também parou de guardar 404/erro em cache);
 - **abre SEMPRE**: não existe mais trava de sessão nenhuma — cada carga da página tenta abrir a aba
