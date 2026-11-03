@@ -348,12 +348,21 @@ How it works:
   to test;
 - it is all CSS plus a handful of nodes built in `assets/js/reveal.js` (no library, no images).
 
-Files: `assets/js/reveal.js` (build, roll, skip and cooldown), `assets/css/reveal.css` (aurora, rays,
-rings, sparks, gradients and keyframes). The call comes from `assets/js/app.js`, exactly where the app
-switches tabs — the animation lands before the catalog view shows up.
+Files: `assets/js/reveal.js` (build, roll, skip and cooldown; loaded globally from `index.html`, with a
+per-route copy only to bust caches), `assets/css/reveal.css` (aurora, rays, rings, sparks, gradients and
+keyframes, also global). The call comes from `assets/js/app.js`, exactly where the app switches tabs —
+the animation lands before the catalog view shows up. If building the layer ever fails, the module
+cleans up immediately: **the animation can never leave the page stuck**.
 
 There is also a standalone preview at `tools/reveal-preview/index.html`, which loads the real
 `reveal.js`/`reveal.css` so you can audition the animation without going through the shortcut.
+
+**To edit the animation**, open `assets/js/reveal.js`: the `CONFIG` block at the top holds everything —
+`DURATION` (ms), `COOLDOWN` (ms between animations), `SPARKS` (max sparks), `PALETTE` (aurora/ray/ring
+colours), `TEXTS` (tag and skip hint), `TIERS` (name, chance, colour and sparks per rarity), `ON_FIRST`
+(animate the first visit?) and `LABEL` (title per destination). The look itself (shapes, keyframe
+timings) lives in `assets/css/reveal.css`, which uses the `--rv-*` variables filled by that CONFIG.
+Live tweaks: `LuminReveal.config` in the console, or the preview page (it has a “Ver/config” button).
 
 ### Opening in about:blank (the site inside an iframe)
 

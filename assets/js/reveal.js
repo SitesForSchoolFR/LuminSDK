@@ -1,49 +1,76 @@
 /* =========================================================
-   LuminSDK — abertura do catálogo (animação)
-   A "revelação" que toca quando Shift+D — ou o crédito do rodapé dos
-   estudos — abre o LuminSDK: aurora, raios girando, portal de anéis,
-   faíscas subindo, varredura de luz, flash e título com brilho. É a
-   mesma ideia das aberturas do Sols RNG: a raridade saltando na tela.
+   LuminSDK — abertura do catálogo (animação)  ·  ARQUIVO EDITÁVEL
+   A "revelação" que toca quando Shift+D — ou o crédito do rodapé —
+   abre o LuminSDK: aurora, raios girando, portal de anéis, faíscas,
+   varredura de luz, flash e o título com brilho. Mesma ideia das
+   aberturas do Sols RNG.
 
-   Como funciona:
-   · show() recebe o destino ('lumin' ou 'estudo') e o motivo ('roll' =
-     atalho/crédito, 'first' = primeira entrada, '' = troca de aba comum)
-   · a rolagem só acontece quando o catálogo é aberto por 'roll' — o
-     atalho Shift+D, o crédito do rodapé e os links de rota — no máximo uma
-     vez a cada 10 s; a primeira entrada do site (o portal de estudos) só
-     anima se for ligada em LuminApp.revealOnFirst(true)
-   · ~2,4 s de animação; clique, qualquer tecla ou Esc pula na hora
-   · ?anim=0 desliga; preferência "menos movimento" cai para um fade
-   · quem move a tela por conta própria (troca de aba) continua igual —
-     a rolagem entra por cima e sai sozinha
+   CARREGADO GLOBALMENTE (defer no index.html): a animação nunca
+   depende de rota, de aba carregada ou de script sob demanda.
 
-   Sem bibliotecas, sem build.
-   Autor: Ryan Smith · Licença MIT
+   ---------------------------------------------------------
+   EDITE AQUI (nada de caçar valor no meio do arquivo)
+   ---------------------------------------------------------
+   · DURATION      duração da animação em ms
+   · COOLDOWN      intervalo mínimo entre duas animações (ms)
+   · SPARKS        faíscas da maior raridade (as outras usam menos)
+   · PALETTE       cores:  a/b/c = auroras, rays = raios, rings = anéis
+   · TEXTS         textos fixos (tag, dica de pular)
+   · TIERS         raridades: nome, chance mostrada, cor e faíscas
+   · ON_FIRST      anima também na primeira entrada do dia?
+   · LABEL         título grande por destino (aceita <b>)
    ========================================================= */
 (function () {
   'use strict';
 
-  /* o arquivo único e o modo depuração ficam de fora */
-  if (window.__LUMIN_SINGLE__) return;
-  if (/(?:^|[?&])anim=0(?:&|$)/.test(window.location.search || '')) return;
+  const CONFIG = {
+    DURATION: 2400,
+    COOLDOWN: 10000,
+    SPARKS: 40,
+    ON_FIRST: false,
 
-  const DURATION = 2400;
-  const COOLDOWN = 10000;
-  const REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const MAX_SPARKS = 40;
+    PALETTE: {
+      a: 'rgba(139, 92, 246, .85)',   /* aurora violeta */
+      b: 'rgba(34, 211, 238, .70)',   /* aurora ciano */
+      c: 'rgba(244, 114, 182, .55)',  /* aurora rosa */
+      rays: 'rgba(167, 139, 250, .22)',
+      rings: 'rgba(196, 181, 253, .38)'
+    },
 
-  const TIERS = [
-    { chance: '1 / 1.100', name: 'Comum', accent: '#a5b4fc', sparks: 14 },
-    { chance: '1 / 1.000.000', name: 'Raro', accent: '#22d3ee', sparks: 20 },
-    { chance: '1 / 100.000.000', name: 'Épico', accent: '#a78bfa', sparks: 26 },
-    { chance: '1 / 1.000.000.000', name: 'Lendário', accent: '#f472b6', sparks: 32 },
-    { chance: '1 / 10.000.000.000', name: 'Mítico', accent: '#fde68a', sparks: 40 }
-  ];
+    TEXTS: {
+      lumin: 'abertura do catálogo',
+      estudo: 'de volta aos estudos',
+      skip: 'toque ou aperte qualquer tecla para pular',
+      label: 'Abrindo o LuminSDK'
+    },
+
+    LABEL: {
+      lumin: 'Lumin<b>SDK</b>',
+      estudo: 'Study<b>Hub</b>'
+    },
+
+    TIERS: [
+      { chance: '1 / 1.100', name: 'Comum', accent: '#a5b4fc', sparks: 14 },
+      { chance: '1 / 1.000.000', name: 'Raro', accent: '#22d3ee', sparks: 20 },
+      { chance: '1 / 100.000.000', name: 'Épico', accent: '#a78bfa', sparks: 26 },
+      { chance: '1 / 1.000.000.000', name: 'Lendário', accent: '#f472b6', sparks: 32 },
+      { chance: '1 / 10.000.000.000', name: 'Mítico', accent: '#fde68a', sparks: 40 }
+    ]
+  };
+
+  /* registro único: o app.js carrega este arquivo sob demanda também, então
+     já pode existir uma instância na página */
+  if (window.LuminReveal) return;
+
+  /* ?anim=0 no endereço desliga tudo (e o arquivo único nem carrega isto) */
+  const OFF = /(?:^|[?&])anim=0(?:&|$)/.test(window.location.search || '');
+
   const LAST = 'luminsdk:v1:reveal:last';
-  const ON_FIRST = 'luminsdk:v1:reveal:first';
+  const REDUCED = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
 
   let layer = null;
   let timer = 0;
+  let watchdog = 0;
   let running = false;
   let lastAt = 0;
 
@@ -56,20 +83,16 @@
     }
   }
 
-  function write(key, value) {
-    try { sessionStorage.setItem(key, String(value)); } catch (error) { /* modo privado */ }
-  }
-
-  /* 1 em 1.100 → 1 em 10 bilhões, dependendo do destino e do momento */
+  /* 1 em 1.100 → 1 em 10 bilhões, dependendo do destino */
   function pickTier(route) {
     const juice = route === 'lumin' ? 1 : 0.35;
     const lucky = Math.random();
-    let index = 0;
-    if (lucky < 0.28 * juice) index = 4;
-    else if (lucky < 0.48 * juice) index = 3;
-    else if (lucky < 0.66 * juice) index = 2;
-    else if (lucky < 0.82 * juice) index = 1;
-    return TIERS[index];
+    const tiers = CONFIG.TIERS;
+    if (lucky < 0.28 * juice) return tiers[4];
+    if (lucky < 0.48 * juice) return tiers[3];
+    if (lucky < 0.66 * juice) return tiers[2];
+    if (lucky < 0.82 * juice) return tiers[1];
+    return tiers[0];
   }
 
   function make(tag, className, parent) {
@@ -92,19 +115,27 @@
     parent.append(dot);
   }
 
-  /* monta a camada inteira (uma vez por chamada; sai do DOM no fim) */
+  /* monta a camada inteira; sai do DOM no fim */
   function build(route) {
     const tier = pickTier(route);
-    const reduced = REDUCED;
     const node = document.createElement('div');
     node.id = 'lumin-reveal';
+    node.className = 'rv-layer';
     node.setAttribute('role', 'status');
     node.setAttribute('aria-live', 'polite');
-    node.setAttribute('aria-label', 'Abrindo o LuminSDK');
+    node.setAttribute('aria-label', CONFIG.TEXTS.label);
 
-    const stageTag = route === 'lumin' ? 'abertura do catálogo' : 'de volta aos estudos';
+    /* cores e destaque da raridade viram variáveis CSS: dá para trocar
+       tudo pelo CONFIG acima ou por CSS, sem tocar na estrutura */
+    const p = CONFIG.PALETTE;
+    node.style.setProperty('--rv-tier', tier.accent);
+    node.style.setProperty('--rv-a', p.a);
+    node.style.setProperty('--rv-b', p.b);
+    node.style.setProperty('--rv-c', p.c);
+    node.style.setProperty('--rv-rays', p.rays);
+    node.style.setProperty('--rv-rings', p.rings);
 
-    if (!reduced) {
+    if (!REDUCED) {
       make('div', 'rv-aurora rv-aurora--a', node);
       make('div', 'rv-aurora rv-aurora--b', node);
       make('div', 'rv-aurora rv-aurora--c', node);
@@ -116,37 +147,40 @@
       make('div', 'rv-core', node);
 
       const sparks = make('div', 'rv-sparks', node);
-      for (let i = 0; i < Math.min(tier.sparks, MAX_SPARKS); i++) spark(sparks, tier);
+      const total = Math.min(tier.sparks, CONFIG.SPARKS);
+      for (let i = 0; i < total; i++) spark(sparks, tier);
       make('div', 'rv-sweep', node);
       make('div', 'rv-flash', node);
     }
 
     const stage = make('div', 'rv-stage', node);
-    const tag = make('div', 'rv-tag', stage);
-    tag.textContent = stageTag;
+    make('div', 'rv-tag', stage).textContent =
+      CONFIG.TEXTS[route] || CONFIG.TEXTS.lumin;
 
     const title = document.createElement('p');
     title.className = 'rv-title';
-    title.innerHTML = route === 'lumin' ? 'Lumin<b>SDK</b>' : 'Study<b>Hub</b>';
+    title.innerHTML = CONFIG.LABEL[route] || CONFIG.LABEL.lumin;
     stage.append(title);
 
-    const sub = make('p', 'rv-sub', stage);
-    sub.textContent = tier.name + ' · ' + tier.chance;
-
+    make('p', 'rv-sub', stage).textContent = tier.name + ' · ' + tier.chance;
     const bar = make('div', 'rv-bar', stage);
     make('i', '', bar);
-    make('p', 'rv-skip', stage).textContent = 'toque ou aperte qualquer tecla para pular';
+    make('p', 'rv-skip', stage).textContent = CONFIG.TEXTS.skip;
 
-    node.style.setProperty('--tier', tier.accent);
     return node;
   }
 
-  function remove() {
+  /* ---- limpeza: SEMPRE libera a página (mesmo se algo falhar) ---- */
+  function cleanup() {
     window.clearTimeout(timer);
+    window.clearTimeout(watchdog);
     timer = 0;
+    watchdog = 0;
     running = false;
-    disarmSkip();
+
+    /* a classe que existia na primeira versão travava o body: sai sempre */
     document.documentElement.classList.remove('is-revealing');
+
     if (!layer) return;
     const node = layer;
     layer = null;
@@ -156,58 +190,79 @@
     }, 620);
   }
 
-  /* ---- pular: clique, tecla ou Esc ---- */
+  /* pular: clique, tecla, rolagem ou toque */
   const SKIP_EVENTS = ['pointerdown', 'keydown', 'wheel', 'touchstart'];
 
   function armSkip() {
     SKIP_EVENTS.forEach(function (type) {
-      window.addEventListener(type, remove, true);
+      window.addEventListener(type, cleanup, true);
     });
-    window.clearTimeout(timer);
-    timer = window.setTimeout(disarmSkip, 3400);
   }
 
   function disarmSkip() {
     SKIP_EVENTS.forEach(function (type) {
-      window.removeEventListener(type, remove, true);
+      window.removeEventListener(type, cleanup, true);
     });
   }
 
   /* ---------- API ---------- */
   function show(route, reason) {
+    if (OFF) return false;
+    route = route === 'estudo' ? 'estudo' : 'lumin';
+    reason = reason === undefined ? 'roll' : reason;
+
     if (running) return false;
     if (reason !== 'roll' && reason !== 'first') return false;
-    /* a primeira entrada do site é o portal de estudos: só anima se a
-       pessoa ligar (LuminApp.revealOnFirst(true)) — a abertura barulhenta
-       fica reservada para o atalho/crédito, que é quando o catálogo abre */
-    if (reason === 'first' && read(ON_FIRST, '0') !== '1') return false;
+    if (reason === 'first' && !CONFIG.ON_FIRST && read('luminsdk:v1:reveal:first', '0') !== '1') return false;
 
     const now = Date.now();
-    if (now - lastAt < COOLDOWN) return false;   /* nada de animação em série */
+    if (now - lastAt < CONFIG.COOLDOWN) return false;
     lastAt = now;
+
     running = true;
+    try {
+      disarmSkip();
+      layer = build(route);
+      document.body.append(layer);
+      armSkip();
+    } catch (error) {
+      /* nunca deixa a página presa por causa da animação */
+      console.warn('[LuminSDK] animação não montou:', error);
+      cleanup();
+      return false;
+    }
 
-    layer = build(route);
-    document.body.append(layer);
-    document.documentElement.classList.add('is-revealing');
-    armSkip();
-
+    const total = REDUCED ? 900 : CONFIG.DURATION;
     timer = window.setTimeout(function () {
       disarmSkip();
-      remove();
-    }, REDUCED ? 900 : DURATION);
+      cleanup();
+    }, total);
 
+    /* rede de segurança: se algum navegador engasgar nos timers, a camada
+       e a classe saem no limite de tempo de qualquer forma */
+    watchdog = window.setTimeout(cleanup, total + 1500);
     return true;
   }
 
-  /* diagnóstico (e para testar sem esperar o atalho) */
+  /* se a aba volta do segundo plano com a camada presa, limpa na hora */
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible' && layer) cleanup();
+  });
+  window.addEventListener('pageshow', function () {
+    document.documentElement.classList.remove('is-revealing');
+  });
+
   window.LuminReveal = {
-    show: function (route, reason) {
-      return show(route || 'lumin', reason === undefined ? 'roll' : reason);
-    },
+    config: CONFIG,
+    show: function (route, reason) { return show(route, reason); },
     blast: function (route) { lastAt = 0; return show(route || 'lumin', 'roll'); },
+    hide: cleanup,
     state: function () {
-      return { running: running, reduced: REDUCED, last: lastAt, onFirst: read(ON_FIRST, '0') === '1' };
+      return {
+        disabled: OFF, running: running, reduced: REDUCED, last: lastAt,
+        duration: CONFIG.DURATION, cooldown: CONFIG.COOLDOWN,
+        onFirst: CONFIG.ON_FIRST || read('luminsdk:v1:reveal:first', '0') === '1'
+      };
     }
   };
 })();

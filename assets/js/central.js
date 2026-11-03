@@ -58,6 +58,11 @@
   };
 
   const CHANGELOG = [
+    { v: 'v43', items: [
+      'Correção: a animação de abertura volta a tocar no Shift+D — o script e a folha agora são globais e não dependem mais da rota carregada.',
+      'Correção: a página não fica mais travada (a classe que zerava a rolagem saiu; se sobrar de sessão antiga, é limpa no boot).',
+      'Animação editável: tudo em CONFIG no topo de assets/js/reveal.js (duração, cooldown, cores, textos, raridades).'
+    ] },
     { v: 'v42', items: [
       'Animação de abertura no estilo Sols RNG quando Shift+D (ou o crédito do rodapé) abre o catálogo: aurora, raios, anéis, faíscas, flash e raridade sorteada.',
       'A animação dura ~2,4 s, pula com clique/tecla/Esc, espera 10 s entre uma e outra e ?anim=0 desliga.',

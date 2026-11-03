@@ -46,6 +46,7 @@
       <div class="row">
         <button id="blast" class="ghost">Sortear outro (ignora o intervalo)</button>
         <button id="state" class="ghost">Ver estado</button>
+        <button id="cfg" class="ghost">Ver/config</button>
       </div>
       <p class="hint" id="hint">—</p>
 
@@ -73,6 +74,15 @@
     });
     document.getElementById('state').addEventListener('click', () => {
       hint.textContent = JSON.stringify(window.LuminReveal.state());
+    });
+    /* EDITE AQUI: window.LuminReveal.config — duração, cooldown, cores, textos
+       e raridades. Ex.: LuminReveal.config.DURATION = 4000; depois clique em
+       "Abrir o catálogo". */
+    document.getElementById('cfg').addEventListener('click', () => {
+      const c = window.LuminReveal.config;
+      c.DURATION = c.DURATION === 2400 ? 4000 : 2400;
+      hint.textContent = 'DURATION agora é ' + c.DURATION + ' ms · COOLDOWN ' + c.COOLDOWN +
+        ' ms · SPARKS ' + c.SPARKS;
     });
     document.getElementById('blast').click();
   </script>
