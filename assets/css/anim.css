@@ -1,12 +1,12 @@
 /* =========================================================
    LuminSDK — animação de troca de aba (tempo · relógio · espaço-tempo)
-   Uma animação curta (2,5 s por padrão, editável em CONFIG.DURATION de
+   Uma animação curta (1,5 s por padrão, editável em CONFIG.DURATION de
    assets/js/anim.js) e diferente para cada aba: funil de espaço-tempo, anéis de relógio,
    ponteiro girando, grade em perspectiva e um mostrador com o "tempo" da
    aba. A cor e os textos vêm de --la-1 / --la-2 e do CONFIG.
 
    Nada aqui bloqueia clique, rolagem ou foco: a camada é
-   pointer-events:none e sai do DOM sozinha (2,5 s + 120 ms).
+   pointer-events:none e sai do DOM sozinha (duração + 120 ms).
    Autor: Ryan Smith · Licença MIT
    ========================================================= */
 
@@ -26,7 +26,7 @@
      violeta/ciano de sempre; com o tema Astolfo, o anim.js manda rosa e
      lilás — por isso o fallback existe aqui. */
   /* todos os tempos usam --la-scale: o CSS foi coreografado para 200 ms e
-     o anim.js multiplica pelo fator da duração escolhida (2,5 s = 12,5) */
+     o anim.js multiplica pelo fator da duração escolhida (1,5 s = 7,5) */
   animation: la-fade calc(200ms * var(--la-scale, 1)) ease-out both;
   will-change: opacity;
 }
@@ -34,8 +34,8 @@
 /* ---------- funil de espaço-tempo ---------- */
 #lum-anim .la-warp {
   position: absolute;
-  width: 130vmax;
-  height: 130vmax;
+  width: 110vmax;
+  height: 110vmax;
   border-radius: 50%;
   background: conic-gradient(from 0deg,
     transparent 0 8%, color-mix(in srgb, var(--la-1) 55%, transparent) 10%,
@@ -43,7 +43,7 @@
     transparent 30% 46%, color-mix(in srgb, var(--la-1) 35%, transparent) 48%,
     transparent 52% 70%, color-mix(in srgb, var(--la-2) 30%, transparent) 72%,
     transparent 76% 100%);
-  filter: blur(7px);
+  filter: blur(4px);
   opacity: .9;
   animation: la-warp calc(200ms * var(--la-scale, 1)) cubic-bezier(.22, .9, .25, 1) both;
 }
@@ -146,7 +146,7 @@
   letter-spacing: .04em;
   color: #fff;
   text-shadow: 0 0 22px color-mix(in srgb, var(--la-1) 85%, transparent);
-  animation: la-fade 1200ms ease-out both;
+  animation: la-fade var(--la-dur, 1200ms) ease-out both;
 }
 
 #lum-anim .la-time {

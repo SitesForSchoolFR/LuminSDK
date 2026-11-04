@@ -6,7 +6,7 @@
    ========================================================= */
 'use strict';
 
-const VERSION = 'v56';
+const VERSION = 'v57';
 const SHELL_CACHE = 'lumin-shell-' + VERSION;
 const RUNTIME_CACHE = 'lumin-runtime-' + VERSION;
 
@@ -19,42 +19,42 @@ const SHELL = [
   './',
   'index.html',
   'manifest.webmanifest',
-  'assets/css/styles.css?v=56',
-  'assets/css/app.css?v=56',
-  'assets/js/app.js?v=56',
-  'assets/js/cloak.js?v=56',
-  'assets/js/anim.js?v=56',
-  'assets/css/anim.css?v=56',
-  'assets/js/astolfo.js?v=56',
-  'assets/css/astolfo.css?v=56',
-  'assets/js/site.js?v=56',
-  'assets/js/settings.js?v=56',
-  'assets/js/progress.js?v=56',
-  'assets/js/atmosphere.js?v=56',
-  'assets/js/library.js?v=56',
-  'assets/js/bonus.js?v=56',
-  'assets/js/social.js?v=56',
-  'assets/js/player.js?v=56',
-  'assets/js/os.js?v=56',
-  'assets/js/profile.js?v=56',
-  'assets/js/lab.js?v=56',
-  'assets/js/studio.js?v=56',
-  'assets/js/arcade.js?v=56',
-  'assets/js/vault.js?v=56',
-  'assets/js/community.js?v=56',
-  'assets/css/social.css?v=56',
-  'assets/css/lcore.css?v=56',
-  'assets/js/lcore.js?v=56',
-  'assets/css/os.css?v=56',
-  'assets/css/hub.css?v=56',
-  'assets/js/hub.js?v=56',
-  'assets/js/central.js?v=56',
+  'assets/css/styles.css?v=57',
+  'assets/css/app.css?v=57',
+  'assets/js/app.js?v=57',
+  'assets/js/cloak.js?v=57',
+  'assets/js/anim.js?v=57',
+  'assets/css/anim.css?v=57',
+  'assets/js/astolfo.js?v=57',
+  'assets/css/astolfo.css?v=57',
+  'assets/js/site.js?v=57',
+  'assets/js/settings.js?v=57',
+  'assets/js/progress.js?v=57',
+  'assets/js/atmosphere.js?v=57',
+  'assets/js/library.js?v=57',
+  'assets/js/bonus.js?v=57',
+  'assets/js/social.js?v=57',
+  'assets/js/player.js?v=57',
+  'assets/js/os.js?v=57',
+  'assets/js/profile.js?v=57',
+  'assets/js/lab.js?v=57',
+  'assets/js/studio.js?v=57',
+  'assets/js/arcade.js?v=57',
+  'assets/js/vault.js?v=57',
+  'assets/js/community.js?v=57',
+  'assets/css/social.css?v=57',
+  'assets/css/lcore.css?v=57',
+  'assets/js/lcore.js?v=57',
+  'assets/css/os.css?v=57',
+  'assets/css/hub.css?v=57',
+  'assets/js/hub.js?v=57',
+  'assets/js/central.js?v=57',
   'assets/img/hub.svg',
-  'assets/css/study.css?v=56',
-  'assets/css/browser.css?v=56',
-  'assets/js/browser.js?v=56',
-  'assets/js/provider.js?v=56',
-  'assets/css/provider.css?v=56',
+  'assets/css/study.css?v=57',
+  'assets/css/browser.css?v=57',
+  'assets/js/browser.js?v=57',
+  'assets/js/provider.js?v=57',
+  'assets/css/provider.css?v=57',
   'assets/img/browser.jpg',
   'assets/img/duckmath.jpg',
   'assets/img/astra.jpg',
@@ -102,6 +102,25 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(request.url);
 
+  /* Fontes do Google: stale-while-revalidate. Tratar antes dos hosts externos. */
+  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
+    event.respondWith(
+      caches.open(RUNTIME_CACHE).then((cache) =>
+        cache.match(request).then((cached) => {
+          const network = fetch(request)
+            .then((response) => {
+              if (response && response.ok) cache.put(request, response.clone()).catch(() => {});
+              return response;
+            })
+            .catch(() => cached || new Response('', { status: 503, statusText: 'Offline' }));
+          return cached || network;
+        })
+      )
+    );
+    return;
+  }
+
+
   /* Requisições do SDK / catálogo: sempre rede (dados nunca podem ficar velhos) */
   const isSdk = url.hostname !== self.location.hostname;
   if (isSdk) return;
@@ -125,23 +144,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  /* Fontes do Google: stale-while-revalidate */
-  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-    event.respondWith(
-      caches.open(RUNTIME_CACHE).then((cache) =>
-        cache.match(request).then((cached) => {
-          const network = fetch(request)
-            .then((response) => {
-              cache.put(request, response.clone()).catch(() => {});
-              return response;
-            })
-            .catch(() => cached);
-          return cached || network;
-        })
-      )
-    );
-    return;
-  }
 
   /* Estáticos locais: rede primeiro, cache só como reserva offline.
      (cache primeiro fazia o navegador continuar rodando o JS/CSS antigo
@@ -150,7 +152,7 @@ self.addEventListener('fetch', (event) => {
     fetch(request)
       .then((response) => {
         /* só guarda sucesso de verdade: 404 de arquivo recém-publicado
-           (ex.: assets/js/anim.js?v=56 antes do Pages terminar) não pode
+           (ex.: assets/js/anim.js?v=57 antes do Pages terminar) não pode
            virar cache permanente */
         if (response && response.ok && response.status === 200) {
           caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, response.clone())).catch(() => {});
