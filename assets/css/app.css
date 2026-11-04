@@ -145,3 +145,17 @@ html[data-view="gn"] .tabrail__tab.is-active {
     border: 0;
   }
 }
+
+/* Trocas de área mais naturais sem mudar as rotas nem interferir nos apps. */
+.app-view.is-active {
+  animation: lumin-view-enter 360ms cubic-bezier(.2, .75, .25, 1) both;
+}
+
+@keyframes lumin-view-enter {
+  from { opacity: .78; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-view.is-active { animation-duration: 1ms; }
+}

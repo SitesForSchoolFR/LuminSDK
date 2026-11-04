@@ -1,6 +1,6 @@
 /* =========================================================
    LuminSDK — animação de troca de aba  ·  ARQUIVO EDITÁVEL
-   Uma animação curta (2,5 s, editável abaixo) e DIFERENTE para cada
+   Uma animação curta (1,5 s, editável abaixo) e DIFERENTE para cada
    aba, no tema tempo / relógio / espaço-tempo: funil de espaço-tempo,
    anéis de relógio, ponteiro girando, grade em perspectiva e um
    mostrador digital com o "tempo" daquela aba.
@@ -14,14 +14,14 @@
    ---------------------------------------------------------
    EDITE AQUI
    ---------------------------------------------------------
-   · DURATION  duração em ms (2500 = 2,5 s; use 2000 para 2 s)
+   · DURATION  duração em ms (1500 = 1,5 s; use 2000 para 2 s)
    · THEMES    uma entrada por aba: c1/c2 (cores), label, stamp, hint
    ========================================================= */
 (function () {
   'use strict';
 
   const CONFIG = {
-    DURATION: 2500,
+    DURATION: 1500,
 
     /* c1/c2 = cores do gradiente · label = nome da aba
        stamp = "tempo" mostrado · hint = marcações do mostrador */
@@ -57,11 +57,14 @@
   /* o app.js carrega este arquivo por rota (para furar cache): não duplica */
   if (window.LuminAnim) return;
 
-  const REDUCED = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false;
+  const motionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  function reducedMotion() { return !!(motionQuery && motionQuery.matches); }
+  function duration() { return reducedMotion() ? 260 : CONFIG.DURATION; }
 
   let layer = null;
   let dropTimer = 0;
   let born = 0;
+  let activeDuration = 0;
   let tick = 0;
   let lastRoute = '';
 
@@ -91,25 +94,27 @@
     window.clearTimeout(dropTimer);
     if (tick) { window.clearInterval(tick); tick = 0; }
     dropTimer = 0;
-    if (!layer) return;
+    if (!layer) { activeDuration = 0; return; }
     const node = layer;
+    activeDuration = 0;
     layer = null;
     if (node.parentNode) node.parentNode.removeChild(node);
   }
 
-  function build(route) {
+  function build(route, playDuration) {
     const t = theme(route);
+    const reduced = reducedMotion();
     const node = document.createElement('div');
     node.id = ROOT_ID;
     node.setAttribute('aria-hidden', 'true');
     node.style.setProperty('--la-1', t.c1);
     node.style.setProperty('--la-2', t.c2);
-    node.style.setProperty('--la-dur', CONFIG.DURATION + 'ms');
-    /* o CSS foi coreografado para 200 ms; multiplicamos os tempos pelo
-       fator da duração para a animação continuar bonita em 2,5 s */
-    node.style.setProperty('--la-scale', (CONFIG.DURATION / 200).toFixed(3));
+    node.style.setProperty('--la-dur', playDuration + 'ms');
+    /* o CSS foi coreografado para 200 ms; escalamos os tempos para a
+       coreografia acompanhar a duração escolhida sem saltos. */
+    node.style.setProperty('--la-scale', (playDuration / 200).toFixed(3));
 
-    if (!REDUCED) {
+    if (!reduced) {
       make('div', 'la-warp', node);
       const rings = [ '', 'la-ring--2', 'la-ring--3' ];
       rings.forEach(function (extra) {
@@ -139,7 +144,7 @@
 
   /* duração no próprio elemento (o CSS já usa --la-scale como rede) */
   function paint(el) {
-    try { el.style.animationDuration = CONFIG.DURATION + 'ms'; } catch (error) {}
+    try { el.style.animationDuration = duration() + 'ms'; } catch (error) {}
     return el;
   }
 
@@ -149,32 +154,34 @@
     lastRoute = route;
     try {
       drop();                                  /* troca rápida: troca a camada */
-      layer = build(route);
+      activeDuration = duration();
+      layer = build(route, activeDuration);
       /* body pode não existir (script adiantado, aba em branco recém-criada) */
       (document.body || document.documentElement).append(layer);
       born = Date.now();
-      dropTimer = window.setTimeout(drop, CONFIG.DURATION + 120);
-      runClock(layer);
+      dropTimer = window.setTimeout(drop, activeDuration + 120);
+      runClock(layer, activeDuration);
       return true;
     } catch (error) {
       console.warn('[LuminSDK] animação não montou:', error);
       drop();
       /* última rede: pelo menos o texto da aba, sem coreografia nenhuma */
       try {
+        activeDuration = duration();
         const t = theme(route);
         const simple = document.createElement('div');
         simple.id = ROOT_ID;
         simple.setAttribute('aria-hidden', 'true');
         simple.style.setProperty('--la-1', t.c1);
         simple.style.setProperty('--la-2', t.c2);
-        simple.style.setProperty('--la-dur', CONFIG.DURATION + 'ms');
+        simple.style.setProperty('--la-dur', activeDuration + 'ms');
         simple.style.setProperty('--la-scale', '1');
         simple.className = 'la-simple';
         simple.textContent = t.stamp + ' · ' + t.label;
         (document.body || document.documentElement).append(simple);
         layer = simple;
         born = Date.now();
-        dropTimer = window.setTimeout(drop, CONFIG.DURATION + 120);
+        dropTimer = window.setTimeout(drop, activeDuration + 120);
         return true;
       } catch (fatal) {
         drop();
@@ -187,7 +194,7 @@
      já passou do próprio tempo de vida (load/pageshow chegam logo depois do
      boot e apagavam a primeira animação antes de ela aparecer) */
   function sweep() {
-    if (layer && Date.now() - born > CONFIG.DURATION + 200) drop();
+    if (layer && Date.now() - born > activeDuration + 200) drop();
   }
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'visible') sweep();
@@ -195,14 +202,14 @@
   window.addEventListener('pageshow', sweep);
 
   /* o relógio do mostrador avança enquanto a animação roda */
-  function runClock(node) {
+  function runClock(node, playDuration) {
     if (typeof window.setInterval !== 'function') return;
     const clock = node.querySelector ? node.querySelector('.la-time') : null;
     const stamp = clock ? (clock.getAttribute('data-stamp') || '') : '';
     const parts = /^(\d{1,2}):(\d{2})$/.exec(stamp || '');
     if (!parts) return;
     let minutes = (parseInt(parts[1], 10) * 60 + parseInt(parts[2], 10)) % 1440;
-    const step = Math.max(220, Math.round(CONFIG.DURATION / 5));
+    const step = Math.max(120, Math.round(playDuration / 5));
     tick = window.setInterval(function () {
       if (!layer) { window.clearInterval(tick); tick = 0; return; }
       minutes = (minutes + 1) % 1440;
@@ -222,7 +229,7 @@
       return themed();
     },
     state: function () {
-      return { running: !!layer, duration: CONFIG.DURATION, reduced: REDUCED,
+      return { running: !!layer, duration: activeDuration || duration(), reduced: reducedMotion(),
         last: lastRoute, themes: Object.keys(CONFIG.THEMES) };
     }
   };

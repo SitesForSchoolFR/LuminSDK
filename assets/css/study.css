@@ -1061,3 +1061,35 @@ html[data-view="estudo"] body { padding-left: 0; }
   line-height: 1.5;
 }
 #view-estudo .sd-quiz__wrong li { margin: 6px 0; }
+
+/* Interações suaves e consistentes em mouse, toque e teclado. */
+#view-estudo .sd-subject,
+#view-estudo .sd-res__item,
+#view-estudo .sd-faq details,
+#view-estudo .sd-btn,
+#view-estudo .sd-chip {
+  transition-duration: 260ms;
+  transition-timing-function: cubic-bezier(.2, .75, .25, 1);
+}
+#view-estudo .sd-subject:focus-within {
+  border-color: #b9c8f5;
+  box-shadow: 0 0 0 3px rgba(47, 97, 240, .09), var(--shadow-sm);
+}
+#view-estudo .sd-subject__go span {
+  display: inline-block;
+  transition: transform 260ms cubic-bezier(.2, .75, .25, 1);
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  #view-estudo .sd-subject:hover { transform: translateY(-3px); }
+  #view-estudo .sd-subject:hover .sd-subject__go span { transform: translateX(4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #view-estudo *,
+  #view-estudo *::before,
+  #view-estudo *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

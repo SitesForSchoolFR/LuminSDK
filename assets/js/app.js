@@ -11,7 +11,7 @@
    · não existe mais trava de troca de janela: sair do app (Alt+Tab, trocar
      de aba, bloquear o celular) não muda a tela nem desliga o crédito — no
      celular era isso que sumia com o botão "Ryan Smith"
-   · toda troca de aba toca a animação daquela aba (2,5 s), feita em
+   · toda troca de aba toca uma animação suave por aba (1,5 s; menos movimento: 260 ms), feita em
      assets/js/anim.js (tempo / relógio / espaço-tempo)
    · endereços antigos (/gn/, /sites/, /study/) continuam funcionando pelo
      ?view=…, e a barra de endereço é limpa logo depois
@@ -30,20 +30,20 @@
          desligado quando a rota muda */
       css: [],
       scripts: [
-        'assets/js/anim.js?v=56',
+        'assets/js/anim.js?v=57',
         { src: 'https://cdn.jsdelivr.net/gh/luminsdk/script@latest/lumin.min.js', attrs: { 'data-lumin-sdk': '' } },
-        'assets/js/library.js?v=56',
-        'assets/js/settings.js?v=56',
-        'assets/js/site.js?v=56',
-        'assets/js/atmosphere.js?v=56',
-        'assets/js/progress.js?v=56',
-        'assets/js/bonus.js?v=56'
+        'assets/js/library.js?v=57',
+        'assets/js/settings.js?v=57',
+        'assets/js/site.js?v=57',
+        'assets/js/atmosphere.js?v=57',
+        'assets/js/progress.js?v=57',
+        'assets/js/bonus.js?v=57'
       ]
     },
     gn: {
       title: 'GN-Math — mais de 840 jogos | LuminSDK',
-      css: ['assets/css/gnmath.css?v=56'],
-      scripts: ['assets/js/gnmath.js?v=56'],
+      css: ['assets/css/gnmath.css?v=57'],
+      scripts: ['assets/js/gnmath.js?v=57'],
       html: {
         'data-gn-accent': 'grafite',
         'data-gn-bg': 'lisa',
@@ -55,60 +55,60 @@
     },
     provider: {
       title: 'Catálogo — aqui dentro | LuminSDK',
-      css: ['assets/css/provider.css?v=56'],
-      scripts: ['assets/js/provider.js?v=56', 'assets/js/atmosphere.js?v=56']
+      css: ['assets/css/provider.css?v=57'],
+      scripts: ['assets/js/provider.js?v=57', 'assets/js/atmosphere.js?v=57']
     },
     sites: {
       title: 'Sites — coleções que abrem aqui dentro | LuminSDK',
-      css: ['assets/css/sites.css?v=56'],
-      scripts: ['assets/js/sites.js?v=56', 'assets/js/atmosphere.js?v=56']
+      css: ['assets/css/sites.css?v=57'],
+      scripts: ['assets/js/sites.js?v=57', 'assets/js/atmosphere.js?v=57']
     },
     browser: {
       title: 'Navegador — abrir sites aqui dentro | LuminSDK',
-      css: ['assets/css/browser.css?v=56'],
-      scripts: ['assets/js/browser.js?v=56', 'assets/js/atmosphere.js?v=56']
+      css: ['assets/css/browser.css?v=57'],
+      scripts: ['assets/js/browser.js?v=57', 'assets/js/atmosphere.js?v=57']
     },
     os: {
       title: 'LuminOS — área de trabalho | LuminSDK',
       css: [],
       scripts: [
-        'assets/js/player.js?v=56',
-        'assets/js/os.js?v=56',
-        'assets/js/profile.js?v=56',
-        'assets/js/lab.js?v=56',
-        'assets/js/studio.js?v=56',
-        'assets/js/arcade.js?v=56',
-        'assets/js/vault.js?v=56',
-        'assets/js/community.js?v=56',
-        'assets/js/central.js?v=56',
-        'assets/js/atmosphere.js?v=56'
+        'assets/js/player.js?v=57',
+        'assets/js/os.js?v=57',
+        'assets/js/profile.js?v=57',
+        'assets/js/lab.js?v=57',
+        'assets/js/studio.js?v=57',
+        'assets/js/arcade.js?v=57',
+        'assets/js/vault.js?v=57',
+        'assets/js/community.js?v=57',
+        'assets/js/central.js?v=57',
+        'assets/js/atmosphere.js?v=57'
       ]
     },
     hub: {
       title: 'Hub — perfil, laboratório, estúdio, arcade, cofre e comunidade | LuminSDK',
-      css: ['assets/css/os.css?v=56', 'assets/css/hub.css?v=56'],
+      css: ['assets/css/os.css?v=57', 'assets/css/hub.css?v=57'],
       scripts: [
-        'assets/js/player.js?v=56',
-        'assets/js/os.js?v=56',
-        'assets/js/profile.js?v=56',
-        'assets/js/lab.js?v=56',
-        'assets/js/studio.js?v=56',
-        'assets/js/arcade.js?v=56',
-        'assets/js/vault.js?v=56',
-        'assets/js/community.js?v=56',
-        'assets/js/central.js?v=56',
-        'assets/js/hub.js?v=56'
+        'assets/js/player.js?v=57',
+        'assets/js/os.js?v=57',
+        'assets/js/profile.js?v=57',
+        'assets/js/lab.js?v=57',
+        'assets/js/studio.js?v=57',
+        'assets/js/arcade.js?v=57',
+        'assets/js/vault.js?v=57',
+        'assets/js/community.js?v=57',
+        'assets/js/central.js?v=57',
+        'assets/js/hub.js?v=57'
       ]
     },
     boot: {
       title: 'LuminSDK — escolha como entrar',
       css: [],
-      scripts: ['assets/js/atmosphere.js?v=56']
+      scripts: ['assets/js/atmosphere.js?v=57']
     },
     estudo: {
       title: 'StudyHub | Estudos e Quiz',
-      css: ['assets/css/study.css?v=56'],
-      scripts: ['assets/js/study-questions.js?v=56', 'assets/js/anim.js?v=56', 'assets/js/study.js?v=56']
+      css: ['assets/css/study.css?v=57'],
+      scripts: ['assets/js/study-questions.js?v=57', 'assets/js/anim.js?v=57', 'assets/js/study.js?v=57']
     }
   };
 
@@ -310,7 +310,7 @@
   }
 
   /* ---------- animação de troca de aba ----------
-     Cada aba tem a sua animação (tempo/relógio/espaço-tempo), de 2,5 s,
+     Cada aba tem sua animação (tempo/relógio/espaço-tempo), com 1,5 s;
      em assets/js/anim.js. Toca em TODA troca de aba — nada de
      "só na primeira vez". O script é global (defer no index.html); a cópia
      por rota em ROUTES serve só para furar cache. */
